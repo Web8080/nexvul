@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-nA8EBhGypwllYOaawHgeVDdejHSo1cB6WRqgkmvFfYQ='; img-src data:; base-uri 'none'">
+<title>J5 wireframes</title><style>:root {
+  --page: #ffffff;
+  --raised: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f7f8fa;
+  --inset: #f4f5f7;
+  --nav: #fafbfc;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --border-strong: #c5c9d3;
+  --text: #1a1d27;
+  --muted: #5b6270;
+  --dim: #636a77;
+  --accent: #4a6cf7;
+  --accent-text: #3654dc;
+  --accent-tint: rgba(74, 108, 247, 0.08);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #8a2bb8;
+  --sink: #8a6100;
+  --hatch: rgba(20, 22, 28, 0.14);
+  --shadow: rgba(16, 24, 40, 0.06);
+  --scrim: rgba(16, 24, 40, 0.40);
+  --mock-band: #eef1fe;
+  --mock-band-text: #2b44b8;
+  --graph-edge: #8a93a6;
+  --graph-node: #ffffff;
+  --sev-critical: #c41d3a;
+  --sev-critical-tint: rgba(196, 29, 58, 0.06);
+  --sev-critical-border: rgba(196, 29, 58, 0.25);
+  --sev-high: #a64c08;
+  --sev-high-tint: rgba(166, 76, 8, 0.06);
+  --sev-high-border: rgba(166, 76, 8, 0.25);
+  --sev-medium: #8a6100;
+  --sev-medium-tint: rgba(138, 97, 0, 0.06);
+  --sev-medium-border: rgba(138, 97, 0, 0.25);
+  --sev-low: #1f5fb8;
+  --sev-low-tint: rgba(31, 95, 184, 0.06);
+  --sev-low-border: rgba(31, 95, 184, 0.25);
+  --sev-info: #5b6474;
+  --sev-info-tint: rgba(91, 100, 116, 0.06);
+  --sev-info-border: rgba(91, 100, 116, 0.20);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.5 var(--body)}
+code,.mono{font-family:var(--mono)}
+.band{background:var(--mock-band);color:var(--mock-band-text);font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid var(--border)}
+.band strong{letter-spacing:.06em;text-transform:uppercase}
+.wrap{max-width:1320px;margin:0 auto;padding:24px 24px 48px}
+header.top{display:flex;align-items:center;gap:10px;margin-bottom:6px;color:var(--text)}
+header.top .wm{font-family:var(--mono);font-weight:700;letter-spacing:-.02em}
+h1{font-size:26px;margin:4px 0 6px;letter-spacing:-.01em}
+.goal{color:var(--muted);max-width:90ch;margin:0 0 4px}
+.meta{font-size:12px;color:var(--dim);margin:0 0 18px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--muted);margin:0 0 16px;padding:0;list-style:none}
+.legend li{display:flex;gap:6px;align-items:center}
+.k{display:inline-block;width:18px;height:12px;border:1.5px solid var(--border-strong);border-radius:3px}
+.k-dec{transform:rotate(45deg);width:11px;height:11px}
+.k-fail{border-style:dashed;border-color:var(--sev-critical)}
+.lanes{display:grid;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+.lhead{display:grid;background:var(--inset);border-bottom:1px solid var(--border)}
+.lhead div{padding:8px 12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);border-left:1px solid var(--border)}
+.lhead div:first-child{border-left:0}
+.row{display:grid;position:relative;border-top:1px solid var(--border-subtle)}
+.row:first-of-type{border-top:0}
+.cell{padding:12px;border-left:1px dashed var(--border);min-height:24px}
+.cell:first-child{border-left:0}
+.step{border:1px solid var(--border-strong);border-radius:8px;background:var(--card);padding:10px;box-shadow:0 1px 2px var(--shadow)}
+.sh{display:flex;gap:8px;align-items:baseline;margin-bottom:8px}
+.sn{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:11px;background:var(--text);color:var(--page);font-size:11px;font-weight:700}
+.st{font-weight:650}
+.ids{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--accent-text);white-space:nowrap}
+.act{margin:8px 0 0;font-size:12px;color:var(--text)}
+.act b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.dec{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:stretch;padding:12px;background:var(--inset)}
+.q{display:flex;align-items:center;gap:10px;font-weight:650;min-width:240px}
+.dia{display:inline-block;width:14px;height:14px;border:2px solid var(--text);transform:rotate(45deg);flex:none}
+.br{flex:1 1 200px;border:1px solid var(--border-strong);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--card)}
+.br b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.br-fail{border-style:dashed;border-color:var(--sev-critical)}
+.br-fail b{color:var(--sev-critical)}
+.br a{color:var(--accent-text)}
+.wf{border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:11px;line-height:1.45}
+.wf-chrome{display:flex;gap:5px;align-items:center;padding:5px 8px;background:#13161f;color:#8890a4}
+.wf-chrome span{width:7px;height:7px;border-radius:4px;background:#8890a4}
+.wf-chrome em{font-style:normal;margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-chrome.light{background:var(--inset);color:var(--muted);border-bottom:1px solid var(--border)}
+.wf-body{padding:8px 10px}
+.wf-term .wf-body{background:#0f1119;color:#e2e4ea}
+.wf-term .ln{white-space:pre-wrap;word-break:break-word}
+.wf-term .hl{color:#e2e4ea;font-weight:700;background:#1e2333}
+.wf-term .warn{color:#f0c541}
+.wf-term .dimln{color:#8890a4}
+.wf-term .bar{background:#1e2333}
+.ln{white-space:pre-wrap;word-break:break-word}
+.hl{font-weight:700;background:var(--accent-tint)}
+.dimln{color:var(--muted)}
+.bar{height:7px;border-radius:4px;background:var(--border);margin:5px 0;width:92%}
+.bar-s{width:60%}.bar-xs{width:30%}
+.ibar{display:inline-block;vertical-align:middle;height:7px;border-radius:4px;background:var(--border);width:80px}.ibar-s{width:48px}.ibar-xs{width:28px}
+.wf-term .ibar{background:#1e2333}
+.wf-ed .wf-body{background:var(--card)}
+.eln{display:flex;gap:8px;white-space:pre-wrap;word-break:break-word}
+.eln .gut{color:var(--dim);min-width:18px;text-align:right;flex:none}
+.eln.hl{background:var(--accent-tint)}
+.dash{display:grid;grid-template-columns:64px 1fr;min-height:120px}
+.dnav{background:var(--nav);border-right:1px solid var(--border);padding:6px 4px}
+.nv{font-size:10px;color:var(--muted);padding:2px 4px;border-radius:3px}
+.nv.on{background:var(--accent-tint);color:var(--accent-text);font-weight:700}
+.dmain{padding:8px 10px}
+.dh{font-weight:700;margin-bottom:4px}
+.ghbar{display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);background:var(--inset)}
+.ghbar .bar{margin:0;height:6px}
+.fails{margin-top:28px}
+h2{font-size:18px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-top:1px solid var(--border-subtle)}
+thead th{border-top:0;background:var(--inset);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.id{font-family:var(--mono);font-weight:700;color:var(--sev-critical);white-space:nowrap}
+td.copy{font-family:var(--mono);font-size:12px}
+tr:target{background:var(--accent-tint)}
+.foot{margin-top:24px;font-size:12px;color:var(--muted)}
+@media (max-width:900px){.lhead{display:none}.row{display:block}.cell:empty{display:none}.cell{border-left:0}
+  .cell[data-lane]::before{content:attr(data-lane);display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}}
+@media (max-width:600px){.wrap{padding:16px}table{display:block;overflow-x:auto}}
+.cols{grid-template-columns:repeat(4,minmax(0,1fr))}
+.lhead{grid-template-columns:repeat(4,minmax(0,1fr))}
+</style></head>
+<body>
+<div class="band" role="note"><strong>Design mock-up, sample data</strong> &middot; Low-fidelity wireframes; copy is real, layout is indicative. Journeys: <a href="J1-first-run.html">J1</a> &middot; <a href="J2-triage.html">J2</a> &middot; <a href="J3-suppress.html">J3</a> &middot; <a href="J4-ci-gating.html">J4</a> &middot; <strong>J5</strong> &middot; <a href="J6-pre-commit.html">J6</a> &middot; <a href="../design-pack.html">Design pack</a></div>
+<div class="wrap">
+<header class="top"><svg class="mark" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M14.5 12h3"/></svg><span class="wm">nexvul</span><span class="meta">user journey storyboard</span></header>
+<h1>J5 Contribute a rule</h1>
+<p class="goal"><strong>Goal.</strong> Turn knowledge of an agent attack pattern into a rule that ships, without guessing what evidence maintainers need.</p>
+<p class="meta">Actor: Open-source contributor (U-OSS) &middot; Screen IDs from screen-inventory.md &middot; Flow diagram: flows/J5-*.svg (J1&ndash;J5)</p>
+<ul class="legend"><li><span class="k" aria-hidden="true"></span>Step: the screen the user sees, and what they do</li>
+<li><span class="k k-dec" aria-hidden="true"></span>Decision point</li><li><span class="k k-fail" aria-hidden="true"></span>Failure branch (links to the table)</li></ul>
+<div class="lanes" aria-label="J5 Contribute a rule swim lanes">
+<div class="lhead" aria-hidden="true"><div>Contributor</div><div>Terminal / editor</div><div>GitHub issue and PR</div><div>Maintainers and CI</div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="GitHub issue and PR"><div class="step"><div class="sh"><span class="sn">1</span><span class="st">Reads Propose a rule</span><span class="ids">D05</span></div><div class="wf wf-doc"><div class="wf-chrome light"><em>CONTRIBUTING.md</em></div><div class="wf-body"><div class="ln hl">Propose a rule</div><div class="ln">1 Proposal issue (no code)</div><div class="ln">2 Triage</div><div class="ln">3 ID allocated by a maintainer</div><div class="ln">4 Rule + tests + docs</div><div class="ln">5 Benchmark within the FP budget</div><div class="ln">6 Merged as experimental</div><div class="ln">7 Default after one release</div></div></div><p class="act"><b>User action</b>Reads the gates and the template.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal / editor"><div class="step"><div class="sh"><span class="sn">2</span><span class="st">Checks existing coverage</span><span class="ids">U01 U02 U03</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh</em></div><div class="wf-body mono"><div class="ln">$ nexvul rules --asi ASI07</div><div class="ln">NEX006  A2A / agent HTTP endpoint without authentication</div><div class="ln">NEX007  MCP connection without authentication...</div><div class="bar"></div><div class="ln">$ nexvul explain NEX008</div><div class="ln hl">WHAT THIS RULE DOES NOT DETECT</div><div class="bar"></div></div></div><p class="act"><b>User action</b>Reads what the nearest rule does not detect.</p></div></div><div class="cell"></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="GitHub issue and PR"><div class="step"><div class="sh"><span class="sn">3</span><span class="st">Opens a rule proposal issue</span><span class="ids">D05</span></div><div class="wf wf-gh"><div class="wf-chrome light"><em>github.com &middot; Issues · new</em></div><div class="ghbar"><div class="bar bar-s"></div><div class="bar bar-xs"></div></div><div class="wf-body"><div class="dh">Rule proposal: A2A card fetched over cleartext</div><div class="ln">Threat  <span class="ibar ibar-m"></span></div><div class="ln">OWASP mapping  ASI07</div><div class="ln">Positive examples  <span class="ibar ibar-m"></span></div><div class="ln">Negative examples  <span class="ibar ibar-m"></span></div><div class="ln">False positives  <span class="ibar ibar-s"></span></div></div></div><p class="act"><b>User action</b>Fills Threat, OWASP mapping, detection, examples, FP/FN.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Maintainer triage</div><div class="br"><b>Accepted for design</b>continue</div><div class="br"><b>Needs evidence</b>Comment lists the missing evidence.</div><div class="br"><b>Out of scope</b>Closed with the taxonomy exclusion category (e.g. not statically detectable).</div></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="Maintainers and CI"><div class="step"><div class="sh"><span class="sn">4</span><span class="st">ID allocated</span><span class="ids">-</span></div><div class="wf wf-gh"><div class="wf-chrome light"><em>github.com &middot; Issue #88</em></div><div class="ghbar"><div class="bar bar-s"></div><div class="bar bar-xs"></div></div><div class="wf-body"><div class="dh">Accepted · NEX026 allocated</div><div class="ln hl">Rule ID: NEX026</div><div class="ln">Next: rule, tests (positive, negative, edge_cases, adversarial), docs/rules/NEX026.md</div></div></div><p class="act"><b>User action</b>Maintainer assigns NEX026; IDs are never reused.</p></div></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal / editor"><div class="step"><div class="sh"><span class="sn">5</span><span class="st">Writes the rule, tests and docs; runs locally</span><span class="ids">D04</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh</em></div><div class="wf-body mono"><div class="ln">$ pytest tests/rules/test_nex026.py</div><div class="ln dimln">14 passed</div><div class="ln">$ nexvul scan benchmarks/safe --rules NEX026</div><div class="ln hl">Result  0 findings · scan complete. Exit code 0.</div></div></div><p class="act"><b>User action</b>Expects zero high-confidence findings on benchmarks/safe.</p></div></div><div class="cell"></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="Maintainers and CI"><div class="step"><div class="sh"><span class="sn">6</span><span class="st">CI posts per-rule precision and recall</span><span class="ids">-</span></div><div class="wf wf-gh"><div class="wf-chrome light"><em>github.com &middot; PR #301 · bot comment</em></div><div class="ghbar"><div class="bar bar-s"></div><div class="bar bar-xs"></div></div><div class="wf-body"><div class="dh">Benchmark: NEX026</div><div class="ln">precision  <span class="ibar ibar-s"></span>   recall  <span class="ibar ibar-s"></span></div><div class="ln hl">safe/ cases that fired: 1 (benchmarks/safe/a2a_local.py)</div><div class="ln">FP budget (DEC-0002): <span class="ibar ibar-xs"></span></div></div></div><p class="act"><b>User action</b>Contributor reads which safe/ cases fired.</p></div></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Within the FP budget?</div><div class="br"><b>Yes</b>Review gates, then merged as experimental (off by default); promoted after a release cycle.</div><div class="br"><b>No</b>CI comment lists exactly which safe/ cases fired.</div></div></div>
+</div>
+<section class="fails" aria-labelledby="fh"><h2 id="fh">Failure paths</h2>
+<table><thead><tr><th scope="col">ID</th><th scope="col">Trigger</th><th scope="col">Screen</th><th scope="col">Exit</th><th scope="col">What the user sees (copy)</th></tr></thead><tbody><tr id="J5-F1"><td class="id">J5-F1</td><td>Message template interpolates scanned content unsafely</td><td class="mono">lint</td><td class="mono">fail</td><td class="copy">Message templates may use only named, escaped placeholders.</td></tr><tr id="J5-F2"><td class="id">J5-F2</td><td>Help links to a non-allowlisted host</td><td class="mono">lint</td><td class="mono">fail</td><td class="copy">Built-in help may link only to OWASP, MITRE CWE, framework docs and nexvul docs.</td></tr><tr id="J5-F3"><td class="id">J5-F3</td><td>Rule message uses a banned phrase</td><td class="mono">copy lint</td><td class="mono">fail</td><td class="copy">&quot;vulnerable&quot; is not allowed; write &quot;finding&quot; or name the risky pattern.</td></tr><tr id="J5-F4"><td class="id">J5-F4</td><td>Duplicates an existing rule&#x27;s sink</td><td class="mono">dedupe check</td><td class="mono">comment</td><td class="copy">Overlaps NEX006 on the same route; dedupe so there is one finding per route.</td></tr></tbody></table></section>
+<p class="foot">Design mock-up, sample data. Generated by docs/design/_build/wireframes.py. A clean nexvul result does not prove that an application is secure.</p>
+</div></body></html>

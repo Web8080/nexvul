@@ -26,17 +26,20 @@ from nexvul.core.limits import MAX_DISPLAY_PATH_CHARS
 # Characters that render like a path separator or a dot and could make a name look like a
 # different path (MF-68). They are escaped rather than shown.
 _CONFUSABLE_PATH_CHARS = frozenset(
-    {
-        "∕",  # DIVISION SLASH
-        "⁄",  # FRACTION SLASH
-        "⧸",  # BIG SOLIDUS
-        "／",  # FULLWIDTH SOLIDUS
-        "⧹",  # BIG REVERSE SOLIDUS
-        "＼",  # FULLWIDTH REVERSE SOLIDUS
-        "․",  # ONE DOT LEADER
-        "．",  # FULLWIDTH FULL STOP
-    }
+    chr(code)
+    for code in (
+        0x2215,  # DIVISION SLASH
+        0x2044,  # FRACTION SLASH
+        0x29F8,  # BIG SOLIDUS
+        0xFF0F,  # FULLWIDTH SOLIDUS
+        0x29F9,  # BIG REVERSE SOLIDUS
+        0xFF3C,  # FULLWIDTH REVERSE SOLIDUS
+        0x2024,  # ONE DOT LEADER
+        0xFF0E,  # FULLWIDTH FULL STOP
+    )
 )
+
+_ELLIPSIS = chr(0x2026)
 
 _ESCAPED_CATEGORIES = frozenset({"Cc", "Cf", "Cs", "Co", "Cn", "Zl", "Zp"})
 
@@ -73,13 +76,16 @@ def display_text(value: str, *, max_chars: int = MAX_DISPLAY_PATH_CHARS) -> str:
     if len(out) <= max_chars:
         return out
     digest = hashlib.sha256(value.encode("utf-8", "surrogatepass")).hexdigest()[:10]
-    keep = max(max_chars - 13, 1)
-    # Do not cut an escape sequence in half: trim back to the last complete token boundary.
-    head = out[:keep]
-    cut = head.rfind("\\")
-    if cut != -1 and cut >= keep - 10:
-        head = head[:cut]
-    return f"{head}…~{digest}"
+    keep = max(max_chars - 12, 1)  # room for ellipsis, "~" and a 10-char digest
+    # Truncate on token boundaries so an escape sequence is never cut in half.
+    used = 0
+    head: list[str] = []
+    for token in parts:
+        if used + len(token) > keep:
+            break
+        head.append(token)
+        used += len(token)
+    return f"{''.join(head)}{_ELLIPSIS}~{digest}"
 
 
 def display_path(value: str | bytes, *, max_chars: int = MAX_DISPLAY_PATH_CHARS) -> str:

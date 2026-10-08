@@ -208,3 +208,5 @@ the partial banner. The lint allowlists those strings verbatim, not the words.
 | DV-10 | Dataflow as one horizontal `→` chain | Numbered vertical steps with role words and locations | Long chains overflow; each step needs a location to be disputable |
 | DV-11 | Footer disclaimer in italic 11px dim | Disclaimer at body size in T02/H02; footer remains | The disclaimer is the product's core claim, not small print |
 | DV-12 | No suppressed section, no weakened-config list, no provenance (commit, rules hash, config source) | H06, H07 | Visible suppressions (G8) and auditability (G9) |
+| DV-13 | Light page `#f5f6f8`, dark-first report | **White page `#ffffff` by default**, white cards separated by borders; dark is the alternate (`prefers-color-scheme` or the theme toggle) | Product-owner direction 2026-10-08 with DEC-0009. Tokens updated (`color.light.surface`); all text tokens re-checked against white (≥ 4.5:1) |
+| DV-14 | Single scrolling report | App shell with side menu and eight views (H14–H24); without JS every view renders in sequence | DEC-0009; H10 still holds (complete with scripts blocked) |

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nexvul design pack</title><style>:root {
+  --page: #ffffff;
+  --raised: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f7f8fa;
+  --inset: #f4f5f7;
+  --nav: #fafbfc;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --border-strong: #c5c9d3;
+  --text: #1a1d27;
+  --muted: #5b6270;
+  --dim: #636a77;
+  --accent: #4a6cf7;
+  --accent-text: #3654dc;
+  --accent-tint: rgba(74, 108, 247, 0.08);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #8a2bb8;
+  --sink: #8a6100;
+  --hatch: rgba(20, 22, 28, 0.14);
+  --shadow: rgba(16, 24, 40, 0.06);
+  --scrim: rgba(16, 24, 40, 0.40);
+  --mock-band: #eef1fe;
+  --mock-band-text: #2b44b8;
+  --graph-edge: #8a93a6;
+  --graph-node: #ffffff;
+  --sev-critical: #c41d3a;
+  --sev-critical-tint: rgba(196, 29, 58, 0.06);
+  --sev-critical-border: rgba(196, 29, 58, 0.25);
+  --sev-high: #a64c08;
+  --sev-high-tint: rgba(166, 76, 8, 0.06);
+  --sev-high-border: rgba(166, 76, 8, 0.25);
+  --sev-medium: #8a6100;
+  --sev-medium-tint: rgba(138, 97, 0, 0.06);
+  --sev-medium-border: rgba(138, 97, 0, 0.25);
+  --sev-low: #1f5fb8;
+  --sev-low-tint: rgba(31, 95, 184, 0.06);
+  --sev-low-border: rgba(31, 95, 184, 0.25);
+  --sev-info: #5b6474;
+  --sev-info-tint: rgba(91, 100, 116, 0.06);
+  --sev-info-border: rgba(91, 100, 116, 0.20);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.5 var(--body)}
+a{color:var(--accent-text)}
+.band{background:var(--mock-band);color:var(--mock-band-text);font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid var(--border)}
+.wrap{max-width:1240px;margin:0 auto;padding:24px 24px 64px}
+header{display:flex;align-items:center;gap:10px}
+.wm{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:-.02em}
+h1{font-size:28px;margin:8px 0 6px}
+.lede{color:var(--muted);max-width:90ch;margin:0}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px 16px;margin:16px 0 8px;font-size:13px}
+h2{font-size:20px;margin:36px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
+.sub{color:var(--muted);margin:0 0 14px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:10px;background:var(--card);overflow:hidden;text-decoration:none;color:var(--text)}
+.card:hover{border-color:var(--accent)}
+.thumb{height:180px;overflow:hidden;background:var(--inset);border-bottom:1px solid var(--border)}
+.thumb img{width:100%;display:block}
+.meta{padding:10px 12px}
+.ids{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent-text)}
+.t{display:block;font-size:13px;margin-top:2px}
+.f{display:block;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px;word-break:break-all}
+.hero{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start}
+.hero img{width:100%;border:1px solid var(--border);border-radius:10px;display:block}
+.callout{border:1px solid var(--accent);background:var(--accent-tint);border-radius:10px;padding:14px 16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 10px;border-top:1px solid var(--border-subtle);vertical-align:top}
+thead th{background:var(--inset);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+code{font-family:var(--mono);font-size:12px}
+@media (max-width:800px){.hero{grid-template-columns:1fr}.wrap{padding:16px}}
+</style></head>
+<body><div class="band"><strong>Design mock-up, sample data</strong> &middot; Everything here is a design artefact for a scanner that is not built yet.</div>
+<div class="wrap">
+<header><svg class="mark" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M14.5 12h3"/></svg><span class="wm">nexvul</span></header>
+<h1>Design pack</h1>
+<p class="lede">The visual companion to the design documents. Screen IDs are permanent and match <a href="screen-inventory.md">screen-inventory.md</a>. Open this file from disk; it loads only local files next to it.</p>
+<nav class="toc"><a href="#dash">Dashboard app shell</a><a href="#wire">Journey wireframes</a><a href="#screens">Rendered screens</a><a href="#flows">Flow diagrams</a><a href="#docs">Documents</a></nav>
+<h2 id="dash">Dashboard app shell (local report, v1)</h2>
+<p class="sub">White by default, dark as an alternate. No accounts, sign-in or server (DEC-0009); Settings is read-only.</p>
+<div class="hero"><a href="../../assets/report-preview.html"><img src="../../assets/screenshots/dashboard-hero.png" alt="Dashboard overview, light theme"></a>
+<div class="callout"><p><strong>Open the live mock-up:</strong> <a href="../../assets/report-preview.html"><code>assets/report-preview.html</code></a></p>
+<p>Views: Overview, Findings, Frameworks and agent map, Rules, Suppressions, Scan history (this run only), Settings, Help. Use <em>Preview state</em> in the top band to switch between a complete and a partial scan.</p>
+<p>Deep links: <code>#findings/F3</code>, <code>#findings/sev=high</code>, <code>#findings/rule=NEX015</code>, <code>#settings</code>.</p></div></div>
+<div class="grid"><a class="card" href="../../assets/screenshots/dashboard-hero.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-hero.png" alt="Overview, 1280 px, light (README / hero)" loading="lazy"></div><div class="meta"><span class="ids">H01 H14</span><span class="t">Overview, 1280 px, light (README / hero)</span><span class="f">assets/screenshots/dashboard-hero.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-full.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-full.png" alt="Overview, full length" loading="lazy"></div><div class="meta"><span class="ids">H01 H07</span><span class="t">Overview, full length</span><span class="f">assets/screenshots/dashboard-full.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-overview-partial.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-overview-partial.png" alt="Overview, partial scan" loading="lazy"></div><div class="meta"><span class="ids">H03 H01</span><span class="t">Overview, partial scan</span><span class="f">assets/screenshots/dashboard-overview-partial.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-findings-expanded.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-findings-expanded.png" alt="Findings: filters, list, expanded finding with flow" loading="lazy"></div><div class="meta"><span class="ids">H16 H05</span><span class="t">Findings: filters, list, expanded finding with flow</span><span class="f">assets/screenshots/dashboard-findings-expanded.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-findings-filtered-empty.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-findings-filtered-empty.png" alt="Findings: no results for these filters (not &quot;no findings&quot;)" loading="lazy"></div><div class="meta"><span class="ids">H17</span><span class="t">Findings: no results for these filters (not &quot;no findings&quot;)</span><span class="f">assets/screenshots/dashboard-findings-filtered-empty.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-agent-map.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-agent-map.png" alt="Frameworks and agent map" loading="lazy"></div><div class="meta"><span class="ids">H18</span><span class="t">Frameworks and agent map</span><span class="f">assets/screenshots/dashboard-agent-map.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-rules.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-rules.png" alt="Rules NEX001-NEX025" loading="lazy"></div><div class="meta"><span class="ids">H19</span><span class="t">Rules NEX001-NEX025</span><span class="f">assets/screenshots/dashboard-rules.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-suppressions.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-suppressions.png" alt="Suppressions, incl. a hidden-character justification" loading="lazy"></div><div class="meta"><span class="ids">H20 H13</span><span class="t">Suppressions, incl. a hidden-character justification</span><span class="f">assets/screenshots/dashboard-suppressions.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-history-partial.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-history-partial.png" alt="Scan history (this run), partial variant" loading="lazy"></div><div class="meta"><span class="ids">H21 H07</span><span class="t">Scan history (this run), partial variant</span><span class="f">assets/screenshots/dashboard-history-partial.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-settings.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-settings.png" alt="Settings (read-only) and display preferences" loading="lazy"></div><div class="meta"><span class="ids">H22 H24</span><span class="t">Settings (read-only) and display preferences</span><span class="f">assets/screenshots/dashboard-settings.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-help.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-help.png" alt="Help and docs" loading="lazy"></div><div class="meta"><span class="ids">H23</span><span class="t">Help and docs</span><span class="f">assets/screenshots/dashboard-help.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-overview-dark.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-overview-dark.png" alt="Dark theme (alternate)" loading="lazy"></div><div class="meta"><span class="ids">H11 H24</span><span class="t">Dark theme (alternate)</span><span class="f">assets/screenshots/dashboard-overview-dark.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-mobile.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-mobile.png" alt="Phone width, 390 px" loading="lazy"></div><div class="meta"><span class="ids">H12 H15</span><span class="t">Phone width, 390 px</span><span class="f">assets/screenshots/dashboard-mobile.png</span></div></a><a class="card" href="../../assets/screenshots/dashboard-mobile-menu.png"><div class="thumb"><img src="../../assets/screenshots/dashboard-mobile-menu.png" alt="Phone width, menu open" loading="lazy"></div><div class="meta"><span class="ids">H15</span><span class="t">Phone width, menu open</span><span class="f">assets/screenshots/dashboard-mobile-menu.png</span></div></a></div>
+<h2 id="wire">Journey wireframes (J1&ndash;J6)</h2>
+<p class="sub">Swim-lane storyboards: the screen at each step, the user action, decision points and failure paths with real copy.</p>
+<div class="grid"><a class="card" href="wireframes/J1-first-run.html"><div class="thumb"><img src="wireframes/J1-first-run.png" alt="First run (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J1</span><span class="t">First run (storyboard)</span><span class="f">docs/design/wireframes/J1-first-run.html</span></div></a><a class="card" href="wireframes/J2-triage.html"><div class="thumb"><img src="wireframes/J2-triage.png" alt="Triage (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J2</span><span class="t">Triage (storyboard)</span><span class="f">docs/design/wireframes/J2-triage.html</span></div></a><a class="card" href="wireframes/J3-suppress.html"><div class="thumb"><img src="wireframes/J3-suppress.png" alt="Suppress (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J3</span><span class="t">Suppress (storyboard)</span><span class="f">docs/design/wireframes/J3-suppress.html</span></div></a><a class="card" href="wireframes/J4-ci-gating.html"><div class="thumb"><img src="wireframes/J4-ci-gating.png" alt="Ci gating (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J4</span><span class="t">Ci gating (storyboard)</span><span class="f">docs/design/wireframes/J4-ci-gating.html</span></div></a><a class="card" href="wireframes/J5-contribute-rule.html"><div class="thumb"><img src="wireframes/J5-contribute-rule.png" alt="Contribute rule (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J5</span><span class="t">Contribute rule (storyboard)</span><span class="f">docs/design/wireframes/J5-contribute-rule.html</span></div></a><a class="card" href="wireframes/J6-pre-commit.html"><div class="thumb"><img src="wireframes/J6-pre-commit.png" alt="Pre commit (storyboard)" loading="lazy"></div><div class="meta"><span class="ids">J6</span><span class="t">Pre commit (storyboard)</span><span class="f">docs/design/wireframes/J6-pre-commit.html</span></div></a></div>
+<h2 id="screens">Rendered screens</h2>
+<p class="sub">Terminal states at 80 and 120 columns, rendered from terminal-mockups.md; GitHub alert, PR check and job summaries; pre-commit failure. HTML sources sit next to each PNG.</p>
+<div class="grid"><a class="card" href="screens/A01-job-summary.png"><div class="thumb"><img src="screens/A01-job-summary.png" alt="Job summary" loading="lazy"></div><div class="meta"><span class="ids">A01</span><span class="t">Job summary</span><span class="f">docs/design/screens/A01-job-summary.html</span></div></a><a class="card" href="screens/A03-job-summary-partial.png"><div class="thumb"><img src="screens/A03-job-summary-partial.png" alt="Job summary partial" loading="lazy"></div><div class="meta"><span class="ids">A03</span><span class="t">Job summary partial</span><span class="f">docs/design/screens/A03-job-summary-partial.html</span></div></a><a class="card" href="screens/A05-pr-check.png"><div class="thumb"><img src="screens/A05-pr-check.png" alt="Pr check" loading="lazy"></div><div class="meta"><span class="ids">A05</span><span class="t">Pr check</span><span class="f">docs/design/screens/A05-pr-check.html</span></div></a><a class="card" href="screens/G01-alert-list.png"><div class="thumb"><img src="screens/G01-alert-list.png" alt="Alert list" loading="lazy"></div><div class="meta"><span class="ids">G01</span><span class="t">Alert list</span><span class="f">docs/design/screens/G01-alert-list.html</span></div></a><a class="card" href="screens/G02-alert-detail.png"><div class="thumb"><img src="screens/G02-alert-detail.png" alt="Alert detail" loading="lazy"></div><div class="meta"><span class="ids">G02</span><span class="t">Alert detail</span><span class="f">docs/design/screens/G02-alert-detail.html</span></div></a><a class="card" href="screens/K02-pre-commit-failure-80.png"><div class="thumb"><img src="screens/K02-pre-commit-failure-80.png" alt="Pre commit failure (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">K02</span><span class="t">Pre commit failure (80 cols)</span><span class="f">docs/design/screens/K02-pre-commit-failure-80.html</span></div></a><a class="card" href="screens/T02-clean-with-caveats-120.png"><div class="thumb"><img src="screens/T02-clean-with-caveats-120.png" alt="Clean with caveats (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">T02</span><span class="t">Clean with caveats (120 cols)</span><span class="f">docs/design/screens/T02-clean-with-caveats-120.html</span></div></a><a class="card" href="screens/T02-clean-with-caveats-80.png"><div class="thumb"><img src="screens/T02-clean-with-caveats-80.png" alt="Clean with caveats (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">T02</span><span class="t">Clean with caveats (80 cols)</span><span class="f">docs/design/screens/T02-clean-with-caveats-80.html</span></div></a><a class="card" href="screens/T04-findings-120.png"><div class="thumb"><img src="screens/T04-findings-120.png" alt="Findings (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">T04</span><span class="t">Findings (120 cols)</span><span class="f">docs/design/screens/T04-findings-120.html</span></div></a><a class="card" href="screens/T04-findings-80.png"><div class="thumb"><img src="screens/T04-findings-80.png" alt="Findings (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">T04</span><span class="t">Findings (80 cols)</span><span class="f">docs/design/screens/T04-findings-80.html</span></div></a><a class="card" href="screens/T05-partial-scan-120.png"><div class="thumb"><img src="screens/T05-partial-scan-120.png" alt="Partial scan (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">T05</span><span class="t">Partial scan (120 cols)</span><span class="f">docs/design/screens/T05-partial-scan-120.html</span></div></a><a class="card" href="screens/T05-partial-scan-80.png"><div class="thumb"><img src="screens/T05-partial-scan-80.png" alt="Partial scan (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">T05</span><span class="t">Partial scan (80 cols)</span><span class="f">docs/design/screens/T05-partial-scan-80.html</span></div></a><a class="card" href="screens/T09-config-error-120.png"><div class="thumb"><img src="screens/T09-config-error-120.png" alt="Config error (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">T09</span><span class="t">Config error (120 cols)</span><span class="f">docs/design/screens/T09-config-error-120.html</span></div></a><a class="card" href="screens/T09-config-error-80.png"><div class="thumb"><img src="screens/T09-config-error-80.png" alt="Config error (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">T09</span><span class="t">Config error (80 cols)</span><span class="f">docs/design/screens/T09-config-error-80.html</span></div></a><a class="card" href="screens/T15-ci-plain-120.png"><div class="thumb"><img src="screens/T15-ci-plain-120.png" alt="Ci plain (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">T15</span><span class="t">Ci plain (120 cols)</span><span class="f">docs/design/screens/T15-ci-plain-120.html</span></div></a><a class="card" href="screens/T15-ci-plain-80.png"><div class="thumb"><img src="screens/T15-ci-plain-80.png" alt="Ci plain (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">T15</span><span class="t">Ci plain (80 cols)</span><span class="f">docs/design/screens/T15-ci-plain-80.html</span></div></a><a class="card" href="screens/U01-rules-120.png"><div class="thumb"><img src="screens/U01-rules-120.png" alt="Rules (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">U01</span><span class="t">Rules (120 cols)</span><span class="f">docs/design/screens/U01-rules-120.html</span></div></a><a class="card" href="screens/U01-rules-80.png"><div class="thumb"><img src="screens/U01-rules-80.png" alt="Rules (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">U01</span><span class="t">Rules (80 cols)</span><span class="f">docs/design/screens/U01-rules-80.html</span></div></a><a class="card" href="screens/U03-explain-120.png"><div class="thumb"><img src="screens/U03-explain-120.png" alt="Explain (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">U03</span><span class="t">Explain (120 cols)</span><span class="f">docs/design/screens/U03-explain-120.html</span></div></a><a class="card" href="screens/U03-explain-80.png"><div class="thumb"><img src="screens/U03-explain-80.png" alt="Explain (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">U03</span><span class="t">Explain (80 cols)</span><span class="f">docs/design/screens/U03-explain-80.html</span></div></a><a class="card" href="screens/U05-doctor-120.png"><div class="thumb"><img src="screens/U05-doctor-120.png" alt="Doctor (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">U05</span><span class="t">Doctor (120 cols)</span><span class="f">docs/design/screens/U05-doctor-120.html</span></div></a><a class="card" href="screens/U05-doctor-80.png"><div class="thumb"><img src="screens/U05-doctor-80.png" alt="Doctor (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">U05</span><span class="t">Doctor (80 cols)</span><span class="f">docs/design/screens/U05-doctor-80.html</span></div></a><a class="card" href="screens/U06-doctor-problems-120.png"><div class="thumb"><img src="screens/U06-doctor-problems-120.png" alt="Doctor problems (120 cols)" loading="lazy"></div><div class="meta"><span class="ids">U06</span><span class="t">Doctor problems (120 cols)</span><span class="f">docs/design/screens/U06-doctor-problems-120.html</span></div></a><a class="card" href="screens/U06-doctor-problems-80.png"><div class="thumb"><img src="screens/U06-doctor-problems-80.png" alt="Doctor problems (80 cols)" loading="lazy"></div><div class="meta"><span class="ids">U06</span><span class="t">Doctor problems (80 cols)</span><span class="f">docs/design/screens/U06-doctor-problems-80.html</span></div></a></div>
+<h2 id="flows">Flow diagrams</h2><div class="grid"><a class="card" href="flows/J1-first-run.svg"><div class="thumb"><img src="flows/J1-first-run.svg" alt="Journey flow diagram" loading="lazy"></div><div class="meta"><span class="ids">J1</span><span class="t">Journey flow diagram</span><span class="f">docs/design/flows/J1-first-run.svg</span></div></a><a class="card" href="flows/J2-triage.svg"><div class="thumb"><img src="flows/J2-triage.svg" alt="Journey flow diagram" loading="lazy"></div><div class="meta"><span class="ids">J2</span><span class="t">Journey flow diagram</span><span class="f">docs/design/flows/J2-triage.svg</span></div></a><a class="card" href="flows/J3-suppress.svg"><div class="thumb"><img src="flows/J3-suppress.svg" alt="Journey flow diagram" loading="lazy"></div><div class="meta"><span class="ids">J3</span><span class="t">Journey flow diagram</span><span class="f">docs/design/flows/J3-suppress.svg</span></div></a><a class="card" href="flows/J4-ci-gating.svg"><div class="thumb"><img src="flows/J4-ci-gating.svg" alt="Journey flow diagram" loading="lazy"></div><div class="meta"><span class="ids">J4</span><span class="t">Journey flow diagram</span><span class="f">docs/design/flows/J4-ci-gating.svg</span></div></a><a class="card" href="flows/J5-contribute-rule.svg"><div class="thumb"><img src="flows/J5-contribute-rule.svg" alt="Journey flow diagram" loading="lazy"></div><div class="meta"><span class="ids">J5</span><span class="t">Journey flow diagram</span><span class="f">docs/design/flows/J5-contribute-rule.svg</span></div></a></div>
+<h2 id="docs">Documents</h2>
+<table><thead><tr><th>File</th><th>Contents</th></tr></thead><tbody><tr><td><a href="user-journeys.md"><code>user-journeys.md</code></a></td><td>Journeys J1-J6, failure branches, coverage check</td></tr><tr><td><a href="screen-inventory.md"><code>screen-inventory.md</code></a></td><td>All screen IDs (T, U, K, C, H, J, G, A, D) with specifications</td></tr><tr><td><a href="terminal-mockups.md"><code>terminal-mockups.md</code></a></td><td>Terminal output at 80/120 columns (source for the rendered screens)</td></tr><tr><td><a href="github-and-action.md"><code>github-and-action.md</code></a></td><td>SARIF mapping, rule help, Action job summaries</td></tr><tr><td><a href="design-system.md"><code>design-system.md</code></a></td><td>Principles, colour, severity and status encoding, components, tone</td></tr><tr><td><a href="tokens.json"><code>tokens.json</code></a></td><td>Machine-readable tokens: colour, type, spacing, copy</td></tr><tr><td><a href="brand.md"><code>brand.md</code></a></td><td>Name, wordmark, trace mark, palette, voice</td></tr><tr><td><a href="open-decisions.md"><code>open-decisions.md</code></a></td><td>Decisions (all accepted, DEC-0007; dashboard scope DEC-0009)</td></tr></tbody></table>
+<p class="sub">A clean nexvul result does not prove that an application is secure.</p>
+</div></body></html>

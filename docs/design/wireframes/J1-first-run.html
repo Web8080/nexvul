@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-JNRiEO3+Ia4k+EGA6wbehB/TORmUKnd6Ea6rP2CNz0U='; img-src data:; base-uri 'none'">
+<title>J1 wireframes</title><style>:root {
+  --page: #ffffff;
+  --raised: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f7f8fa;
+  --inset: #f4f5f7;
+  --nav: #fafbfc;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --border-strong: #c5c9d3;
+  --text: #1a1d27;
+  --muted: #5b6270;
+  --dim: #636a77;
+  --accent: #4a6cf7;
+  --accent-text: #3654dc;
+  --accent-tint: rgba(74, 108, 247, 0.08);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #8a2bb8;
+  --sink: #8a6100;
+  --hatch: rgba(20, 22, 28, 0.14);
+  --shadow: rgba(16, 24, 40, 0.06);
+  --scrim: rgba(16, 24, 40, 0.40);
+  --mock-band: #eef1fe;
+  --mock-band-text: #2b44b8;
+  --graph-edge: #8a93a6;
+  --graph-node: #ffffff;
+  --sev-critical: #c41d3a;
+  --sev-critical-tint: rgba(196, 29, 58, 0.06);
+  --sev-critical-border: rgba(196, 29, 58, 0.25);
+  --sev-high: #a64c08;
+  --sev-high-tint: rgba(166, 76, 8, 0.06);
+  --sev-high-border: rgba(166, 76, 8, 0.25);
+  --sev-medium: #8a6100;
+  --sev-medium-tint: rgba(138, 97, 0, 0.06);
+  --sev-medium-border: rgba(138, 97, 0, 0.25);
+  --sev-low: #1f5fb8;
+  --sev-low-tint: rgba(31, 95, 184, 0.06);
+  --sev-low-border: rgba(31, 95, 184, 0.25);
+  --sev-info: #5b6474;
+  --sev-info-tint: rgba(91, 100, 116, 0.06);
+  --sev-info-border: rgba(91, 100, 116, 0.20);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.5 var(--body)}
+code,.mono{font-family:var(--mono)}
+.band{background:var(--mock-band);color:var(--mock-band-text);font-size:12px;padding:6px 16px;text-align:center;border-bottom:1px solid var(--border)}
+.band strong{letter-spacing:.06em;text-transform:uppercase}
+.wrap{max-width:1320px;margin:0 auto;padding:24px 24px 48px}
+header.top{display:flex;align-items:center;gap:10px;margin-bottom:6px;color:var(--text)}
+header.top .wm{font-family:var(--mono);font-weight:700;letter-spacing:-.02em}
+h1{font-size:26px;margin:4px 0 6px;letter-spacing:-.01em}
+.goal{color:var(--muted);max-width:90ch;margin:0 0 4px}
+.meta{font-size:12px;color:var(--dim);margin:0 0 18px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--muted);margin:0 0 16px;padding:0;list-style:none}
+.legend li{display:flex;gap:6px;align-items:center}
+.k{display:inline-block;width:18px;height:12px;border:1.5px solid var(--border-strong);border-radius:3px}
+.k-dec{transform:rotate(45deg);width:11px;height:11px}
+.k-fail{border-style:dashed;border-color:var(--sev-critical)}
+.lanes{display:grid;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+.lhead{display:grid;background:var(--inset);border-bottom:1px solid var(--border)}
+.lhead div{padding:8px 12px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);border-left:1px solid var(--border)}
+.lhead div:first-child{border-left:0}
+.row{display:grid;position:relative;border-top:1px solid var(--border-subtle)}
+.row:first-of-type{border-top:0}
+.cell{padding:12px;border-left:1px dashed var(--border);min-height:24px}
+.cell:first-child{border-left:0}
+.step{border:1px solid var(--border-strong);border-radius:8px;background:var(--card);padding:10px;box-shadow:0 1px 2px var(--shadow)}
+.sh{display:flex;gap:8px;align-items:baseline;margin-bottom:8px}
+.sn{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:11px;background:var(--text);color:var(--page);font-size:11px;font-weight:700}
+.st{font-weight:650}
+.ids{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--accent-text);white-space:nowrap}
+.act{margin:8px 0 0;font-size:12px;color:var(--text)}
+.act b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.dec{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:stretch;padding:12px;background:var(--inset)}
+.q{display:flex;align-items:center;gap:10px;font-weight:650;min-width:240px}
+.dia{display:inline-block;width:14px;height:14px;border:2px solid var(--text);transform:rotate(45deg);flex:none}
+.br{flex:1 1 200px;border:1px solid var(--border-strong);border-radius:8px;padding:6px 10px;font-size:12px;background:var(--card)}
+.br b{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.br-fail{border-style:dashed;border-color:var(--sev-critical)}
+.br-fail b{color:var(--sev-critical)}
+.br a{color:var(--accent-text)}
+.wf{border:1px solid var(--border);border-radius:6px;overflow:hidden;font-size:11px;line-height:1.45}
+.wf-chrome{display:flex;gap:5px;align-items:center;padding:5px 8px;background:#13161f;color:#8890a4}
+.wf-chrome span{width:7px;height:7px;border-radius:4px;background:#8890a4}
+.wf-chrome em{font-style:normal;margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-chrome.light{background:var(--inset);color:var(--muted);border-bottom:1px solid var(--border)}
+.wf-body{padding:8px 10px}
+.wf-term .wf-body{background:#0f1119;color:#e2e4ea}
+.wf-term .ln{white-space:pre-wrap;word-break:break-word}
+.wf-term .hl{color:#e2e4ea;font-weight:700;background:#1e2333}
+.wf-term .warn{color:#f0c541}
+.wf-term .dimln{color:#8890a4}
+.wf-term .bar{background:#1e2333}
+.ln{white-space:pre-wrap;word-break:break-word}
+.hl{font-weight:700;background:var(--accent-tint)}
+.dimln{color:var(--muted)}
+.bar{height:7px;border-radius:4px;background:var(--border);margin:5px 0;width:92%}
+.bar-s{width:60%}.bar-xs{width:30%}
+.ibar{display:inline-block;vertical-align:middle;height:7px;border-radius:4px;background:var(--border);width:80px}.ibar-s{width:48px}.ibar-xs{width:28px}
+.wf-term .ibar{background:#1e2333}
+.wf-ed .wf-body{background:var(--card)}
+.eln{display:flex;gap:8px;white-space:pre-wrap;word-break:break-word}
+.eln .gut{color:var(--dim);min-width:18px;text-align:right;flex:none}
+.eln.hl{background:var(--accent-tint)}
+.dash{display:grid;grid-template-columns:64px 1fr;min-height:120px}
+.dnav{background:var(--nav);border-right:1px solid var(--border);padding:6px 4px}
+.nv{font-size:10px;color:var(--muted);padding:2px 4px;border-radius:3px}
+.nv.on{background:var(--accent-tint);color:var(--accent-text);font-weight:700}
+.dmain{padding:8px 10px}
+.dh{font-weight:700;margin-bottom:4px}
+.ghbar{display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--border);background:var(--inset)}
+.ghbar .bar{margin:0;height:6px}
+.fails{margin-top:28px}
+h2{font-size:18px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-top:1px solid var(--border-subtle)}
+thead th{border-top:0;background:var(--inset);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.id{font-family:var(--mono);font-weight:700;color:var(--sev-critical);white-space:nowrap}
+td.copy{font-family:var(--mono);font-size:12px}
+tr:target{background:var(--accent-tint)}
+.foot{margin-top:24px;font-size:12px;color:var(--muted)}
+@media (max-width:900px){.lhead{display:none}.row{display:block}.cell:empty{display:none}.cell{border-left:0}
+  .cell[data-lane]::before{content:attr(data-lane);display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}}
+@media (max-width:600px){.wrap{padding:16px}table{display:block;overflow-x:auto}}
+.cols{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lhead{grid-template-columns:repeat(3,minmax(0,1fr))}
+</style></head>
+<body>
+<div class="band" role="note"><strong>Design mock-up, sample data</strong> &middot; Low-fidelity wireframes; copy is real, layout is indicative. Journeys: <strong>J1</strong> &middot; <a href="J2-triage.html">J2</a> &middot; <a href="J3-suppress.html">J3</a> &middot; <a href="J4-ci-gating.html">J4</a> &middot; <a href="J5-contribute-rule.html">J5</a> &middot; <a href="J6-pre-commit.html">J6</a> &middot; <a href="../design-pack.html">Design pack</a></div>
+<div class="wrap">
+<header class="top"><svg class="mark" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M14.5 12h3"/></svg><span class="wm">nexvul</span><span class="meta">user journey storyboard</span></header>
+<h1>J1 First run on a local repo</h1>
+<p class="goal"><strong>Goal.</strong> Install nexvul, scan an agent project, and understand one finding well enough to fix it, without reading documentation first.</p>
+<p class="meta">Actor: Developer (U-DEV) &middot; Screen IDs from screen-inventory.md &middot; Flow diagram: flows/J1-*.svg (J1&ndash;J5)</p>
+<ul class="legend"><li><span class="k" aria-hidden="true"></span>Step: the screen the user sees, and what they do</li>
+<li><span class="k k-dec" aria-hidden="true"></span>Decision point</li><li><span class="k k-fail" aria-hidden="true"></span>Failure branch (links to the table)</li></ul>
+<div class="lanes" aria-label="J1 First run on a local repo swim lanes">
+<div class="lhead" aria-hidden="true"><div>Developer</div><div>Terminal</div><div>Dashboard (local HTML)</div></div>
+<div class="row cols"><div class="cell" data-lane="Developer"><div class="step"><div class="sh"><span class="sn">1</span><span class="st">Reads the README hero</span><span class="ids">D01</span></div><div class="wf wf-doc"><div class="wf-chrome light"><em>README.md</em></div><div class="wf-body"><div class="ln hl">nexvul</div><div class="ln">Static checks for risky patterns in AI-agent code and MCP configs.</div><div class="bar bar-s"></div><div class="ln">pipx install nexvul</div><div class="ln">nexvul scan .</div><div class="bar"></div><div class="bar"></div><div class="ln">A clean result does not prove your application is secure.</div><div class="ln dimln">Runs locally. No account, no telemetry, no network.</div></div></div><p class="act"><b>User action</b>Copies the install line.</p></div></div><div class="cell"></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal"><div class="step"><div class="sh"><span class="sn">2</span><span class="st">Installs and scans</span><span class="ids">T01</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh: my-agent-project</em></div><div class="wf-body mono"><div class="ln">$ pipx install nexvul</div><div class="ln dimln">installed package nexvul 0.1.0</div><div class="ln">$ nexvul scan .</div><div class="ln dimln">Analysing  241/312 files  0:07</div></div></div><p class="act"><b>User action</b>Runs nexvul scan . from the project root.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Did discovery find analysable files?</div><div class="br"><b>Yes</b>continue</div><div class="br br-fail"><b>No</b>T18 SCAN FAILED: nothing to analyse in ./docs. Exit 3. Never prints &quot;No findings&quot;. <a href="#J1-F10">J1-F10</a></div></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Were any agent frameworks recognised?</div><div class="br"><b>Yes</b>continue</div><div class="br br-fail"><b>None</b>T19 note: framework rules had nothing to attach to. Scan continues; zero findings mean even less. <a href="#J1-F11">J1-F11</a></div></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Was every file analysed inside limits?</div><div class="br"><b>Yes</b>status COMPLETE</div><div class="br br-fail"><b>No</b>T05 / T06 PARTIAL SCAN banner as the last line. Exit 3. <a href="#J1-F4">J1-F4</a></div></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal"><div class="step"><div class="sh"><span class="sn">3</span><span class="st">Reads findings, highest severity first</span><span class="ids">T04</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh: my-agent-project</em></div><div class="wf-body mono"><div class="ln hl">CRITICAL ████  NEX018  Financial action without human oversight</div><div class="ln dimln">               ASI02 · ASI09 · confidence medium</div><div class="ln">               agent/billing.py:58:9</div><div class="ln">   Flow</div><div class="ln">     1 source  agent/billing.py:31</div><div class="ln">     3 sink    agent/billing.py:58</div><div class="ln">   Fix  Require human approval before the call.</div><div class="bar"></div><div class="ln"> Result  5 findings · 3 at or above fail-on (high). Exit code 1.</div></div></div><p class="act"><b>User action</b>Picks the top finding.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="dec"><div class="q"><span class="dia" aria-hidden="true"></span>Any findings?</div><div class="br"><b>Yes</b>continue</div><div class="br"><b>No, COMPLETE</b>T02: &quot;No findings from enabled rules. This does not prove the application is secure.&quot; Exit 0.</div></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal"><div class="step"><div class="sh"><span class="sn">4</span><span class="st">Learns the rule</span><span class="ids">U03</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh</em></div><div class="wf-body mono"><div class="ln">$ nexvul explain NEX018</div><div class="ln hl">NEX018  Financial action without human oversight</div><div class="ln">WHAT IT LOOKS FOR</div><div class="bar"></div><div class="ln">HOW TO FIX</div><div class="bar bar-s"></div><div class="ln">WHAT THIS RULE DOES NOT DETECT</div><div class="bar bar-s"></div><div class="ln">SUPPRESSING THIS FINDING</div><div class="ln">  # nexvul: ignore[NEX018] -- &lt;reason&gt;</div></div></div><p class="act"><b>User action</b>Runs nexvul explain NEX018.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell" data-lane="Terminal"><div class="step"><div class="sh"><span class="sn">5</span><span class="st">Writes the HTML report to share</span><span class="ids">T21</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh</em></div><div class="wf-body mono"><div class="ln">$ nexvul scan . --format html --output nexvul-report.html</div><div class="ln dimln">nexvul: wrote nexvul-report.html</div><div class="ln dimln">nexvul: scan complete · 5 at or above fail-on (high) · exit code 1</div></div></div><p class="act"><b>User action</b>Opens nexvul-report.html from disk.</p></div></div><div class="cell"></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="Dashboard (local HTML)"><div class="step"><div class="sh"><span class="sn">6</span><span class="st">Overview opens offline</span><span class="ids">H01 H14 H07</span></div><div class="wf wf-dash"><div class="wf-chrome light"><em>nexvul-report.html (local file)</em></div><div class="dash"><div class="dnav"><div class="nv on">Overview</div><div class="nv">Findings</div><div class="nv">Agents</div><div class="nv">Rules</div><div class="nv">Suppr.</div><div class="nv">History</div><div class="nv">Settings</div></div><div class="dmain"><div class="dh">Overview</div><div class="ln hl">5 findings at or above fail-on (high). Exit code 1.</div><div class="bar"></div><div class="ln">COMPLETE · 312/312 files · 22/25 rules</div><div class="ln">CRITICAL 1  HIGH 4  MEDIUM 2  LOW 2</div><div class="bar bar-s"></div><div class="bar bar-s"></div></div></div></div><p class="act"><b>User action</b>Reads the completeness strip, then selects the top finding.</p></div></div></div>
+<div class="row cols"><div class="cell"></div><div class="cell"></div><div class="cell" data-lane="Dashboard (local HTML)"><div class="step"><div class="sh"><span class="sn">7</span><span class="st">Reads the flow and fix</span><span class="ids">H16 H05</span></div><div class="wf wf-dash"><div class="wf-chrome light"><em>nexvul-report.html (local file)</em></div><div class="dash"><div class="dnav"><div class="nv">Overview</div><div class="nv on">Findings</div><div class="nv">Agents</div><div class="nv">Rules</div><div class="nv">Suppr.</div><div class="nv">History</div><div class="nv">Settings</div></div><div class="dmain"><div class="dh">Findings</div><div class="ln">[Critical][High][Medium][Low]  ASI ▾  Rule ▾  File</div><div class="ln hl">CRITICAL NEX018 Financial action without human oversight</div><div class="ln">1 SOURCE agent/billing.py:31</div><div class="ln">2 STEP   agent/billing.py:44</div><div class="ln">3 SINK   agent/billing.py:58</div><div class="ln">How to fix  <span class="ibar ibar-m"></span></div><div class="ln">Suppress  # nexvul: ignore[NEX018] -- ...</div></div></div></div><p class="act"><b>User action</b>Copies the fix; edits agent/billing.py.</p></div></div></div>
+<div class="row cols"><div class="cell" data-lane="Developer"><div class="step"><div class="sh"><span class="sn">8</span><span class="st">Fixes and re-runs</span><span class="ids">T03 T02</span></div><div class="wf wf-term"><div class="wf-chrome"><span></span><span></span><span></span><em>zsh</em></div><div class="wf-body mono"><div class="ln">$ nexvul scan .</div><div class="bar"></div><div class="ln"> Result  4 findings · 2 at or above fail-on (high). Exit code 1.</div></div></div><p class="act"><b>User action</b>Sees the finding gone and the summary updated.</p></div></div><div class="cell"></div><div class="cell"></div></div>
+</div>
+<section class="fails" aria-labelledby="fh"><h2 id="fh">Failure paths</h2>
+<table><thead><tr><th scope="col">ID</th><th scope="col">Trigger</th><th scope="col">Screen</th><th scope="col">Exit</th><th scope="col">What the user sees (copy)</th></tr></thead><tbody><tr id="J1-F1"><td class="id">J1-F1</td><td>Python older than 3.12</td><td class="mono">pip error, then U05 in doctor</td><td class="mono">-</td><td class="copy">README states the requirement next to the install line.</td></tr><tr id="J1-F2"><td class="id">J1-F2</td><td>Path does not exist</td><td class="mono">T10</td><td class="mono">2</td><td class="copy">Path not found: ./agnet. Did you mean ./agent? Nothing was scanned.</td></tr><tr id="J1-F3"><td class="id">J1-F3</td><td>Broken .nexvul.yml</td><td class="mono">T09</td><td class="mono">2</td><td class="copy">config error in .nexvul.yml:7:3 · rules.disable: unknown key. Did you mean rules.disabled?</td></tr><tr id="J1-F4"><td class="id">J1-F4</td><td>Files failed to parse</td><td class="mono">T05 T08 H03</td><td class="mono">3</td><td class="copy">PARTIAL SCAN: 4 of 312 files not analysed. This result is not a clean bill of health.</td></tr><tr id="J1-F5"><td class="id">J1-F5</td><td>Global time limit hit</td><td class="mono">T25</td><td class="mono">3</td><td class="copy">Limit reached: max_files (1000 of 1,412 discovered).</td></tr><tr id="J1-F6"><td class="id">J1-F6</td><td>Ctrl-C</td><td class="mono">T20</td><td class="mono">130</td><td class="copy">Scan interrupted. No result was produced.</td></tr><tr id="J1-F7"><td class="id">J1-F7</td><td>nexvul crashes</td><td class="mono">T11</td><td class="mono">4</td><td class="copy">nexvul stopped unexpectedly (internal error). Bug-report URL, nexvul doctor hint.</td></tr><tr id="J1-F8"><td class="id">J1-F8</td><td>Output file exists and is not a report</td><td class="mono">T22</td><td class="mono">2</td><td class="copy">Refusing to overwrite README.md: it is not a nexvul report.</td></tr><tr id="J1-F9"><td class="id">J1-F9</td><td>Installed into the project venv</td><td class="mono">U06</td><td class="mono">-</td><td class="copy">warn: nexvul is installed in the same environment as the current project.</td></tr><tr id="J1-F10"><td class="id">J1-F10</td><td>Nothing analysable</td><td class="mono">T18</td><td class="mono">3</td><td class="copy">SCAN FAILED — nothing to analyse in ./docs. Try: nexvul scan .</td></tr><tr id="J1-F11"><td class="id">J1-F11</td><td>No framework recognised</td><td class="mono">T19</td><td class="mono">0/1</td><td class="copy">Frameworks: none recognised. 18 of 25 rules had nothing to check.</td></tr></tbody></table></section>
+<p class="foot">Design mock-up, sample data. Generated by docs/design/_build/wireframes.py. A clean nexvul result does not prove that an application is secure.</p>
+</div></body></html>

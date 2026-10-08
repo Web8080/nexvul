@@ -1,4 +1,4 @@
-"""Repository discovery with self-protection (architecture §4, SR-04, SR-06, SR-16, T-05, T-08, T-22).
+"""Repository discovery with self-protection (architecture §4; SR-04/06/16; T-05, T-08, T-22).
 
 Discovery decides which files later stages may analyse. It treats the scan root as hostile:
 
@@ -390,7 +390,7 @@ class DiscoveryResult:
 # ============================================================================================
 
 
-class _Stop(Exception):
+class _StopDiscoveryError(Exception):
     """Internal: a global cap was hit."""
 
 
@@ -447,7 +447,7 @@ class _Walker:
 
     def _limit(self, limit: LimitHit) -> None:
         self.ledger.record_limit(limit)
-        raise _Stop
+        raise _StopDiscoveryError
 
     def _tick(self) -> None:
         self.entries += 1
@@ -596,6 +596,8 @@ class _Walker:
     def walk(self) -> None:
         stack: list[tuple[tuple[str, ...], tuple[int, int] | None]] = [((), None)]
         while stack:
+            if self.clock() > self.deadline:
+                self._limit(LimitHit.DISCOVERY_TIME_BUDGET)
             comps, expect = stack.pop()
             rel_dir = "/".join(comps)
             try:
@@ -851,7 +853,7 @@ def discover(
             walker.walk()
             if walker.mode is DiscoveryMode.GIT:
                 walker.tracked_pass()
-        except _Stop:
+        except _StopDiscoveryError:
             pass
         files = tuple(walker.selected[k] for k in sorted(walker.selected))
         return DiscoveryResult(

@@ -1,5 +1,12 @@
 # nexvul — Open Decisions for the Product Owner
 
+> **Update 2026-10-08.** All decisions below were accepted as recommended (`.nexvul/decisions/DEC-0007`).
+> Dashboard scope is settled by **`.nexvul/decisions/DEC-0009-dashboard-scope-no-accounts.md`** (binding):
+> the v1 dashboard is a local, static, self-contained report with a full app shell; **no accounts** (no sign in,
+> sign up, log out or password reset); Settings is read-only; white background by default, dark as an alternate.
+> A hosted or team dashboard is a separate product decision with its own threat model. Design:
+> `assets/report-preview.html`, screens H14–H24 in `screen-inventory.md`.
+
 > Status: **Awaiting decision.** Owner of this list: Design (Dave). Decider: Victor Ibhafidon (product owner).
 > Date: 2026-10-08. Each item names the screens it blocks, the options, a recommendation and what users will
 > notice either way. Items that duplicate an existing escalation reference it rather than re-deciding it.

@@ -366,7 +366,7 @@ def agent_graph():
         return x, y + H / 2
 
     for a, b, lab in E:
-        if N[a][2] == N[b][2]:
+        if N[a][2] == N[b][2] and not (a == "sup" and b in ("res", "bil")):
             continue
         x1, y1 = right(a)
         x2, y2 = left(b)
@@ -374,7 +374,10 @@ def agent_graph():
             # vertical delegation inside the agents column
             _, _, x, y, w, _ = N[a]
             _, _, bx, by, bw, _ = N[b]
-            out.append('<path class="g-edge" d="M%d %d L%d %d" marker-end="url(#arr)"/>' % (x + 60, y + H, bx + 60, by - 2))
+            if b == "res":
+                out.append('<path class="g-edge" d="M%d %d L%d %d" marker-end="url(#arr)"/>' % (x + 60, y + H, bx + 60, by - 2))
+            else:
+                out.append('<path class="g-edge" d="M%d %d L%d %d L%d %d L%d %d" marker-end="url(#arr)"/>' % (x, y + H / 2, x - 18, y + H / 2, x - 18, by + H / 2, bx - 2, by + H / 2))
             continue
         cx = (x2 - x1) * 0.5
         out.append('<path class="g-edge" d="M%.0f %.0f C%.0f %.0f %.0f %.0f %.0f %.0f" marker-end="url(#arr)"/>'
@@ -389,12 +392,12 @@ def agent_graph():
                    '<text class="g-lab" x="%d" y="%d">%s</text><text class="g-sub" x="%d" y="%d">%s</text></g>'
                    % (kind, x, y, w, H, rx, x + 12, y + 19, esc(lab), x + 12, y + 35, esc(sub)))
     # finding markers: (x, y, sev, text)
-    M = [(700, 136, "high", "NEX007 HIGH"), (700, 256, "high", "NEX002 HIGH"),
-         (700, 378, "critical", "NEX018 CRITICAL"), (452, 296, "high", "NEX020 HIGH"),
+    M = [(690, 136, "high", "NEX007 HIGH"), (690, 256, "high", "NEX002 HIGH"),
+         (678, 370, "critical", "NEX018 CRITICAL"), (270, 292, "high", "NEX020 HIGH"),
          (396, 150, "medium", "NEX011 MEDIUM"), (452, 60, "medium", "NEX014 MEDIUM"),
-         (196, 22, "info", "NEX006 suppressed"), (700, 196, "low", "NEX015 LOW")]
+         (16, 94, "info", "NEX006 suppressed"), (690, 196, "low", "NEX015 LOW")]
     for x, y, sev, t in M:
-        w = 8 + len(t) * 6.6
+        w = 16 + len(t) * 7.0
         out.append('<g class="g-mark g-m-%s"><rect x="%.0f" y="%d" width="%.0f" height="20" rx="10"/>'
                    '<text x="%.0f" y="%d">%s</text></g>' % (sev, x, y, w, x + 8, y + 14, esc(t)))
     out.append("</svg>")
@@ -404,8 +407,8 @@ def agent_graph():
 def v_agents():
     fw = "".join(
         '<div class="fw"><div class="fw-head"><strong>%s</strong><span class="tag">%s</span></div>'
-        '<p class="dim-p">%s</p><p class="fw-meta"><strong>%d</strong> files &middot; <strong>%d</strong> rules attached</p></div>'
-        % (esc(n), esc(v), esc(how), files, rules) for n, v, files, how, rules in D.FRAMEWORKS)
+        '<p class="dim-p">%s</p><p class="fw-meta">%s &middot; <strong>%d</strong> rules attached</p></div>'
+        % (esc(n), esc(v), esc(how), "<strong>%d</strong> file%s" % (files, "" if files == 1 else "s"), rules) for n, v, files, how, rules in D.FRAMEWORKS)
     rows = "".join(
         "<tr><th scope=\"row\"><code>%s</code><br><span class=\"dim\">%s</span></th><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
         % (esc(a), esc(k), esc(t), esc(s), esc(c),
@@ -581,7 +584,7 @@ def v_settings():
         srccls = "cli" if src.startswith("CLI") else ("file" if ".nexvul.yml" in src else "default")
         rows.append('<tr><th scope="row"><code>%s</code></th><td><code>%s</code></td><td><span class="src src-%s">%s</span></td>'
                     '<td>%s</td><td>%s</td></tr>'
-                    % (esc(k), esc(v), srccls, esc(src), '<span class="weak">%s</span>' % esc(weak) if weak else
+                    % (esc(k), esc(v), srccls, esc(src), '<span class="weakv">%s</span>' % esc(weak) if weak else
                        '<span class="dim">no</span>', ('<strong>%s</strong>' % esc(ci)) if "NOT" in ci or "forced" in ci else esc(ci)))
     chips = []
     for rid, title, *_ in D.RULES:
@@ -739,6 +742,7 @@ html.js .view.active{display:block}
 .sub{color:var(--muted);margin:6px 0 0;max-width:80ch}
 .only-partial{display:none!important}
 html[data-scan="partial"] .only-partial{display:revert!important}
+html[data-scan="partial"] .status-pill.only-partial{display:inline-flex!important}
 html[data-scan="partial"] .only-complete{display:none!important}
 .banner-partial{margin:0 0 16px;padding:12px 16px;border-radius:8px;color:var(--partial-on);background:repeating-linear-gradient(45deg,var(--partial-fill) 0 10px,var(--hatch) 10px 13px),var(--partial-fill);font-weight:500}
 .banner-partial a{color:var(--partial-on);font-weight:700}
@@ -920,8 +924,9 @@ html[data-wrap="1"] .snip{white-space:pre-wrap;word-break:break-all}
 .src-cli{border-color:var(--accent);color:var(--accent-text)}
 .src-file{border-color:var(--border-strong);color:var(--text);font-weight:600}
 .src-default{color:var(--muted)}
-.weak,.tbl .weak{color:var(--text)}
-.tbl-cfg .weak{font-weight:600}
+.weakv{color:var(--text);font-weight:600}
+.tbl .loc{white-space:nowrap;word-break:normal}
+.note+.panel,.tscroll+.note+.panel{margin-top:16px}
 .rchips{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;margin:0;padding:0}
 .rchip{display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card)}
 .rchip-off{background:var(--inset);border-style:dashed}
@@ -1122,7 +1127,7 @@ def shots():
         ("dashboard-findings-expanded.png", "?theme=light#findings", 1280, 1500, False),
         ("dashboard-findings-filtered-empty.png", "?theme=light#findings/sev=info", 1280, 760, False),
         ("dashboard-agent-map.png", "?theme=light#agents", 1280, 2000, True),
-        ("dashboard-rules.png", "?theme=light#rules", 1280, 2000, True),
+        ("dashboard-rules.png", "?theme=light#rules", 1280, 2600, True),
         ("dashboard-suppressions.png", "?theme=light#suppressions", 1280, 2000, True),
         ("dashboard-history-partial.png", "?theme=light&scan=partial#history", 1280, 2000, True),
         ("dashboard-settings.png", "?theme=light#settings", 1280, 2600, True),
@@ -1133,6 +1138,18 @@ def shots():
         ("dashboard-mobile-menu.png", "?theme=light&nav=open#findings", 390, 844, False),
     ]
     for name, q, w, h, crop in jobs:
+        if w < 500:  # headless Chrome enforces a 500px minimum window: render inside a phone-width iframe
+            harness = os.path.join(os.path.dirname(__file__), "_phone_harness.html")
+            open(harness, "w").write('<!doctype html><meta charset="utf-8"><body style="margin:0">'
+                                     '<iframe src="%s" width="%d" height="%d" style="border:0;display:block">'
+                                     '</iframe>' % (u + q, w, h))
+            out = os.path.join(SHOTS, name)
+            shoot("file://" + harness, out, 500, h, crop=False)
+            from PIL import Image
+            Image.open(out).crop((0, 0, w, h)).save(out)
+            os.remove(harness)
+            print("shot", name)
+            continue
         shoot(u + q, os.path.join(SHOTS, name), w, h, crop=crop, crop_x=240 if w > 900 else 0)
         print("shot", name)
 

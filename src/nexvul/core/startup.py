@@ -10,6 +10,7 @@ for every root after argument parsing and before discovery.
 
 from __future__ import annotations
 
+import contextlib
 import os
 import sys
 from collections.abc import Iterable, Mapping
@@ -43,10 +44,8 @@ def _module_files(module: ModuleType) -> list[str]:
         files.append(origin)
     paths = getattr(module, "__path__", None)
     if paths is not None:
-        try:
+        with contextlib.suppress(TypeError):  # exotic namespace path objects
             files.extend(p for p in list(paths) if isinstance(p, str))
-        except TypeError:  # exotic namespace path objects
-            pass
     return files
 
 

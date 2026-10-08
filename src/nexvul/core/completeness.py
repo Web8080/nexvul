@@ -1,4 +1,4 @@
-"""Completeness ledger and exit-code resolution (threat model §7, architecture §12.3-12.4, SR-18/19).
+"""Completeness ledger and exit codes (threat model §7, architecture §12.3-12.4, SR-18/19).
 
 The ledger is trusted accounting kept by the supervisor. It is never derived from rule output.
 A partial scan must never be presentable as clean (DEC-0004 §3).

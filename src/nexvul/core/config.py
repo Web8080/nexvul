@@ -82,9 +82,7 @@ _SCHEMA: Final[dict[str, frozenset[str]]] = {
     "analysis": frozenset({"cross_file", "max_files", "max_file_size"}),
 }
 
-_OPEN_FLAGS: Final = (
-    os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
-)
+_OPEN_FLAGS: Final = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | getattr(os, "O_CLOEXEC", 0)
 
 
 # ============================================================================================
@@ -190,7 +188,7 @@ DEFAULTS: Final = EffectiveConfig(
     cross_file=True,
     max_files=limits.DEFAULT_MAX_FILES,
     max_file_size=limits.DEFAULT_MAX_FILE_SIZE,
-    sources={k: (ConfigSource.DEFAULT,) for k in ALL_KEYS},
+    sources=dict.fromkeys(ALL_KEYS, (ConfigSource.DEFAULT,)),
 )
 
 
@@ -280,11 +278,11 @@ class _StrictLoader(yaml.SafeLoader):
     def construct_mapping(self, node: MappingNode, deep: bool = False) -> dict[Any, Any]:
         seen: set[str] = set()
         for key_node, _value_node in node.value:
+            if isinstance(key_node, ScalarNode) and key_node.tag == "tag:yaml.org,2002:merge":
+                raise ConfigError(ConfigErrorCode.UNKNOWN_KEY, "merge keys are not allowed")
             if not isinstance(key_node, ScalarNode) or key_node.tag != "tag:yaml.org,2002:str":
                 raise ConfigError(ConfigErrorCode.TYPE, "mapping keys must be plain strings")
             key = str(key_node.value)
-            if key == "<<":
-                raise ConfigError(ConfigErrorCode.UNKNOWN_KEY, "merge keys are not allowed")
             if key in seen:
                 raise ConfigError(ConfigErrorCode.DUPLICATE_KEY, "duplicate key", key=key)
             seen.add(key)
@@ -306,7 +304,7 @@ def _check_events(text: str) -> None:
             if isinstance(event, NodeEvent) and event.anchor is not None:
                 raise ConfigError(ConfigErrorCode.ANCHOR_OR_ALIAS, "YAML anchors are not allowed")
             if isinstance(event, ScalarEvent | CollectionStartEvent) and event.tag is not None:
-                raise ConfigError(ConfigErrorCode.EXPLICIT_TAG, "explicit YAML tags are not allowed")
+                raise ConfigError(ConfigErrorCode.EXPLICIT_TAG, "explicit YAML tags not allowed")
             if isinstance(event, DocumentStartEvent):
                 documents += 1
                 if documents > 1:
@@ -427,8 +425,9 @@ def validate_document(doc: object) -> ConfigValues:
             if dotted == KEY_FAIL_ON:
                 sev = _expect_str(value, dotted)
                 if sev not in _SEVERITY_RANK:
+                    allowed = ", ".join(SEVERITIES)
                     raise ConfigError(
-                        ConfigErrorCode.VALUE, f"expected one of {', '.join(SEVERITIES)}", key=dotted
+                        ConfigErrorCode.VALUE, f"expected one of {allowed}", key=dotted
                     )
                 values["fail_on"] = sev
             elif dotted == KEY_RULES_ENABLED:
@@ -570,7 +569,8 @@ class _Builder:
         sources = dict(self.cfg.sources)
         prior = sources.get(key, ())
         sources[key] = (*prior, source) if source not in prior else prior
-        self.cfg = replace(self.cfg, **{attr: value}, sources=sources)
+        changes: dict[str, Any] = {attr: value, "sources": sources}
+        self.cfg = replace(self.cfg, **changes)
 
     def note(
         self, key: str, detail: str, source: ConfigSource, status: ChangeStatus, reason: str

@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-GosXoof5VNdtl+BCldw5WhGnSwao9jEmcykRMih6bVc='; base-uri 'none'"><title>U03 nexvul explain NEX002, 120 columns</title><style>:root {
+  --page: #ffffff;
+  --raised: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f7f8fa;
+  --inset: #f4f5f7;
+  --nav: #fafbfc;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --border-strong: #c5c9d3;
+  --text: #1a1d27;
+  --muted: #5b6270;
+  --dim: #636a77;
+  --accent: #4a6cf7;
+  --accent-text: #3654dc;
+  --accent-tint: rgba(74, 108, 247, 0.08);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #8a2bb8;
+  --sink: #8a6100;
+  --hatch: rgba(20, 22, 28, 0.14);
+  --shadow: rgba(16, 24, 40, 0.06);
+  --scrim: rgba(16, 24, 40, 0.40);
+  --mock-band: #eef1fe;
+  --mock-band-text: #2b44b8;
+  --graph-edge: #8a93a6;
+  --graph-node: #ffffff;
+  --sev-critical: #c41d3a;
+  --sev-critical-tint: rgba(196, 29, 58, 0.06);
+  --sev-critical-border: rgba(196, 29, 58, 0.25);
+  --sev-high: #a64c08;
+  --sev-high-tint: rgba(166, 76, 8, 0.06);
+  --sev-high-border: rgba(166, 76, 8, 0.25);
+  --sev-medium: #8a6100;
+  --sev-medium-tint: rgba(138, 97, 0, 0.06);
+  --sev-medium-border: rgba(138, 97, 0, 0.25);
+  --sev-low: #1f5fb8;
+  --sev-low-tint: rgba(31, 95, 184, 0.06);
+  --sev-low-border: rgba(31, 95, 184, 0.25);
+  --sev-info: #5b6474;
+  --sev-info-tint: rgba(91, 100, 116, 0.06);
+  --sev-info-border: rgba(91, 100, 116, 0.20);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.5 var(--body)}
+.frame{display:inline-block;padding:20px 24px 24px}
+.lab{display:flex;gap:10px;align-items:baseline;margin:0 0 10px;font-size:13px}
+.lab .id{font-family:var(--mono);font-weight:700;color:var(--accent-text)}
+.lab .t{font-weight:650}
+.lab .mock{margin-left:16px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mock-band-text);background:var(--mock-band);padding:1px 8px;border-radius:4px}
+.cap{margin:10px 0 0;font-size:12px;color:var(--muted);max-width:110ch}
+.gh{width:1000px;border:1px solid var(--border-strong);border-radius:10px;background:var(--card);overflow:hidden;font-size:14px}
+.ghtop{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--inset);border-bottom:1px solid var(--border);color:var(--muted);font-size:13px}
+.ghtop .crumb{font-weight:600;color:var(--text)}
+.ghb{padding:16px 20px}
+.ghb h2{font-size:20px;margin:0 0 6px}
+.chip{display:inline-block;font-size:12px;border:1px solid var(--border-strong);border-radius:12px;padding:1px 10px;margin-right:6px;color:var(--muted)}
+.chip.sev{color:var(--failed-on);background:var(--failed-fill);border-color:var(--failed-fill);font-weight:700}
+.chip.open{color:var(--text);font-weight:600}
+.region{position:relative;border:1px dashed var(--accent);border-radius:8px;padding:12px 14px;margin:14px 0 0;background:var(--card)}
+.region>.rl{position:absolute;top:-10px;left:10px;background:var(--card);padding:0 6px;font:600 11px var(--mono);color:var(--accent-text)}
+.mono{font-family:var(--mono);font-size:12.5px}
+.code{background:var(--inset);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font:12.5px/1.5 var(--mono);white-space:pre;overflow:hidden}
+.code .hl{background:var(--sev-critical-tint);display:block}
+.paths{list-style:none;margin:6px 0 0;padding:0}
+.paths li{display:grid;grid-template-columns:28px 160px 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--border-subtle);align-items:center;font-size:13px}
+.paths .n{display:inline-flex;width:22px;height:22px;border-radius:11px;border:2px solid var(--border-strong);align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.list{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.list .r{display:grid;grid-template-columns:1fr 110px 90px;gap:10px;padding:10px 14px;border-top:1px solid var(--border-subtle);align-items:center}
+.list .r:first-child{border-top:0;background:var(--inset);font-size:12px;color:var(--muted)}
+.checks .r{display:grid;grid-template-columns:24px 1fr 120px;gap:10px;padding:10px 14px;border-top:1px solid var(--border-subtle);align-items:center}
+.st{font:700 11px var(--mono);letter-spacing:.04em}
+.st-fail{color:var(--sev-critical)} .st-ok{color:var(--muted)}
+.x{width:16px;height:16px;border-radius:8px;border:2px solid var(--sev-critical);display:inline-block}
+.o{width:16px;height:16px;border-radius:8px;border:2px solid var(--border-strong);display:inline-block}
+.md h3{font-size:16px;margin:16px 0 6px}
+.md h2{font-size:20px;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.md table{border-collapse:collapse;font-size:13px;margin:6px 0}
+.md th,.md td{border:1px solid var(--border);padding:5px 10px;text-align:left}
+.md th{background:var(--inset)}
+.md code{font:12px var(--mono);background:var(--inset);padding:1px 5px;border-radius:4px;border:1px solid var(--border-subtle)}
+.md blockquote{margin:8px 0;padding:6px 12px;border-left:4px solid var(--partial-fill);color:var(--text)}
+.md sub{color:var(--muted)}
+
+.term{background:#0c0e14;color:#e2e4ea;border-radius:10px;overflow:hidden;border:1px solid #252a3a;display:inline-block}
+.tbar{display:flex;gap:6px;align-items:center;padding:8px 12px;background:#13161f;color:#8890a4;font:12px var(--body)}
+.tbar i{width:10px;height:10px;border-radius:5px;background:#252a3a;display:inline-block}
+.tbar span{margin-left:8px}
+.term pre{margin:0;padding:14px 16px 16px;font:13px/1.45 var(--mono);white-space:pre}
+.term pre.c80{width:calc(80ch + 32px)}.term pre.c120{width:calc(120ch + 32px)}
+.t-dim{color:#8890a4}.t-bold{font-weight:700}.t-rid{color:#8aa4ff}
+.t-crit{background:#c41d3a;color:#ffffff;font-weight:700}
+.t-crit-t{color:#ff6b85;font-weight:700}
+.t-high{color:#ff6b85;font-weight:700}
+.t-med{color:#f0c541}.t-low{color:#6cb6ff}
+.t-src{color:#d58cff}.t-sink{color:#f0c541}
+.t-partial{background:#f0c541;color:#14161c;font-weight:700}
+.t-failed{background:#c41d3a;color:#ffffff;font-weight:700}
+</style></head>
+<body><div class="frame"><p class="lab"><span class="id">U03</span><span class="t">nexvul explain NEX002, 120 columns</span><span class="mock">Design mock-up, sample data</span></p>
+<div class="term"><div class="tbar"><i></i><i></i><i></i><span>Terminal &middot; 120 columns</span></div><pre class="c120"><span class="t-rid">NEX002</span>  External content indexed into a vector store
+        ASI06 Memory &amp; Context Poisoning · default severity high
+        confidence high (same function) / medium (across files)
+
+<span class="t-bold">WHAT IT LOOKS FOR</span>
+  Text fetched from outside the application (HTTP responses, web loaders, email, uploaded files) that reaches a
+  vector-store write such as add_documents, add_texts, upsert or from_documents, with no validation or trust-boundary
+  step that nexvul recognises in between.
+
+<span class="t-bold">WHY IT MATTERS</span>
+  Documents in a vector store are retrieved later and placed in the model&#x27;s context. Text an attacker controls on a
+  web page can carry instructions that the agent follows on a future, unrelated request.
+
+EXAMPLE (flagged)                                          EXAMPLE (not flagged)
+  html = requests.get(url).text                              if urlparse(url).hostname not in ALLOWED_SOURCES:
+  vector_store.add_documents(                                    raise ValueError(&quot;source not allowed&quot;)
+      [Document(page_content=html)])                         doc = Document(page_content=html,
+                                                                            metadata={&quot;source&quot;: url, &quot;trust&quot;: &quot;web&quot;})
+
+<span class="t-bold">HOW TO FIX</span>
+  Allowlist the sources you index. Record provenance on every stored document. Keep retrieved text in user or tool
+  messages with delimiters, never in system instructions.
+
+<span class="t-bold">WHAT THIS RULE DOES NOT DETECT</span>
+  Poisoned documents already in the corpus. Poisoning of embeddings or the model. Ingestion code outside the scanned
+  repository. Validation helpers nexvul does not recognise are treated as absent (possible false positive).
+
+<span class="t-bold">SUPPRESSING THIS FINDING</span>
+  # nexvul: ignore[<span class="t-rid">NEX002</span>] -- &lt;why this source is trusted&gt;        In CI the justification after -- is required.
+
+<span class="t-bold">REFERENCES</span>
+  OWASP Top 10 for Agentic Applications 2026, ASI06 · docs/rules/<span class="t-rid">NEX002</span>.md</pre></div>
+<p class="cap">Rendered from terminal-mockups.md U03. Colour per tokens.json terminal SGR; every meaning is also in words.</p></div></body></html>

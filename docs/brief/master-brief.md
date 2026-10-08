@@ -220,6 +220,12 @@ Malicious Python, malformed JS/TS, giant files, deep nesting, recursive structur
 malicious config, malformed SARIF, Unicode edge cases, binary files, generated code, huge strings, ReDoS, parser
 crashes, memory exhaustion. Fail safely.
 
+## 20. No code execution (non-negotiable)
+
+Never `exec(...)`, `eval(...)`, `subprocess.run(<target project code>)`, or `importlib.import_module(<target module>)`.
+Do not execute project code to understand it. Static analysis only. (Restated from §2; the numbering in this file
+follows the original brief.)
+
 ## 21. Development-agent boundaries
 
 May: read/analyse/write source, run tests, run safe static tooling.

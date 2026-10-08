@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nexvul.dev/schemas/benchmark-case/v1.json",
+  "title": "nexvul benchmark case metadata (case.yaml)",
+  "description": "Metadata for one benchmark case. Required core fields follow master brief section 22. See docs/benchmark-strategy.md section 3. The $id is a stable identifier, not a fetched URL; the harness validates offline.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "category",
+    "language",
+    "split",
+    "source",
+    "framework",
+    "owasp",
+    "expected_findings",
+    "expected_non_findings",
+    "license",
+    "labels",
+    "notes"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "id": {
+      "type": "string",
+      "pattern": "^BM-(ASI(0[1-9]|10)|NEX[0-9]{3}|RW|PERF)-[0-9]{4}$",
+      "description": "Stable case ID; never reused."
+    },
+    "name": { "type": "string", "minLength": 3, "maxLength": 200 },
+    "category": {
+      "enum": ["vulnerable", "safe", "frameworks", "real_world", "adversarial"]
+    },
+    "language": { "enum": ["python", "javascript", "typescript", "config", "mixed"] },
+    "split": {
+      "enum": ["dev", "heldout"],
+      "description": "Cases in the public repo must be 'dev'. Held-out cases are stored separately."
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["synthetic", "derived", "external_ref"] },
+        "repo": { "type": "string", "pattern": "^https://(github\\.com|gitlab\\.com)/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "path": { "type": "string", "maxLength": 1024 },
+        "paths": { "type": "array", "items": { "type": "string", "maxLength": 1024 }, "maxItems": 500 },
+        "retrieved": { "type": "string", "format": "date" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "enum": ["derived", "external_ref"] } } },
+          "then": { "required": ["repo", "commit", "retrieved"] }
+        }
+      ]
+    },
+    "framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "enum": ["none", "langchain", "langgraph", "crewai", "autogen", "openai_agents", "mcp", "a2a", "llamaindex", "other"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Exact version the case targets, or 'unverified'."
+        }
+      }
+    },
+    "owasp": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^ASI(0[1-9]|10)$" }
+    },
+    "cwe": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^CWE-[0-9]+$" }
+    },
+    "expected_findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/expectedFinding" },
+      "description": "May be empty (e.g. safe cases). Known misses stay listed and count as FN."
+    },
+    "expected_non_findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/expectedNonFinding" }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spdx"],
+      "properties": {
+        "spdx": {
+          "type": "string",
+          "enum": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "0BSD", "Unlicense", "CC0-1.0", "Python-2.0", "Zlib", "MIT OR Apache-2.0", "RESTRICTED-REFERENCE-ONLY"],
+          "description": "Allow-list from docs/benchmark-strategy.md section 5. RESTRICTED-REFERENCE-ONLY requires a human approval reference in 'approval'."
+        },
+        "attribution": { "type": ["string", "null"] },
+        "license_files_checked": { "type": "array", "items": { "type": "string" } },
+        "approval": { "type": "string", "pattern": "^DEC-[0-9]{4}$" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "spdx": { "const": "RESTRICTED-REFERENCE-ONLY" } } },
+          "then": { "required": ["approval"] }
+        }
+      ]
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["author", "labelled_by"],
+      "properties": {
+        "author": { "type": "string" },
+        "labelled_by": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string" },
+          "description": "Two independent labellers; neither may be the rule author."
+        },
+        "adjudicated_by": { "type": ["string", "null"] },
+        "review_ids": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^REV-[0-9]{4}$" }
+        }
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string", "maxLength": 64 }, "maxItems": 32 },
+    "notes": { "type": "string", "maxLength": 4000 }
+  },
+  "$defs": {
+    "location": {
+      "type": "object",
+      "required": ["file"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024,
+          "not": { "pattern": "(^/|\\.\\./|^\\.\\.$|\\\\)" },
+          "description": "Relative POSIX path inside the case; absolute paths and traversal are rejected."
+        },
+        "line": { "type": "integer", "minimum": 1 },
+        "line_range": {
+          "type": "array",
+          "prefixItems": [
+            { "type": "integer", "minimum": 1 },
+            { "type": "integer", "minimum": 1 }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "oneOf": [
+        { "required": ["line"] },
+        { "required": ["line_range"] }
+      ]
+    },
+    "expectedFinding": {
+      "allOf": [
+        { "$ref": "#/$defs/location" },
+        {
+          "type": "object",
+          "required": ["rule", "severity", "confidence"],
+          "properties": {
+            "rule": { "type": "string", "pattern": "^NEX[0-9]{3}$" },
+            "file": true,
+            "line": true,
+            "line_range": true,
+            "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+            "confidence": { "enum": ["high", "medium", "low"] },
+            "known_miss": {
+              "type": "boolean",
+              "default": false,
+              "description": "True when nexvul is documented not to detect this; still counted as FN."
+            },
+            "flow": {
+              "type": "array",
+              "maxItems": 64,
+              "items": {
+                "allOf": [
+                  { "$ref": "#/$defs/location" },
+                  {
+                    "type": "object",
+                    "required": ["role"],
+                    "properties": {
+                      "file": true,
+                      "line": true,
+                      "line_range": true,
+                      "role": { "enum": ["source", "propagation", "transformation", "sanitiser", "sink"] }
+                    },
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "expectedNonFinding": {
+      "allOf": [
+        { "$ref": "#/$defs/location" },
+        {
+          "type": "object",
+          "required": ["rule", "reason"],
+          "properties": {
+            "rule": { "type": "string", "pattern": "^NEX[0-9]{3}$" },
+            "file": true,
+            "line": true,
+            "line_range": true,
+            "reason": { "type": "string", "minLength": 10, "maxLength": 1000 }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

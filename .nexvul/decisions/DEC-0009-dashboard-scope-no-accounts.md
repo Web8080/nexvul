@@ -24,7 +24,7 @@ password, "only if needed".
    `.nexvul.yml` lines to change anything. The dashboard never writes config or source files.
 4. **A hosted or team dashboard (accounts, history, trends, org-wide views) is a separate product decision.** It
    would move scan results off the user's machine (brief §32 item 5), so it needs its own threat model, privacy
-   design and explicit opt-in before any design or code. Not planned for v1. If wanted later, it belongs in
+   design and explicit opt-in before any design or code. **Update 2026-10-08:** the owner confirmed they want it; see DEC-0010. Still not part of the local v1. If wanted later, it belongs in
    its own repository and release, and the local scanner must keep working fully without it.
 
 ## Why

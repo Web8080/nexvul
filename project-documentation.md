@@ -72,6 +72,8 @@ Recorded in `.nexvul/decisions/`. The product owner delegated these calls ("make
 | DEC-0001 | Thin vertical slice first: Python-only, 2 to 3 rules, terminal + JSON + SARIF + HTML, seed benchmark, pre-release; breadth after |
 | DEC-0003 | Held-out benchmark set in a private repo owned by the product owner, created in Phase 2; weaker interim protection disclosed in reports |
 | DEC-0008 | AutoGPT excluded from the corpus entirely (mixed licence) |
+| DEC-0009 | The v1 dashboard is a local static app shell (menu, views, read-only Settings), white by default, no accounts |
+| DEC-0010 | Hosted team dashboard with accounts, history and trends is wanted: a separate product and repo, opt-in metadata-only upload, threat model first, after the local slice ships |
 | DEC-0007 | All 16 design open decisions accepted: suppression syntax `# nexvul: ignore[NEX006] -- reason`; exit codes 0/1/2/3/4 (precedence 2>4>3>1>0); nothing-to-analyse exits 3; HTML report ships in the thin slice; default `fail-on: high` |
 
 Environments (configured on GitHub): `dev` (any branch), `staging` (`main` only), `prod` (`v*` tags only, reviewer required).
@@ -86,6 +88,12 @@ No release workflow exists yet because there is no package to build.
 
 Closed on 2026-10-08: DEC-0001 (thin slice first, accepted), DEC-0003 (private held-out repo, created when first
 needed), DEC-0008 (AutoGPT excluded entirely).
+
+## 6b. Account usage (affects scheduling)
+
+The Claude Pro plan's weekly limit was at 90% on 2026-10-08, resetting 2026-10-10 12:00 UTC. Agent runs failed
+repeatedly on usage limits. Keep batches small, save one file at a time, and avoid starting large research or
+build jobs when the weekly figure is high. Extra usage is off.
 
 ## 7. Differentiation
 

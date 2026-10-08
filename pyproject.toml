@@ -1,0 +1,124 @@
+# nexvul: local-first static security scanner for AI-agent applications.
+# Phase 1, step 1: package skeleton, config loader, discovery. No analysis yet.
+
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexvul"
+dynamic = ["version"]
+description = "Local-first static security scanner for AI-agent applications (OWASP Agentic Top 10)."
+readme = "README.md"
+requires-python = ">=3.12"
+# TODO(licence): the product owner has not chosen a licence yet. Do not set `license` or add a
+# licence classifier until a decision record exists in .nexvul/decisions/.
+authors = [{ name = "Victor Ibhafidon" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Environment :: Console",
+]
+# Runtime dependencies (architecture §18). Each one is justified:
+# - PyYAML: `.nexvul.yml` parsing. Only `yaml.compose` with SafeLoader / CSafeLoader is used,
+#   never `yaml.load` with an unsafe loader (SR-01, SR-28).
+# - click: the CLI framework the brief names (§8). Pure Python, no transitive dependencies.
+# Rich is deliberately NOT a dependency yet: nothing in step 1 renders untrusted text.
+dependencies = [
+    "PyYAML>=6.0.3,<7",
+    "click>=8.5.0,<9",
+]
+
+[project.optional-dependencies]
+# Dev tooling, pinned exactly. Hash-pinned lockfile is a DevSecOps follow-up (architecture §18).
+dev = [
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "pytest-timeout==2.4.0",
+    "coverage==7.16.2",
+    "ruff==0.16.10",
+    "mypy==2.4.0",
+    "types-PyYAML==6.0.12.20260906",
+]
+
+[project.scripts]
+nexvul = "nexvul.cli.main:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "nexvul.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ---------------------------------------------------------------------------------------------
+# pytest. Fixtures are data, never collected or imported (architecture §11.6, test-strategy §4.1).
+# ---------------------------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+norecursedirs = [
+    "tests/fixtures",
+    "tests/rules",
+    "tests/security/fixtures",
+    "benchmarks",
+    ".git",
+    ".venv",
+    "*.egg-info",
+]
+addopts = "-ra --strict-markers --import-mode=importlib -p no:cacheprovider"
+# Every test gets a hard wall-clock bound; hostile-filesystem tests (FIFOs) must never hang CI.
+timeout = 60
+timeout_method = "thread"
+markers = [
+    "security: malicious-input tests mapped to MF-xx ids in .nexvul/security/malicious-input-test-plan.md",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["nexvul"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+
+# ---------------------------------------------------------------------------------------------
+# ruff
+# ---------------------------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = ["docs/design/_build"]
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PTH", "C4", "PL", "N",
+]
+ignore = [
+    "PLR2004",  # magic values in comparisons are fine in tests and constants modules
+    "PLR0911",  # many returns: validation functions are clearer with early returns
+    "PLR0912",
+    "PLR0913",
+    "PLR0915",
+    "PTH",      # discovery deliberately uses os.* fd-level APIs (O_NOFOLLOW, fstat, scandir)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S108", "S603", "S607", "PLC0415"]
+"src/nexvul/__main__.py" = ["S606", "PLC0415"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# ---------------------------------------------------------------------------------------------
+# mypy
+# ---------------------------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["nexvul"]
+warn_unreachable = true

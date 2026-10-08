@@ -16,7 +16,7 @@
   --border-subtle: #1c2030;
   --fg: #e2e4ea;
   --fg-muted: #8890a4;
-  --fg-dim: #555d74;
+  --fg-dim: #80889d;
   --accent: #6c8aff;
   --accent-glow: rgba(108, 138, 255, 0.15);
   --accent-text: #8aa4ff;
@@ -29,10 +29,10 @@
   --medium: #f0c541;
   --medium-bg: rgba(240, 197, 65, 0.08);
   --medium-border: rgba(240, 197, 65, 0.2);
-  --low: #4ec9b0;
-  --low-bg: rgba(78, 201, 176, 0.08);
-  --low-border: rgba(78, 201, 176, 0.2);
-  --clean: #3dd68c;
+  --low: #6cb6ff;
+  --low-bg: rgba(108, 182, 255, 0.08);
+  --low-border: rgba(108, 182, 255, 0.25);
+  --clean: var(--fg-muted);
   --clean-bg: rgba(61, 214, 140, 0.06);
   --radius: 8px;
   --radius-lg: 12px;
@@ -52,7 +52,7 @@
     --border-subtle: #eaedf2;
     --fg: #1a1d27;
     --fg-muted: #6b7280;
-    --fg-dim: #9ca3af;
+    --fg-dim: #6b7280;
     --accent: #4a6cf7;
     --accent-glow: rgba(74, 108, 247, 0.08);
     --accent-text: #3b5de7;
@@ -68,7 +68,7 @@
     --low: #0d9488;
     --low-bg: rgba(13, 148, 136, 0.06);
     --low-border: rgba(13, 148, 136, 0.15);
-    --clean: #16a34a;
+    --clean: var(--fg-muted);
     --clean-bg: rgba(22, 163, 74, 0.04);
     color-scheme: light;
   }
@@ -83,7 +83,7 @@
   --border-subtle: #eaedf2;
   --fg: #1a1d27;
   --fg-muted: #6b7280;
-  --fg-dim: #9ca3af;
+  --fg-dim: #6b7280;
   --accent: #4a6cf7;
   --accent-glow: rgba(74, 108, 247, 0.08);
   --accent-text: #3b5de7;
@@ -99,7 +99,7 @@
   --low: #0d9488;
   --low-bg: rgba(13, 148, 136, 0.06);
   --low-border: rgba(13, 148, 136, 0.15);
-  --clean: #16a34a;
+  --clean: var(--fg-muted);
   --clean-bg: rgba(22, 163, 74, 0.04);
   color-scheme: light;
 }
@@ -419,9 +419,8 @@ body {
   text-decoration: none;
 }
 .disclaimer {
-  font-size: 11px;
-  color: var(--fg-dim);
-  font-style: italic;
+  font-size: 13px;
+  color: var(--fg-muted);
 }
 
 /* -- responsive -- */
@@ -443,9 +442,7 @@ body {
 <div class="header">
   <div class="logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="19" cy="15" r="2"/><path d="M6.5 15.5 10.7 8.7M13.6 8.2 17.5 13.6"/></svg>
     </div>
     <span class="logo-text">nexvul</span>
   </div>
@@ -466,12 +463,12 @@ body {
   <div class="stat stat--critical">
     <span class="stat-label">Critical</span>
     <span class="stat-value">2</span>
-    <span class="stat-detail">require immediate attention</span>
+    <span class="stat-detail">highest severity</span>
   </div>
   <div class="stat stat--high">
     <span class="stat-label">High</span>
     <span class="stat-value">4</span>
-    <span class="stat-detail">should be addressed</span>
+    <span class="stat-detail">review next</span>
   </div>
   <div class="stat stat--medium">
     <span class="stat-label">Medium</span>
@@ -484,12 +481,11 @@ body {
     <span class="stat-detail">informational</span>
   </div>
   <div class="stat">
-    <span class="stat-label">OWASP Coverage</span>
-    <span class="stat-value" style="font-size:18px;color:var(--accent-text)">ASI06–10</span>
-    <span class="stat-detail">5 categories scanned</span>
+    <span class="stat-label">Rules run</span>
+    <span class="stat-value" style="font-size:22px">25 of 25</span>
+    <span class="stat-detail">scope, not a verdict</span>
   </div>
 </div>
-
 <!-- severity distribution bar -->
 <div class="severity-bar-wrap">
   <div class="severity-bar">
@@ -509,275 +505,123 @@ body {
   <span class="framework-tag">ChromaDB</span>
 </div>
 
-<!-- critical findings -->
-<div class="section-heading">
-  Critical Findings
-  <span class="section-count">2</span>
-</div>
+<!-- findings -->
+<div class="section-heading">Critical findings <span class="section-count">2</span></div>
 <div class="findings">
   <div class="finding">
     <span class="finding-severity sev-critical">Critical</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX001</span>
-        Untrusted web content reaches persistent agent memory
-        <span class="finding-owasp">ASI06</span>
-      </div>
-      <div class="finding-message">
-        Content returned by <code>requests.get()</code> reaches <code>vector_store.add_documents()</code>
-        without an identified validation or trust-boundary check. Persisting untrusted content may allow
-        malicious instructions to influence future agent behaviour.
-      </div>
-      <div class="dataflow">
-        <span class="df-source">requests.get(url).text</span>
-        <span class="df-arrow">→</span>
-        <span class="df-step">process_content(raw)</span>
-        <span class="df-arrow">→</span>
-        <span class="df-step">Document(page_content=content)</span>
-        <span class="df-arrow">→</span>
-        <span class="df-sink">vector_store.add_documents(docs)</span>
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX001</span>External content written to persistent memory <span class="finding-owasp">ASI06</span></div>
+      <div class="finding-message">Content returned by <code>requests.get()</code> reaches <code>vector_store.add_documents()</code>. No validation or trust-boundary step was found on the path in the scanned code.</div>
+      <div class="dataflow"><span class="df-source">requests.get(url).text</span><span class="df-arrow"> → </span><span class="df-step">process_content(raw)</span><span class="df-arrow"> → </span><span class="df-step">Document(page_content=…)</span><span class="df-arrow"> → </span><span class="df-sink">vector_store.add_documents(docs)</span></div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/memory.py</span>:<span class="line">42</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/memory.py</span>:<span class="line">42</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-critical">Critical</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX021</span>
-        Agent with shell execution, network access, and no approval gate
-        <span class="finding-owasp">ASI10</span>
-      </div>
-      <div class="finding-message">
-        Agent <code>research_agent</code> combines <code>ShellTool</code>, unrestricted
-        <code>requests</code> access, and filesystem write with no human approval boundary
-        or iteration limit. This capability combination allows autonomous destructive actions.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX020</span>Dangerous capability combination (shell + unrestricted network) <span class="finding-owasp">ASI10 · ASI02</span></div>
+      <div class="finding-message">Agent <code>research_agent</code> is given <code>ShellTool</code> and an unrestricted HTTP client. No approval step or iteration limit was found in the scanned code.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/tools.py</span>:<span class="line">18</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/tools.py</span>:<span class="line">18</span></div>
   </div>
 </div>
 
-<!-- high findings -->
-<div class="section-heading">
-  High Findings
-  <span class="section-count">4</span>
-</div>
+<div class="section-heading">High findings <span class="section-count">4</span></div>
 <div class="findings">
   <div class="finding">
     <span class="finding-severity sev-high">High</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX011</span>
-        MCP server exposed without authentication
-        <span class="finding-owasp">ASI07</span>
-      </div>
-      <div class="finding-message">
-        MCP server at <code>mcp_config.json</code> uses Streamable HTTP transport on <code>0.0.0.0:8080</code>
-        with no authentication configured. Any network client can invoke its tools.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX007</span>MCP connection without authentication or over cleartext <span class="finding-owasp">ASI07 · ASI04</span></div>
+      <div class="finding-message">The MCP server entry in <code>mcp_config.json</code> uses an HTTP transport bound to <code>0.0.0.0:8080</code>. No authentication setting was found in this config.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">mcp_config.json</span>:<span class="line">12</span>
-    </div>
+    <div class="finding-loc"><span class="file">mcp_config.json</span>:<span class="line">12</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-high">High</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX031</span>
-        Recursive agent delegation without depth limit
-        <span class="finding-owasp">ASI08</span>
-      </div>
-      <div class="finding-message">
-        Workflow graph contains cycle: <code>planner → researcher → planner</code>.
-        No <code>recursion_limit</code> is set on the <code>StateGraph</code> (default is unbounded in
-        LangGraph &lt;0.2). This can cause infinite loops and resource exhaustion.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX012</span>Workflow cycle without termination guard <span class="finding-owasp">ASI08</span></div>
+      <div class="finding-message">The graph has a cycle <code>planner → researcher → planner</code>. No <code>recursion_limit</code> is set here; the effective default depends on the LangGraph version in your lockfile.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/workflow.py</span>:<span class="line">91</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/workflow.py</span>:<span class="line">91</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-high">High</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX041</span>
-        Destructive tool callable without human approval
-        <span class="finding-owasp">ASI09</span>
-      </div>
-      <div class="finding-message">
-        Tool <code>delete_database</code> performs a destructive filesystem operation and is
-        registered on agent <code>admin_agent</code> with no <code>interrupt_before</code> or
-        approval gate. High-impact tools should require human confirmation.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX017</span>Destructive tool without confirmation <span class="finding-owasp">ASI02 · ASI09</span></div>
+      <div class="finding-message">Tool <code>delete_database</code> is registered on <code>admin_agent</code>. No <code>interrupt_before</code> or other approval step was found on the path to the call.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/admin.py</span>:<span class="line">67</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/admin.py</span>:<span class="line">67</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-high">High</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX002</span>
-        Retrieved content promoted to system instructions
-        <span class="finding-owasp">ASI06</span>
-      </div>
-      <div class="finding-message">
-        Output of <code>retriever.get_relevant_documents()</code> is concatenated directly into the
-        system message template via f-string. An attacker who controls indexed documents can inject
-        instructions into the agent's system prompt.
-      </div>
-      <div class="dataflow">
-        <span class="df-source">retriever.get_relevant_documents(query)</span>
-        <span class="df-arrow">→</span>
-        <span class="df-step">docs[0].page_content</span>
-        <span class="df-arrow">→</span>
-        <span class="df-sink">f"You are an assistant. Context: {context}"</span>
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX005</span>Retrieved content promoted to trusted instructions <span class="finding-owasp">ASI06 · ASI01</span></div>
+      <div class="finding-message">Output of <code>retriever.invoke()</code> is interpolated into the system message. Anyone who can influence indexed documents can influence these instructions.</div>
+      <div class="dataflow"><span class="df-source">retriever.invoke(query)</span><span class="df-arrow"> → </span><span class="df-step">docs[0].page_content</span><span class="df-arrow"> → </span><span class="df-sink">SystemMessage(f"…{context}")</span></div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/prompts.py</span>:<span class="line">23</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/prompts.py</span>:<span class="line">23</span></div>
   </div>
 </div>
 
-<!-- medium findings -->
-<div class="section-heading">
-  Medium Findings
-  <span class="section-count">4</span>
-</div>
+<div class="section-heading">Medium findings <span class="section-count">4</span></div>
 <div class="findings">
   <div class="finding">
     <span class="finding-severity sev-medium">Medium</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX032</span>
-        Agent loop has no iteration limit
-        <span class="finding-owasp">ASI08</span>
-      </div>
-      <div class="finding-message">
-        <code>AgentExecutor</code> created without <code>max_iterations</code>.
-        Default is unbounded, which may cause runaway loops and excessive API costs.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX014</span>Agent iteration limit disabled or unbounded <span class="finding-owasp">ASI08</span></div>
+      <div class="finding-message"><code>AgentExecutor</code> is created with <code>max_iterations=None</code>, which removes the framework default limit.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/chain.py</span>:<span class="line">55</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/chain.py</span>:<span class="line">55</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-medium">Medium</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX012</span>
-        MCP tool with unrestricted shell command execution
-        <span class="finding-owasp">ASI07</span>
-      </div>
-      <div class="finding-message">
-        MCP tool <code>run_command</code> passes user-controlled input to <code>subprocess.run(shell=True)</code>.
-        Any connected client can execute arbitrary commands on the host.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX021</span>Arbitrary filesystem access from an agent tool <span class="finding-owasp">ASI02 · ASI10</span></div>
+      <div class="finding-message">Tool <code>read_file</code> opens a path supplied by the model with no allow-listed root visible in the scanned code.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">mcp/server.py</span>:<span class="line">34</span>
-    </div>
+    <div class="finding-loc"><span class="file">mcp/server.py</span>:<span class="line">34</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-medium">Medium</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX022</span>
-        Agent with unrestricted delegation enabled
-        <span class="finding-owasp">ASI10</span>
-      </div>
-      <div class="finding-message">
-        CrewAI agent <code>lead_agent</code> has <code>allow_delegation=True</code> with no
-        restrictions on which agents it can delegate to or what tasks it can assign.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX024</span>Unrestricted delegation <span class="finding-owasp">ASI03 · ASI10</span></div>
+      <div class="finding-message">CrewAI agent <code>lead_agent</code> sets <code>allow_delegation=True</code> with no restriction on delegates visible in this code.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">crew/agents.py</span>:<span class="line">12</span>
-    </div>
+    <div class="finding-loc"><span class="file">crew/agents.py</span>:<span class="line">12</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-medium">Medium</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX003</span>
-        User input written to persistent agent memory
-        <span class="finding-owasp">ASI06</span>
-      </div>
-      <div class="finding-message">
-        User-supplied chat input reaches <code>ConversationBufferMemory.save_context()</code>
-        which persists across sessions. Consider using
-        <code>ConversationBufferWindowMemory</code> with a limited window.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX003</span>Untrusted tool output persisted into long-term context <span class="finding-owasp">ASI06 · ASI01</span></div>
+      <div class="finding-message">Output of <code>search_web</code> is saved with <code>save_context()</code> on a memory that persists across sessions.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/chat.py</span>:<span class="line">89</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/chat.py</span>:<span class="line">89</span></div>
   </div>
 </div>
 
-<!-- low findings -->
-<div class="section-heading">
-  Low Findings
-  <span class="section-count">2</span>
-</div>
+<div class="section-heading">Low findings <span class="section-count">2</span></div>
 <div class="findings">
   <div class="finding">
     <span class="finding-severity sev-low">Low</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX033</span>
-        Tool execution has no timeout configured
-        <span class="finding-owasp">ASI08</span>
-      </div>
-      <div class="finding-message">
-        External API call in tool <code>search_web</code> has no timeout parameter.
-        A hanging request will block agent execution indefinitely.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX015</span>Missing timeout around agent or tool execution <span class="finding-owasp">ASI08</span></div>
+      <div class="finding-message">The HTTP call in tool <code>search_web</code> has no <code>timeout</code> argument.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">agent/tools.py</span>:<span class="line">45</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/tools.py</span>:<span class="line">45</span></div>
   </div>
-
   <div class="finding">
     <span class="finding-severity sev-low">Low</span>
     <div class="finding-body">
-      <div class="finding-title">
-        <span class="finding-rule">NEX013</span>
-        MCP config uses unpinned npx package
-        <span class="finding-owasp">ASI07</span>
-      </div>
-      <div class="finding-message">
-        MCP server configured with <code>npx -y @untrusted/mcp-server</code>. The <code>-y</code>
-        flag auto-installs without confirmation, and the package version is unpinned.
-        A supply-chain compromise would execute arbitrary code.
-      </div>
+      <div class="finding-title"><span class="finding-rule">NEX013</span>Unlimited retries around agent, tool or LLM calls <span class="finding-owasp">ASI08 · ASI02</span></div>
+      <div class="finding-message">The retry decorator on <code>call_model</code> has no attempt limit.</div>
     </div>
-    <div class="finding-loc">
-      <span class="file">claude_desktop_config.json</span>:<span class="line">8</span>
-    </div>
+    <div class="finding-loc"><span class="file">agent/llm.py</span>:<span class="line">17</span></div>
   </div>
 </div>
 
 <!-- scan completeness -->
-<div class="section-heading">Scan Completeness</div>
+<div class="section-heading">Scan completeness (scope, not a verdict)</div>
 <div class="completeness">
   <div class="completeness-grid">
     <div class="comp-item">
@@ -794,7 +638,7 @@ body {
     </div>
     <div class="comp-item">
       <span class="comp-label">Files skipped</span>
-      <span class="comp-value comp-warn">3 (binary)</span>
+      <span class="comp-value comp-warn">3 skipped (binary)</span>
     </div>
     <div class="comp-item">
       <span class="comp-label">Rules executed</span>
@@ -815,6 +659,6 @@ body {
     <span>42 rules checked</span>
   </div>
   <div class="disclaimer">
-    A clean nexvul result does not prove that an application is secure.
+    A clean nexvul result does not prove that an application is secure. These findings are code patterns, not proof of exploitation.
   </div>
 </div>

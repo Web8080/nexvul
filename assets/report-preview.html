@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nexvul scan report</title>
+<style>
+/* -- dark-first security dashboard -- */
+
+:root {
+  --bg: #0c0e14;
+  --bg-surface: #13161f;
+  --bg-card: #191d29;
+  --bg-card-hover: #1e2333;
+  --bg-input: #0f1119;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --fg: #e2e4ea;
+  --fg-muted: #8890a4;
+  --fg-dim: #555d74;
+  --accent: #6c8aff;
+  --accent-glow: rgba(108, 138, 255, 0.15);
+  --accent-text: #8aa4ff;
+  --critical: #ff4d6a;
+  --critical-bg: rgba(255, 77, 106, 0.08);
+  --critical-border: rgba(255, 77, 106, 0.2);
+  --high: #ff8c42;
+  --high-bg: rgba(255, 140, 66, 0.08);
+  --high-border: rgba(255, 140, 66, 0.2);
+  --medium: #f0c541;
+  --medium-bg: rgba(240, 197, 65, 0.08);
+  --medium-border: rgba(240, 197, 65, 0.2);
+  --low: #4ec9b0;
+  --low-bg: rgba(78, 201, 176, 0.08);
+  --low-border: rgba(78, 201, 176, 0.2);
+  --clean: #3dd68c;
+  --clean-bg: rgba(61, 214, 140, 0.06);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f8;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8f9fb;
+    --bg-input: #f0f1f4;
+    --border: #dfe1e8;
+    --border-subtle: #eaedf2;
+    --fg: #1a1d27;
+    --fg-muted: #6b7280;
+    --fg-dim: #9ca3af;
+    --accent: #4a6cf7;
+    --accent-glow: rgba(74, 108, 247, 0.08);
+    --accent-text: #3b5de7;
+    --critical: #dc2626;
+    --critical-bg: rgba(220, 38, 38, 0.06);
+    --critical-border: rgba(220, 38, 38, 0.15);
+    --high: #d97706;
+    --high-bg: rgba(217, 119, 6, 0.06);
+    --high-border: rgba(217, 119, 6, 0.15);
+    --medium: #ca8a04;
+    --medium-bg: rgba(202, 138, 4, 0.06);
+    --medium-border: rgba(202, 138, 4, 0.15);
+    --low: #0d9488;
+    --low-bg: rgba(13, 148, 136, 0.06);
+    --low-border: rgba(13, 148, 136, 0.15);
+    --clean: #16a34a;
+    --clean-bg: rgba(22, 163, 74, 0.04);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f8;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fb;
+  --bg-input: #f0f1f4;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --fg: #1a1d27;
+  --fg-muted: #6b7280;
+  --fg-dim: #9ca3af;
+  --accent: #4a6cf7;
+  --accent-glow: rgba(74, 108, 247, 0.08);
+  --accent-text: #3b5de7;
+  --critical: #dc2626;
+  --critical-bg: rgba(220, 38, 38, 0.06);
+  --critical-border: rgba(220, 38, 38, 0.15);
+  --high: #d97706;
+  --high-bg: rgba(217, 119, 6, 0.06);
+  --high-border: rgba(217, 119, 6, 0.15);
+  --medium: #ca8a04;
+  --medium-bg: rgba(202, 138, 4, 0.06);
+  --medium-border: rgba(202, 138, 4, 0.15);
+  --low: #0d9488;
+  --low-bg: rgba(13, 148, 136, 0.06);
+  --low-border: rgba(13, 148, 136, 0.15);
+  --clean: #16a34a;
+  --clean-bg: rgba(22, 163, 74, 0.04);
+  color-scheme: light;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 0 24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -- header -- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-mark svg { width: 18px; height: 18px; }
+.logo-text {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.scan-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  flex-wrap: wrap;
+}
+.scan-meta code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-input);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* -- stat tiles -- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 20px 0;
+}
+.stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+}
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.stat-detail {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+.stat--critical .stat-value { color: var(--critical); }
+.stat--high .stat-value { color: var(--high); }
+.stat--medium .stat-value { color: var(--medium); }
+.stat--findings .stat-value { color: var(--high); }
+.stat--clean .stat-value { color: var(--clean); }
+
+/* -- severity bar -- */
+.severity-bar-wrap {
+  padding: 0 0 20px;
+}
+.severity-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-input);
+}
+.severity-bar span {
+  display: block;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.severity-bar .seg-critical { background: var(--critical); }
+.severity-bar .seg-high { background: var(--high); }
+.severity-bar .seg-medium { background: var(--medium); }
+.severity-bar .seg-low { background: var(--low); }
+
+/* -- section heading -- */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border-subtle);
+}
+.section-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* -- finding cards -- */
+.findings { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+
+.finding {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: start;
+  transition: background 0.15s;
+  cursor: default;
+}
+.finding:hover { background: var(--bg-card-hover); }
+
+.finding-severity {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.sev-critical {
+  color: var(--critical);
+  background: var(--critical-bg);
+  border: 1px solid var(--critical-border);
+}
+.sev-high {
+  color: var(--high);
+  background: var(--high-bg);
+  border: 1px solid var(--high-border);
+}
+.sev-medium {
+  color: var(--medium);
+  background: var(--medium-bg);
+  border: 1px solid var(--medium-border);
+}
+.sev-low {
+  color: var(--low);
+  background: var(--low-bg);
+  border: 1px solid var(--low-border);
+}
+
+.finding-body { min-width: 0; }
+.finding-title {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.finding-rule {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-text);
+  margin-right: 6px;
+}
+.finding-owasp {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-dim);
+  background: var(--bg-input);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+  margin-left: 2px;
+}
+.finding-message {
+  font-size: 13px;
+  color: var(--fg-muted);
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.finding-loc {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  margin-top: 2px;
+  text-align: right;
+}
+.finding-loc .file { color: var(--fg-muted); }
+.finding-loc .line { color: var(--accent-text); }
+
+/* -- dataflow trace -- */
+.dataflow {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.8;
+  color: var(--fg-muted);
+  overflow-x: auto;
+}
+.dataflow .df-source { color: var(--critical); font-weight: 600; }
+.dataflow .df-step { color: var(--fg-dim); }
+.dataflow .df-sink { color: var(--high); font-weight: 600; }
+.dataflow .df-arrow { color: var(--fg-dim); margin: 0 2px; }
+
+/* -- frameworks detected -- */
+.frameworks {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+}
+.framework-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(108, 138, 255, 0.2);
+  color: var(--accent-text);
+}
+
+/* -- scan completeness -- */
+.completeness {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.completeness-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px 24px;
+  font-size: 13px;
+}
+.comp-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.comp-label { color: var(--fg-muted); }
+.comp-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.comp-ok { color: var(--clean); }
+.comp-warn { color: var(--medium); }
+
+/* -- footer -- */
+.footer {
+  padding: 16px 0 24px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+.footer a {
+  color: var(--accent-text);
+  text-decoration: none;
+}
+.disclaimer {
+  font-size: 11px;
+  color: var(--fg-dim);
+  font-style: italic;
+}
+
+/* -- responsive -- */
+@media (max-width: 600px) {
+  body { padding: 0 16px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .finding {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .finding-loc { text-align: left; }
+  .stat-value { font-size: 22px; }
+}
+.mockup-banner{margin:12px 0 0;padding:8px 12px;border:1px dashed var(--medium-border);background:var(--medium-bg);color:var(--medium);border-radius:var(--radius);font-size:12px;font-family:var(--font-mono)}
+</style>
+
+<div class="mockup-banner">DESIGN MOCK-UP: sample data for a project that does not exist. nexvul has no working scanner yet.</div>
+<!-- header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <span class="logo-text">nexvul</span>
+  </div>
+  <div class="scan-meta">
+    <span>Scanned <code>my-agent-project/</code></span>
+    <span>327 files · 2.4s</span>
+    <span>2026-10-08 14:32 UTC</span>
+  </div>
+</div>
+
+<!-- stat tiles -->
+<div class="stats">
+  <div class="stat stat--findings">
+    <span class="stat-label">Findings</span>
+    <span class="stat-value">12</span>
+    <span class="stat-detail">across 8 files</span>
+  </div>
+  <div class="stat stat--critical">
+    <span class="stat-label">Critical</span>
+    <span class="stat-value">2</span>
+    <span class="stat-detail">require immediate attention</span>
+  </div>
+  <div class="stat stat--high">
+    <span class="stat-label">High</span>
+    <span class="stat-value">4</span>
+    <span class="stat-detail">should be addressed</span>
+  </div>
+  <div class="stat stat--medium">
+    <span class="stat-label">Medium</span>
+    <span class="stat-value">4</span>
+    <span class="stat-detail">review recommended</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Low</span>
+    <span class="stat-value">2</span>
+    <span class="stat-detail">informational</span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">OWASP Coverage</span>
+    <span class="stat-value" style="font-size:18px;color:var(--accent-text)">ASI06–10</span>
+    <span class="stat-detail">5 categories scanned</span>
+  </div>
+</div>
+
+<!-- severity distribution bar -->
+<div class="severity-bar-wrap">
+  <div class="severity-bar">
+    <span class="seg-critical" style="width:16.6%"></span>
+    <span class="seg-high" style="width:33.3%"></span>
+    <span class="seg-medium" style="width:33.3%"></span>
+    <span class="seg-low" style="width:16.6%"></span>
+  </div>
+</div>
+
+<!-- frameworks detected -->
+<div class="section-heading">Frameworks Detected</div>
+<div class="frameworks">
+  <span class="framework-tag">LangGraph</span>
+  <span class="framework-tag">MCP</span>
+  <span class="framework-tag">OpenAI Agents SDK</span>
+  <span class="framework-tag">ChromaDB</span>
+</div>
+
+<!-- critical findings -->
+<div class="section-heading">
+  Critical Findings
+  <span class="section-count">2</span>
+</div>
+<div class="findings">
+  <div class="finding">
+    <span class="finding-severity sev-critical">Critical</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX001</span>
+        Untrusted web content reaches persistent agent memory
+        <span class="finding-owasp">ASI06</span>
+      </div>
+      <div class="finding-message">
+        Content returned by <code>requests.get()</code> reaches <code>vector_store.add_documents()</code>
+        without an identified validation or trust-boundary check. Persisting untrusted content may allow
+        malicious instructions to influence future agent behaviour.
+      </div>
+      <div class="dataflow">
+        <span class="df-source">requests.get(url).text</span>
+        <span class="df-arrow">→</span>
+        <span class="df-step">process_content(raw)</span>
+        <span class="df-arrow">→</span>
+        <span class="df-step">Document(page_content=content)</span>
+        <span class="df-arrow">→</span>
+        <span class="df-sink">vector_store.add_documents(docs)</span>
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/memory.py</span>:<span class="line">42</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-critical">Critical</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX021</span>
+        Agent with shell execution, network access, and no approval gate
+        <span class="finding-owasp">ASI10</span>
+      </div>
+      <div class="finding-message">
+        Agent <code>research_agent</code> combines <code>ShellTool</code>, unrestricted
+        <code>requests</code> access, and filesystem write with no human approval boundary
+        or iteration limit. This capability combination allows autonomous destructive actions.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/tools.py</span>:<span class="line">18</span>
+    </div>
+  </div>
+</div>
+
+<!-- high findings -->
+<div class="section-heading">
+  High Findings
+  <span class="section-count">4</span>
+</div>
+<div class="findings">
+  <div class="finding">
+    <span class="finding-severity sev-high">High</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX011</span>
+        MCP server exposed without authentication
+        <span class="finding-owasp">ASI07</span>
+      </div>
+      <div class="finding-message">
+        MCP server at <code>mcp_config.json</code> uses Streamable HTTP transport on <code>0.0.0.0:8080</code>
+        with no authentication configured. Any network client can invoke its tools.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">mcp_config.json</span>:<span class="line">12</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-high">High</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX031</span>
+        Recursive agent delegation without depth limit
+        <span class="finding-owasp">ASI08</span>
+      </div>
+      <div class="finding-message">
+        Workflow graph contains cycle: <code>planner → researcher → planner</code>.
+        No <code>recursion_limit</code> is set on the <code>StateGraph</code> (default is unbounded in
+        LangGraph &lt;0.2). This can cause infinite loops and resource exhaustion.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/workflow.py</span>:<span class="line">91</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-high">High</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX041</span>
+        Destructive tool callable without human approval
+        <span class="finding-owasp">ASI09</span>
+      </div>
+      <div class="finding-message">
+        Tool <code>delete_database</code> performs a destructive filesystem operation and is
+        registered on agent <code>admin_agent</code> with no <code>interrupt_before</code> or
+        approval gate. High-impact tools should require human confirmation.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/admin.py</span>:<span class="line">67</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-high">High</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX002</span>
+        Retrieved content promoted to system instructions
+        <span class="finding-owasp">ASI06</span>
+      </div>
+      <div class="finding-message">
+        Output of <code>retriever.get_relevant_documents()</code> is concatenated directly into the
+        system message template via f-string. An attacker who controls indexed documents can inject
+        instructions into the agent's system prompt.
+      </div>
+      <div class="dataflow">
+        <span class="df-source">retriever.get_relevant_documents(query)</span>
+        <span class="df-arrow">→</span>
+        <span class="df-step">docs[0].page_content</span>
+        <span class="df-arrow">→</span>
+        <span class="df-sink">f"You are an assistant. Context: {context}"</span>
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/prompts.py</span>:<span class="line">23</span>
+    </div>
+  </div>
+</div>
+
+<!-- medium findings -->
+<div class="section-heading">
+  Medium Findings
+  <span class="section-count">4</span>
+</div>
+<div class="findings">
+  <div class="finding">
+    <span class="finding-severity sev-medium">Medium</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX032</span>
+        Agent loop has no iteration limit
+        <span class="finding-owasp">ASI08</span>
+      </div>
+      <div class="finding-message">
+        <code>AgentExecutor</code> created without <code>max_iterations</code>.
+        Default is unbounded, which may cause runaway loops and excessive API costs.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/chain.py</span>:<span class="line">55</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-medium">Medium</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX012</span>
+        MCP tool with unrestricted shell command execution
+        <span class="finding-owasp">ASI07</span>
+      </div>
+      <div class="finding-message">
+        MCP tool <code>run_command</code> passes user-controlled input to <code>subprocess.run(shell=True)</code>.
+        Any connected client can execute arbitrary commands on the host.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">mcp/server.py</span>:<span class="line">34</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-medium">Medium</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX022</span>
+        Agent with unrestricted delegation enabled
+        <span class="finding-owasp">ASI10</span>
+      </div>
+      <div class="finding-message">
+        CrewAI agent <code>lead_agent</code> has <code>allow_delegation=True</code> with no
+        restrictions on which agents it can delegate to or what tasks it can assign.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">crew/agents.py</span>:<span class="line">12</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-medium">Medium</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX003</span>
+        User input written to persistent agent memory
+        <span class="finding-owasp">ASI06</span>
+      </div>
+      <div class="finding-message">
+        User-supplied chat input reaches <code>ConversationBufferMemory.save_context()</code>
+        which persists across sessions. Consider using
+        <code>ConversationBufferWindowMemory</code> with a limited window.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/chat.py</span>:<span class="line">89</span>
+    </div>
+  </div>
+</div>
+
+<!-- low findings -->
+<div class="section-heading">
+  Low Findings
+  <span class="section-count">2</span>
+</div>
+<div class="findings">
+  <div class="finding">
+    <span class="finding-severity sev-low">Low</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX033</span>
+        Tool execution has no timeout configured
+        <span class="finding-owasp">ASI08</span>
+      </div>
+      <div class="finding-message">
+        External API call in tool <code>search_web</code> has no timeout parameter.
+        A hanging request will block agent execution indefinitely.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">agent/tools.py</span>:<span class="line">45</span>
+    </div>
+  </div>
+
+  <div class="finding">
+    <span class="finding-severity sev-low">Low</span>
+    <div class="finding-body">
+      <div class="finding-title">
+        <span class="finding-rule">NEX013</span>
+        MCP config uses unpinned npx package
+        <span class="finding-owasp">ASI07</span>
+      </div>
+      <div class="finding-message">
+        MCP server configured with <code>npx -y @untrusted/mcp-server</code>. The <code>-y</code>
+        flag auto-installs without confirmation, and the package version is unpinned.
+        A supply-chain compromise would execute arbitrary code.
+      </div>
+    </div>
+    <div class="finding-loc">
+      <span class="file">claude_desktop_config.json</span>:<span class="line">8</span>
+    </div>
+  </div>
+</div>
+
+<!-- scan completeness -->
+<div class="section-heading">Scan Completeness</div>
+<div class="completeness">
+  <div class="completeness-grid">
+    <div class="comp-item">
+      <span class="comp-label">Files scanned</span>
+      <span class="comp-value comp-ok">327 / 327</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-label">Parse failures</span>
+      <span class="comp-value comp-ok">0</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-label">Timeouts</span>
+      <span class="comp-value comp-ok">0</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-label">Files skipped</span>
+      <span class="comp-value comp-warn">3 (binary)</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-label">Rules executed</span>
+      <span class="comp-value comp-ok">42 / 42</span>
+    </div>
+    <div class="comp-item">
+      <span class="comp-label">Cross-file analysis</span>
+      <span class="comp-value comp-ok">enabled</span>
+    </div>
+  </div>
+</div>
+
+<!-- footer -->
+<div class="footer">
+  <div>
+    <span>nexvul v0.1.0</span> ·
+    <span>Scan completed in 2.4s</span> ·
+    <span>42 rules checked</span>
+  </div>
+  <div class="disclaimer">
+    A clean nexvul result does not prove that an application is secure.
+  </div>
+</div>

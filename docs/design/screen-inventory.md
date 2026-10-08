@@ -232,7 +232,7 @@ be used as a gate?" first. A partial result cannot, in either direction, and a s
 never miss a partial scan because findings happened to exist. (Recommendation; OD-06.)
 
 **`fail_on: never`** (or `--fail-on never`): `1` is never returned; `3` still is unless trusted config sets
-`completeness.fail_on_partial: false` (OD-04 in threat-model handoff D4).
+`completeness.fail_on_partial: false` (OD-06; threat-model handoff D4).
 
 `doctor` exits `0` (all ok) or `1` (any warn/fail). `explain`/`rules`/`version` exit `0` or `2`.
 

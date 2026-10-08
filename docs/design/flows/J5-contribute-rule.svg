@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1850 510" width="1850" height="510" font-family="-apple-system, Segoe UI, Roboto, sans-serif">
+<style>:root{--page:#f5f6f8;--card:#ffffff;--inset:#f0f1f4;--border:#dfe1e8;--ink:#1a1d27;--muted:#5b6270;--accent:#3654dc;--fail:#c41d3a;--decision:#8a6100;--end:#1a1d27}</style>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs>
+<rect width="1850" height="510" fill="var(--page)"/>
+<text x="20" y="32" font-size="16" font-weight="700" text-anchor="start" fill="var(--ink)">J5 Contribute a rule (open-source contributor)</text>
+<rect x="20" y="50" width="1810" height="110" fill="var(--card)" stroke="var(--border)"/>
+<text x="28" y="70" font-size="11" font-weight="600" text-anchor="start" fill="var(--muted)">CONTRIBUTOR</text>
+<rect x="20" y="160" width="1810" height="110" fill="var(--card)" stroke="var(--border)"/>
+<text x="28" y="180" font-size="11" font-weight="600" text-anchor="start" fill="var(--muted)">MAINTAINER</text>
+<rect x="20" y="270" width="1810" height="110" fill="var(--card)" stroke="var(--border)"/>
+<text x="28" y="290" font-size="11" font-weight="600" text-anchor="start" fill="var(--muted)">CI</text>
+<text x="20" y="400" font-size="11" font-weight="600" text-anchor="start" fill="var(--fail)">FAILURE BRANCHES</text>
+<rect x="100.0" y="82.0" width="160" height="58" rx="29" fill="var(--card)" stroke="var(--accent)" stroke-width="2"/>
+<text x="180.0" y="103.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">CONTRIBUTING:</text>
+<text x="180.0" y="116.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">propose a rule</text>
+<text x="180.0" y="154.0" font-size="10.5" font-weight="600" text-anchor="middle" fill="var(--accent)">D05</text>
+<rect x="290.0" y="82.0" width="160" height="58" rx="6" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="370.0" y="109.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Checks existing rules</text>
+<text x="370.0" y="154.0" font-size="10.5" font-weight="600" text-anchor="middle" fill="var(--accent)">U01 U03</text>
+<rect x="480.0" y="82.0" width="160" height="58" rx="6" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="560.0" y="109.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Opens rule proposal</text>
+<text x="560.0" y="154.0" font-size="10.5" font-weight="600" text-anchor="middle" fill="var(--accent)">D05</text>
+<polygon points="750.0,186.0 836.0,221.0 750.0,256.0 664.0,221.0" fill="var(--card)" stroke="var(--decision)" stroke-width="2"/>
+<text x="750.0" y="219.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">In scope?</text>
+<path d="M750.0,272.0 L750.0,410" stroke="var(--fail)" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+<rect x="676.0" y="410" width="148" height="56" rx="4" fill="var(--inset)" stroke="var(--fail)"/>
+<text x="750.0" y="428" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">✕ Out of scope: reason</text>
+<text x="750.0" y="441" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">given</text>
+<text x="750.0" y="458" font-size="10" font-weight="600" text-anchor="middle" fill="var(--fail)">taxonomy §5</text>
+<rect x="860.0" y="192.0" width="160" height="58" rx="6" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="940.0" y="219.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Allocates NEX0nn</text>
+<rect x="1050.0" y="82.0" width="160" height="58" rx="6" fill="var(--card)" stroke="var(--border)" stroke-width="1.5"/>
+<text x="1130.0" y="109.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Rule + tests + docs</text>
+<text x="1130.0" y="154.0" font-size="10.5" font-weight="600" text-anchor="middle" fill="var(--accent)">D04</text>
+<polygon points="1320.0,296.0 1406.0,331.0 1320.0,366.0 1234.0,331.0" fill="var(--card)" stroke="var(--decision)" stroke-width="2"/>
+<text x="1320.0" y="329.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Lints pass?</text>
+<path d="M1320.0,382.0 L1320.0,410" stroke="var(--fail)" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+<rect x="1246.0" y="410" width="148" height="56" rx="4" fill="var(--inset)" stroke="var(--fail)"/>
+<text x="1320.0" y="428" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">✕ Unsafe message / link</text>
+<text x="1320.0" y="441" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">/ banned word</text>
+<text x="1320.0" y="458" font-size="10" font-weight="600" text-anchor="middle" fill="var(--fail)">J5-F1..F3</text>
+<polygon points="1510.0,296.0 1596.0,331.0 1510.0,366.0 1424.0,331.0" fill="var(--card)" stroke="var(--decision)" stroke-width="2"/>
+<text x="1510.0" y="323.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Meets FP</text>
+<text x="1510.0" y="336.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">budget?</text>
+<path d="M1510.0,382.0 L1510.0,410" stroke="var(--fail)" stroke-dasharray="4 3" fill="none" marker-end="url(#arr)"/>
+<rect x="1436.0" y="410" width="148" height="56" rx="4" fill="var(--inset)" stroke="var(--fail)"/>
+<text x="1510.0" y="428" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">✕ No: failing safe/</text>
+<text x="1510.0" y="441" font-size="10.5" font-weight="400" text-anchor="middle" fill="var(--ink)">cases listed</text>
+<text x="1510.0" y="458" font-size="10" font-weight="600" text-anchor="middle" fill="var(--fail)">DEC-0002</text>
+<rect x="1620.0" y="192.0" width="160" height="58" rx="29" fill="var(--card)" stroke="var(--end)" stroke-width="2"/>
+<text x="1700.0" y="213.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">Merged as</text>
+<text x="1700.0" y="226.0" font-size="11.5" font-weight="600" text-anchor="middle" fill="var(--ink)">experimental</text>
+<text x="1700.0" y="264.0" font-size="10.5" font-weight="600" text-anchor="middle" fill="var(--accent)">U01</text>
+<path d="M264.0,111.0 L282.0,111.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M454.0,111.0 L472.0,111.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M644.0,111.0 L653.0,111.0 L653.0,221.0 L662.0,221.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M834.0,221.0 L852.0,221.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M1024.0,221.0 L1033.0,221.0 L1033.0,111.0 L1042.0,111.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M1214.0,111.0 L1223.0,111.0 L1223.0,331.0 L1232.0,331.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M1404.0,331.0 L1422.0,331.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+<path d="M1594.0,331.0 L1603.0,331.0 L1603.0,221.0 L1612.0,221.0" stroke="var(--muted)" fill="none" marker-end="url(#arr)"/>
+</svg>

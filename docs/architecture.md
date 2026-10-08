@@ -839,9 +839,9 @@ approval). Lockfiles hash-pinned (`--require-hashes`); SBOM per release (SR-26).
 
 ---
 
-## 19. Pending decisions (recommended defaults, pending human approval)
+## 19. Decisions (P1-P5 accepted 2026-10-08, see DEC-0004 and DEC-0005)
 
-| # | Decision | Recommended default | Section |
+| # | Decision | Decided policy | Section |
 |---|----------|---------------------|---------|
 | P1 (D1) | Repo-local config in CI | Tighten-only from PR head; loosening only from base branch or explicit workflow input; all weakenings listed | §3.3 |
 | P2 (D2/D3) | Inline suppressions in CI | Justification required in CI; suppressions on PR-changed lines listed as `introduced_in_diff`; suppressed findings always emitted | §11.5 |
@@ -849,7 +849,7 @@ approval). Lockfiles hash-pinned (`--require-hashes`); SBOM per release (SR-26).
 | P4 (D8) | Plugins | None before 1.0 (built-in frozen registry); afterwards declarative packs first, code plugins only by explicit allowlist | §11.3–11.4 |
 | P5 (Q1/Q2) | ASI multi-labelling for ASI09/ASI10 rules | Ordered multi-label list, primary first, per `docs/owasp/mapping.md` | §11.2 |
 
-Related but not new: D5 (tracked files regardless of `.gitignore`) is adopted as the default in §4; D7
+P1-P4 are recorded in `.nexvul/decisions/DEC-0004`, P5 in `DEC-0005`. Related but not new: D5 (tracked files regardless of `.gitignore`) is adopted as the default in §4; D7
 (git-index reader, `platformdirs`, HTML builder) remains open.
 
 ## 20. Open risks

@@ -64,9 +64,9 @@ tests/
 - Fixtures use the inline annotation from architecture §6.4:
   `# nexvul-expect: NEX001 line=15` (positive) and `# nexvul-expect-not: NEX001 line=20 reason="..."` (negative).
   JS/TS use `// nexvul-expect: ...`.
-- **Naming hazard (must fix in architecture §6.4 example):** a fixture named `test_positive_001.py` would be
+- **Naming hazard (resolved in architecture rev 2, §11.6):** a fixture named `test_positive_001.py` would be
   collected **and executed** by pytest, which violates "never execute scanned code". Fixtures are named
-  `case_<nnn>_<slug>.py` (or `.ts`, `.js`, `.json`, `.yaml`) and `tests/rules/**` is listed in
+  `case_<nnn>_<slug>.py.fixture` (or `.ts.fixture`, `.js.fixture`, `.json.fixture`, `.yaml.fixture`), scanned as an in-memory virtual tree and `tests/rules/**` is listed in
   `collect_ignore_glob`. A meta-test fails the build if any file under `tests/rules/` or `benchmarks/` matches
   `test_*.py`, `*_test.py` or `conftest.py`.
 - One generic parametrised test (`tests/component/rule_engine/test_rule_fixtures.py`) discovers all fixtures,

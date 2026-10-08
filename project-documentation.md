@@ -69,6 +69,9 @@ Recorded in `.nexvul/decisions/`. The product owner delegated these calls ("make
 | DEC-0004 | Repo config in CI may only tighten the scan (loosening only from the base branch). Inline suppressions need a rule ID and a reason in CI, and PR-added ones are listed. A partial scan fails CI by default. No rule plugins until after 1.0 |
 | DEC-0005 | ASI09/ASI10 rules get ordered multi-labels (closest-fit OWASP category first, brief's label kept where OWASP's text supports it) |
 | DEC-0006 | Staging publishes only the `@staging` tag and a TestPyPI rc; Marketplace listing only from prod. No Docker image for 1.0. Signing and attestations required from the first release candidate |
+| DEC-0001 | Thin vertical slice first: Python-only, 2 to 3 rules, terminal + JSON + SARIF + HTML, seed benchmark, pre-release; breadth after |
+| DEC-0003 | Held-out benchmark set in a private repo owned by the product owner, created in Phase 2; weaker interim protection disclosed in reports |
+| DEC-0008 | AutoGPT excluded from the corpus entirely (mixed licence) |
 | DEC-0007 | All 16 design open decisions accepted: suppression syntax `# nexvul: ignore[NEX006] -- reason`; exit codes 0/1/2/3/4 (precedence 2>4>3>1>0); nothing-to-analyse exits 3; HTML report ships in the thin slice; default `fail-on: high` |
 
 Environments (configured on GitHub): `dev` (any branch), `staging` (`main` only), `prod` (`v*` tags only, reviewer required).
@@ -76,12 +79,13 @@ No release workflow exists yet because there is no package to build.
 
 ## 6. Open items needing the product owner
 
-1. **DEC-0001**: approve shipping a thin Python-only slice (2 to 3 rules, terminal + JSON + SARIF + HTML) before breadth. Recommended.
-2. **DEC-0003**: where the held-out benchmark set lives.
-3. **OD-11**: canonical GitHub owner and URL before the first release.
-4. **AutoGPT licence**: excluded from the corpus unless the product owner approves path-restricted use of its MIT part.
-5. **ADR-0001**: still Proposed. It includes the JS/TS parser choice, which has supply-chain implications.
-6. **Licence for nexvul itself**: not chosen. Until a LICENSE file exists, no rights are granted. MIT or Apache-2.0 suggested.
+1. **OD-11**: canonical GitHub owner and URL before the first release.
+2. **ADR-0001**: still Proposed. It includes the JS/TS parser choice, which has supply-chain implications.
+3. **Licence for nexvul itself**: not chosen. Until a LICENSE file exists, no rights are granted. MIT or Apache-2.0 suggested.
+4. **Held-out repo**: the private repo (DEC-0003) is created when the first held-out case is written. Back it up.
+
+Closed on 2026-10-08: DEC-0001 (thin slice first, accepted), DEC-0003 (private held-out repo, created when first
+needed), DEC-0008 (AutoGPT excluded entirely).
 
 ## 7. Differentiation
 

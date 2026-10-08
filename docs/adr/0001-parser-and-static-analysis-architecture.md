@@ -1,202 +1,159 @@
 # ADR-0001: Parser and Static Analysis Architecture
 
-> Status: **Proposed**
+> Status: **Proposed** (revision 2)
 > Date: 2026-10-08
-> Deciders: Principal Architect, Security Research, Python Analysis, JS/TS Analysis
-> Technical area: Parsing, IR, Taint Analysis
+> Deciders: Principal Architect, Security Research, Python Analysis, JS/TS Analysis; acceptance by the
+> Principal Supervisor (roadmap Phase 0 exit). Items marked *pending human approval* need the product owner.
+> Technical area: parsing, isolation, IR, taint analysis, rule loading
+> Detail: `docs/architecture.md` (revision 2). Threat inputs: `docs/threat-model.md` T-01..T-30, SR-01..SR-30.
 
 ## Context
 
-nexvul must parse Python and JavaScript/TypeScript source code to build an
-intermediate representation (IR) suitable for taint analysis, call graph
-construction, and rule evaluation. The choice of parser and analysis
-architecture has deep consequences for:
+nexvul must parse Python and JavaScript/TypeScript from **hostile** repositories (brief §0, §2) and build an
+intermediate representation (IR) that supports cross-file taint, call graphs, workflow graphs and rule
+evaluation — without ever executing, importing or building the target (brief §2, §20).
 
-- **Accuracy** of vulnerability detection
-- **Performance** at scale (thousands of files)
-- **Supply-chain risk** of nexvul itself
-- **Maintainability** of the codebase
-- **Security** when processing hostile/malformed input
-- **Extensibility** to new languages and frameworks
+Two findings shape this decision beyond "which parser":
 
-The master brief (§2) mandates: local-first, no external API calls, no
-code execution of scanned projects, Python 3.12+ stack. The brief (§8)
-specifies Python as the implementation language.
+1. The competitive review (`docs/research/competitors/README.md`) shows **no** competitor has cross-file taint,
+   and JS/TS support is heuristic or broken everywhere. These are nexvul's intended differentiators, so the
+   IR and taint design must be built for them from the start, even though the thin slice (roadmap §0) ships
+   intra-procedural Python first.
+2. The threat model shows that the parser choice is inseparable from **how** parsing runs: `ast.parse` can
+   crash the interpreter on deep nesting; native grammar code is a memory-safety surface; `signal.alarm`
+   cannot bound C-level work; auto-loaded plugins and `python -m` path shadowing are code-execution vectors
+   (T-01b, T-03, T-07, T-25, T-28).
 
-## Decision Drivers
+Revision 1 of this ADR also contained an arithmetic error in its decision matrix (inconsistent "corrected"
+totals). Revision 2 recomputes every total and shows the working.
 
-1. **TypeScript/TSX support** — must parse full TS/TSX syntax
-2. **No Node.js runtime dependency** — Python-only installation
-3. **Hostile input safety** — parser must handle malformed/malicious code
-4. **Supply-chain minimalism** — fewest possible dependencies
-5. **Cross-file taint analysis** — must track data across module boundaries
-6. **Performance** — thousands of files in seconds, not minutes
-7. **Type information availability** — useful but not critical for Phase 1
-8. **Maintenance burden** — long-term viability of chosen tools
+## Decision drivers
 
-## Options Considered
+| # | Driver | Weight (1–5) |
+|---|--------|--------------|
+| D1 | Full TypeScript/TSX + modern JS syntax | 5 |
+| D2 | No Node.js runtime dependency (Python-only install, brief §8) | 4 |
+| D3 | Hostile-input safety (error recovery, crash containment possible) | 5 |
+| D4 | Supply-chain minimalism (brief §32.4) | 4 |
+| D5 | Supports nexvul-owned cross-file taint and graph analysis | 5 |
+| D6 | Performance at 1k–10k files (brief §15) | 3 |
+| D7 | Type information | 2 |
+| D8 | Long-term maintenance burden | 3 |
 
-### Option A: Python `ast` + tree-sitter (Recommended)
+## Options considered (JS/TS parser; Python side is stdlib `ast` in all but F)
 
-**Python parsing:** Use the standard library `ast` module. It produces a
-full CPython AST with complete syntax coverage, is maintained by CPython
-core developers, has zero supply-chain risk, and handles all Python 3.12+
-syntax.
+- **A. stdlib `ast` + tree-sitter** (`tree-sitter` + `tree-sitter-javascript` + `tree-sitter-typescript` wheels).
+  CST with error recovery; C parser; prebuilt wheels; no Node.
+- **B. `ast` + Node.js subprocess** running the TypeScript compiler API (or Babel/oxc/swc). Reference
+  parsers and, for `tsc`, type information; but adds Node + npm supply chain, and Node must be defended
+  against hostile `package.json`, `.npmrc`, `node_modules`, `NODE_OPTIONS`.
+- **C. `ast` + esprima-python.** No TypeScript, ES2017 only, stale, no error recovery. Disqualified on D1.
+- **D. Semgrep OSS as the engine.** Intra-file taint only in OSS; LGPL-2.1; large dependency; no IR for
+  ASI08/ASI10 graph analysis.
+- **E. Custom parsers for both languages.** Multi-year effort, unproven robustness.
+- **F. tree-sitter for both Python and JS/TS** (adds `tree-sitter-python`). One CST pipeline and grammar
+  independence from the running interpreter, but loses CPython-exact semantics (encoding, NFKC identifiers,
+  exact syntax acceptance) that the threat model relies on (T-18, SR-20).
 
-**JS/TS parsing:** Use `tree-sitter` (PyPI: `tree-sitter`) with
-`tree-sitter-typescript` and `tree-sitter-javascript` grammar packages.
-tree-sitter produces a concrete syntax tree (CST) via a C-based incremental
-parser with error recovery. Pre-built wheels are available for all major
-platforms.
+oxc/swc Python bindings do not exist (`docs/research/tooling/js-ts-parsers.md`, verified 2026-10-08).
 
-**IR:** Build a language-neutral IR from both AST sources. Python `ast`
-nodes and tree-sitter CST nodes are converted to a common IR.
+## Decision matrix (score 0–5 × weight)
 
-**Taint engine:** Custom, built in Python. Intra-procedural first, then
-function summaries for cross-file analysis.
+| Criterion (weight) | A | B | C | D | E | F |
+|---|---|---|---|---|---|---|
+| D1 TS/TSX (5) | 5 | 5 | 0 | 4 | 5 | 5 |
+| D2 No Node (4) | 5 | 0 | 5 | 3 | 5 | 5 |
+| D3 Hostile input (5) | 4 | 3 | 1 | 3 | 2 | 4 |
+| D4 Supply chain (4) | 4 | 1 | 4 | 2 | 5 | 4 |
+| D5 Own cross-file/graph analysis (5) | 5 | 5 | 5 | 0 | 5 | 5 |
+| D6 Performance (3) | 5 | 3 | 1 | 4 | 3 | 5 |
+| D7 Types (2) | 1 | 5 | 1 | 1 | 3 | 1 |
+| D8 Maintenance (3) | 4 | 2 | 1 | 2 | 0 | 3 |
 
-### Option B: Python `ast` + Node.js subprocess (TypeScript compiler API)
+Working (score × weight, in criterion order):
 
-**Python parsing:** Same as Option A.
+- **A** = 25 + 20 + 20 + 16 + 25 + 15 + 2 + 12 = **135**
+- **B** = 25 + 0 + 15 + 4 + 25 + 9 + 10 + 6 = **94**
+- **C** = 0 + 20 + 5 + 16 + 25 + 3 + 2 + 3 = **74**
+- **D** = 20 + 12 + 15 + 8 + 0 + 12 + 2 + 6 = **75**
+- **E** = 25 + 20 + 10 + 20 + 25 + 9 + 6 + 0 = **115**
+- **F** = 25 + 20 + 20 + 16 + 25 + 15 + 2 + 9 = **132**
 
-**JS/TS parsing:** Shell out to a bundled Node.js process running the
-TypeScript compiler API. Receive AST as JSON over stdout.
+Rank: **A (135) > F (132) > E (115) > B (94) > D (75) > C (74).**
 
-**Advantage:** Access to TypeScript's type checker for type-aware analysis.
+Caveats: the scores are judgements, not measurements. E's score is inflated by D4/D2 because it has no
+dependencies, but it carries the largest delivery risk, which the matrix does not weight — it is rejected on
+feasibility. A and F are close; A wins on Python-semantic fidelity (not captured in the matrix), and F is kept
+as a **fallback** for Python files the running interpreter cannot parse (see Consequences, R-4).
 
-**Disadvantage:** Adds Node.js as a runtime dependency. Subprocess overhead.
-Supply-chain risk from npm. Must defend against hostile `package.json`,
-`.npmrc`, `NODE_OPTIONS` in scanned repos.
+## Decision
 
-### Option C: Python `ast` + esprima-python
+Adopt **Option A** together with the following binding architecture choices (each detailed in
+`docs/architecture.md`):
 
-**Python parsing:** Same as Option A.
-
-**JS/TS parsing:** Use the `esprima` Python port for JavaScript parsing.
-
-**Disadvantage:** No TypeScript support. ES2017 only. Stale maintenance.
-Poor performance. No error recovery.
-
-### Option D: Semgrep OSS as a dependency
-
-Use Semgrep's OSS engine as a library/subprocess for pattern matching and
-intra-file taint analysis.
-
-**Disadvantage:** No cross-file analysis in OSS. LGPL-2.1 licence
-implications. Large dependency. Limited to Semgrep's rule model. Does not
-produce the IR nexvul needs for graph analysis (ASI08, ASI10).
-
-### Option E: Full custom parsers
-
-Write Python and JS/TS parsers from scratch.
-
-**Disadvantage:** Enormous effort. Parser development is a multi-year
-investment. Unnecessary when high-quality parsers exist. Higher bug risk.
-
-## Decision Matrix
-
-Criteria weighted 1–5 (5 = most important).
-
-| Criterion (weight) | A: ast+tree-sitter | B: ast+Node subprocess | C: ast+esprima | D: Semgrep OSS | E: Custom |
-|---|---|---|---|---|---|
-| TS/TSX support (5) | 5 (full CST) | 5 (full AST+types) | 0 (none) | 4 (pattern only) | 5 (if built) |
-| No Node dependency (4) | 5 (Python only) | 0 (requires Node) | 5 (Python only) | 3 (Python, large) | 5 (Python only) |
-| Hostile input safety (5) | 4 (error-recovering) | 3 (subprocess risk) | 1 (no recovery) | 3 (Semgrep handles) | 2 (unproven) |
-| Supply-chain risk (4) | 4 (3 small pkgs) | 1 (Node+npm) | 4 (1 stale pkg) | 2 (large dep tree) | 5 (none) |
-| Cross-file taint (5) | 5 (custom engine) | 5 (custom engine) | 5 (custom engine) | 0 (Pro only) | 5 (custom engine) |
-| Performance (3) | 5 (C-speed parse) | 3 (subprocess overhead) | 1 (Python-speed) | 4 (optimised) | 3 (unoptimised) |
-| Type information (2) | 1 (CST only) | 5 (full type checker) | 1 (none) | 1 (none) | 3 (if built) |
-| Maintenance burden (3) | 4 (active upstream) | 2 (Node ecosystem churn) | 1 (stale) | 2 (Semgrep API changes) | 0 (enormous) |
-| **Weighted total** | **138** | **99** | **68** | **77** | **107** |
-
-Calculation for Option A:
-(5x5) + (4x5) + (5x4) + (4x4) + (5x5) + (3x5) + (2x1) + (3x4) = 25+20+20+16+25+15+2+12 = 135
-
-Corrected totals (recomputed):
-- **A: 135**
-- **B: 97** = (5x5)+(4x0)+(5x3)+(4x1)+(5x5)+(3x3)+(2x5)+(3x2) = 25+0+15+4+25+9+10+6 = 94
-- **C: 65** = (5x0)+(4x5)+(5x1)+(4x4)+(5x5)+(3x1)+(2x1)+(3x1) = 0+20+5+16+25+3+2+3 = 74
-- **D: 68** = (5x4)+(4x3)+(5x3)+(4x2)+(5x0)+(3x4)+(2x1)+(3x2) = 20+12+15+8+0+12+2+6 = 75
-- **E: 100** = (5x5)+(4x5)+(5x2)+(4x5)+(5x5)+(3x3)+(2x3)+(3x0) = 25+20+10+20+25+9+6+0 = 115
-
-**Rank: A (135) > E (115) > B (94) > D (75) > C (74)**
-
-Option E scores second but carries the highest execution risk and longest
-timeline. Option A is the clear practical winner.
-
-## Recommendation
-
-**Option A: Python `ast` + tree-sitter.**
-
-This option scores highest on the weighted matrix and aligns with every
-constraint in the master brief:
-
-- **Python-only stack** (§8) — no Node.js dependency
-- **Security boundary** (§2) — error-recovering parser, no code execution
-- **Local-first** (§2) — all parsing happens locally, no network
-- **Performance** (§15) — C-speed parsing, incremental capability
-- **Supply-chain minimal** — 3 well-maintained PyPI packages with pre-built wheels
-
-The lack of type information is a known trade-off. It means nexvul cannot:
-- Resolve TypeScript generics for type-narrowed taint tracking
-- Distinguish union type branches for precision
-- Use type annotations to infer sanitiser effectiveness
-
-This is acceptable for Phase 5 (initial JS/TS support). Type-aware analysis
-can be added later as an optional enhancement (e.g., a `--type-check` flag
-that shells out to `tsc` when available).
+1. **Parsers.** Python via stdlib `ast` (decoded per PEP 263, SR-20); JS/TS/JSX/TSX via tree-sitter grammar
+   wheels, pinned by hash (Phase 5). Manifests (JSON/YAML/TOML, lockfiles, MCP configs) via safe loaders only.
+2. **Process isolation for all parsing and analysis** (architecture §5). A supervisor assigns one file at a
+   time to `spawn`-started worker processes with POSIX resource limits; per-file and per-analysis wall-clock
+   limits are enforced by **hard kill** of the worker, never `signal.alarm`. Worker death or timeout is
+   recorded per file. Worker→supervisor IPC is size-capped JSON, never pickle (SR-01, SR-03, SR-09).
+3. **Language-neutral IR** with frozen nodes and analysis facts; per-file IR is a pure function of file bytes,
+   path and tool versions (architecture §6).
+4. **nexvul-owned taint engine**: intra-procedural first (thin slice), then function summaries computed
+   bottom-up over call-graph SCCs with deterministic budgets, then cross-file via import resolution, then
+   store-linked second-order flows for ASI06 (architecture §8). Precision-biased: unresolved calls do not
+   propagate taint, and this is counted and reported.
+5. **Version-aware recognition**: framework facts include the resolved version from lockfiles (read as data),
+   and rule defaults come from a cited, versioned table (architecture §7.2). MCP recognisers support both the
+   2025-11-25 and 2026-07-28 spec eras (architecture §7.3).
+6. **Built-in rules only** from a frozen registry until after 1.0; no entry-point discovery (SR-22)
+   *[plugin deferral pending human approval]*.
+7. **Isolated startup**: console-script entry point; `python -m nexvul` re-executes with `-P -E`; startup
+   aborts if any loaded module resolves inside the scan root (SR-02).
+8. **No Semgrep, no Node.js, no network** at runtime.
 
 ## Consequences
 
 ### Positive
 
-- **Minimal installation:** `pip install nexvul` installs everything.
-  Pre-built wheels mean no C compiler needed.
-- **Consistent security posture:** No Node.js process to defend against
-  hostile repo content.
-- **Fast parsing:** tree-sitter's C implementation parses millions of
-  lines per second. Python `ast` is CPython-native.
-- **Error recovery:** tree-sitter produces a (partial) CST even for
-  syntactically invalid files. nexvul can report findings in files that
-  don't fully parse.
-- **Language-neutral IR:** The IR abstraction means rules can (where
-  semantically valid) work across Python and JS/TS.
+- `pip install nexvul` needs no compiler and no Node.js; nothing in the scan path executes target code.
+- Parser crashes, hangs and memory blow-ups become per-file `partial` entries instead of a dead or hung scan,
+  and are visible in the completeness block (SR-18).
+- Cross-file taint and real JS/TS parsing — the two gaps no competitor fills — share one IR and one engine.
+- Rules are independent of the parser; replacing tree-sitter would touch only `parser/javascript|typescript`.
 
 ### Negative
 
-- **No type information for JS/TS:** Taint analysis may be less precise
-  than type-aware tools. False negatives on type-dependent flows.
-- **CST verbosity:** tree-sitter CSTs include punctuation, whitespace
-  tokens, etc. The CST-to-IR converter must filter these.
-- **Version pinning friction:** tree-sitter grammar packages may lag behind
-  the core library version. Must monitor and potentially pin older versions.
-- **Two parser implementations:** Maintaining Python `ast` → IR and
-  tree-sitter CST → IR converters is ongoing work.
+- **No type information for JS/TS.** Type-dependent flows are false negatives. A future, opt-in type-aware
+  mode would need its own ADR and threat-model revision (it would reintroduce Node or `tsc`).
+- **CST verbosity**: the tree-sitter → IR converter must filter punctuation/trivia nodes.
+- **Two front ends** (Python `ast`, tree-sitter) to maintain and keep semantically aligned.
+- **Process-isolation cost**: spawn and JSON IPC overhead per file; measured in the Phase 1 baseline, not
+  assumed.
+- **Interpreter-bound Python grammar**: `ast.parse` rejects syntax newer than the interpreter nexvul runs on;
+  such files are reported as `syntax_unsupported_by_runtime` (partial).
 
 ### Risks
 
-1. **Grammar version incompatibility:** If `tree-sitter-typescript` doesn't
-   release a version compatible with `tree-sitter>=0.24`, nexvul is stuck
-   on 0.23.x. **Mitigation:** Build grammars from source, or contribute
-   upstream.
+| ID | Risk | Mitigation |
+|----|------|------------|
+| R-1 | tree-sitter grammar wheels are native code parsing attacker input (T-28) | hash-pinned wheels; worker isolation contains crashes; fuzzing in Phase 8; OS sandboxing post-1.0 |
+| R-2 | Grammar/core version skew: research notes `tree-sitter-typescript` 0.23.x declaring `tree-sitter~=0.23` while core is 0.26 (compatibility partly UNVERIFIED) | pin a known-compatible set; build grammars from source if needed; re-verify at Phase 5 start |
+| R-3 | CST gaps for some TS constructs (`satisfies`, assertions, decorators) | corpus-based tests; language-tagged IR escape hatch |
+| R-4 | Running interpreter cannot parse newer Python syntax | report as partial; evaluate Option F (tree-sitter-python) as a fallback parser in Phase 3 |
+| R-5 | IR abstraction leaks between Python and JS semantics | language-tagged attributes; language-specific rule branches allowed |
+| R-6 | Memory limits weak on macOS/Windows | pre-parse size and nesting caps are the primary bound; documented |
+| R-7 | Precision bias hides real flows | unresolved-call counts reported; recall measured by the benchmark |
 
-2. **tree-sitter CST gaps:** Some TypeScript constructs may not be
-   represented cleanly in the CST (e.g., type assertions, satisfies
-   operator). **Mitigation:** Test against a corpus of real-world TS code;
-   add special-case handling as needed.
+## Reversal cost
 
-3. **IR abstraction leaks:** Python and JS/TS have different semantics
-   (Python's `self` vs JS `this`, Python's MRO vs prototype chain). The IR
-   may not abstract these cleanly. **Mitigation:** Allow language-tagged IR
-   nodes and language-specific rule branches.
+**Medium.** Swapping the JS/TS parser rewrites `parser/javascript|typescript` (estimate 2–4 weeks) without
+touching rules, taint, recognisers or reporters. Moving Python off `ast` (e.g. to Option F) is larger because
+decoding and location semantics are tied to CPython, but the IR boundary contains it. Reversing process
+isolation is not contemplated: it is required by SR-03.
 
-## Reversal Cost
+## Pending human decisions referenced
 
-**Medium.** The IR provides an abstraction boundary. Replacing tree-sitter
-with a different JS/TS parser would require rewriting
-`parser/javascript/parser.py` and `parser/javascript/ir_converter.py`, but
-would not affect rules, the taint engine, framework recognisers, or
-reporters. Estimated effort: 2–4 weeks of dedicated work. Replacing the
-Python parser (away from `ast`) is harder because the `ast` module's node
-types are deeply integrated, but this is unlikely to be needed since `ast`
-is maintained by CPython itself.
+Plugin deferral to post-1.0 (D8), tighten-only repo config in CI (D1), suppression justification and
+PR-added-suppression listing (D2/D3), partial-scan-fails-CI default (D4), ASI multi-labelling (Q1/Q2), and new
+dependencies such as a git-index reader or `platformdirs` (D7). See `docs/architecture.md` §19.

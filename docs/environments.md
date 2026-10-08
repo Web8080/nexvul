@@ -42,9 +42,15 @@ turn it on when a second maintainer joins.
 - Actions in release workflows are pinned to full commit SHAs, and the workflow's `permissions:` are minimal and
   declared per job.
 
+## Decided (DEC-0006)
+
+- **Staging and the Marketplace:** staging publishes only the `@staging` moving tag and the TestPyPI rc. The
+  Marketplace listing is updated only from `prod`. Never reference `@staging` from a user workflow.
+- **Docker:** no image for 1.0. The Action installs a hash-pinned release from PyPI. Revisit if users need
+  hermetic or air-gapped CI.
+- **Signing:** required from the first release candidate, not just prod: Trusted Publishing with PEP 740
+  attestations, GitHub build-provenance attestations, a CycloneDX SBOM, signed tags, SHA-pinned actions.
+
 ## Not decided yet
 
-- Whether staging also publishes the Action as a Marketplace pre-release or only as a moving tag.
-- Whether a Docker image is justified (brief §5.21); if so it follows the same three channels.
-- Signing: sigstore for artifacts and attestations for build provenance. Planned for the first prod release.
 - The release workflow itself. It is deliberately not written until there is a package to build.

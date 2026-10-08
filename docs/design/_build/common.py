@@ -156,9 +156,10 @@ def check_colours(markup, name, extra=()):
 
 
 def check_no_handlers(markup, name):
-    if re.search(r"<[^>]+\son[a-z]+\s*=", markup):
-        m = re.search(r"<[^>]+\son[a-z]+\s*=", markup)
-        raise SystemExit("%s: inline event handler found: %s" % (name, m.group(0)[:120]))
+    for m in re.finditer(r"<[a-zA-Z][^>]*>", markup):
+        tag = re.sub(r'"[^"]*"|\'[^\']*\'', '""', m.group(0))
+        if re.search(r"\son[a-z]+\s*=", tag) or re.search(r"\sstyle\s*=", tag):
+            raise SystemExit("%s: inline handler or style attribute: %s" % (name, m.group(0)[:120]))
 
 
 def check_no_network(markup, name):

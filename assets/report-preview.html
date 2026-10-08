@@ -1,664 +1,984 @@
 <!doctype html>
 <html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>nexvul scan report</title>
-<style>
-/* -- dark-first security dashboard -- */
-
-:root {
-  --bg: #0c0e14;
-  --bg-surface: #13161f;
-  --bg-card: #191d29;
-  --bg-card-hover: #1e2333;
-  --bg-input: #0f1119;
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-yaIpH/PcFX5ctV5FoZqYDdzjchxEKTaPw0GY6pigDoQ='; script-src 'sha256-ZsI55/ZB1ciRSHfUOCiYy08e4K46dIzMMz27Y9gz+hI='; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>nexvul report</title>
+<style>:root {
+  --page: #ffffff;
+  --raised: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f7f8fa;
+  --inset: #f4f5f7;
+  --nav: #fafbfc;
+  --border: #dfe1e8;
+  --border-subtle: #eaedf2;
+  --border-strong: #c5c9d3;
+  --text: #1a1d27;
+  --muted: #5b6270;
+  --dim: #636a77;
+  --accent: #4a6cf7;
+  --accent-text: #3654dc;
+  --accent-tint: rgba(74, 108, 247, 0.08);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #8a2bb8;
+  --sink: #8a6100;
+  --hatch: rgba(20, 22, 28, 0.14);
+  --shadow: rgba(16, 24, 40, 0.06);
+  --scrim: rgba(16, 24, 40, 0.40);
+  --mock-band: #eef1fe;
+  --mock-band-text: #2b44b8;
+  --graph-edge: #8a93a6;
+  --graph-node: #ffffff;
+  --sev-critical: #c41d3a;
+  --sev-critical-tint: rgba(196, 29, 58, 0.06);
+  --sev-critical-border: rgba(196, 29, 58, 0.25);
+  --sev-high: #a64c08;
+  --sev-high-tint: rgba(166, 76, 8, 0.06);
+  --sev-high-border: rgba(166, 76, 8, 0.25);
+  --sev-medium: #8a6100;
+  --sev-medium-tint: rgba(138, 97, 0, 0.06);
+  --sev-medium-border: rgba(138, 97, 0, 0.25);
+  --sev-low: #1f5fb8;
+  --sev-low-tint: rgba(31, 95, 184, 0.06);
+  --sev-low-border: rgba(31, 95, 184, 0.25);
+  --sev-info: #5b6474;
+  --sev-info-tint: rgba(91, 100, 116, 0.06);
+  --sev-info-border: rgba(91, 100, 116, 0.20);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
   --border: #252a3a;
   --border-subtle: #1c2030;
-  --fg: #e2e4ea;
-  --fg-muted: #8890a4;
-  --fg-dim: #80889d;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
   --accent: #6c8aff;
-  --accent-glow: rgba(108, 138, 255, 0.15);
   --accent-text: #8aa4ff;
-  --critical: #ff4d6a;
-  --critical-bg: rgba(255, 77, 106, 0.08);
-  --critical-border: rgba(255, 77, 106, 0.2);
-  --high: #ff8c42;
-  --high-bg: rgba(255, 140, 66, 0.08);
-  --high-border: rgba(255, 140, 66, 0.2);
-  --medium: #f0c541;
-  --medium-bg: rgba(240, 197, 65, 0.08);
-  --medium-border: rgba(240, 197, 65, 0.2);
-  --low: #6cb6ff;
-  --low-bg: rgba(108, 182, 255, 0.08);
-  --low-border: rgba(108, 182, 255, 0.25);
-  --clean: var(--fg-muted);
-  --clean-bg: rgba(61, 214, 140, 0.06);
-  --radius: 8px;
-  --radius-lg: 12px;
-  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
-  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0c0e14;
+  --raised: #13161f;
+  --card: #191d29;
+  --card-hover: #1e2333;
+  --inset: #0f1119;
+  --nav: #10131b;
+  --border: #252a3a;
+  --border-subtle: #1c2030;
+  --border-strong: #343a4e;
+  --text: #e2e4ea;
+  --muted: #8890a4;
+  --dim: #80889d;
+  --accent: #6c8aff;
+  --accent-text: #8aa4ff;
+  --accent-tint: rgba(108, 138, 255, 0.15);
+  --partial-fill: #f0c541;
+  --partial-on: #14161c;
+  --failed-fill: #c41d3a;
+  --failed-on: #ffffff;
+  --source: #d58cff;
+  --sink: #f0c541;
+  --hatch: rgba(20, 22, 28, 0.20);
+  --shadow: rgba(0, 0, 0, 0.30);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --mock-band: #1b2140;
+  --mock-band-text: #b4c3ff;
+  --graph-edge: #5d667c;
+  --graph-node: #191d29;
+  --sev-critical: #ff6b85;
+  --sev-critical-tint: rgba(255, 107, 133, 0.10);
+  --sev-critical-border: rgba(255, 107, 133, 0.30);
+  --sev-high: #ff9d57;
+  --sev-high-tint: rgba(255, 157, 87, 0.10);
+  --sev-high-border: rgba(255, 157, 87, 0.30);
+  --sev-medium: #f0c541;
+  --sev-medium-tint: rgba(240, 197, 65, 0.10);
+  --sev-medium-border: rgba(240, 197, 65, 0.30);
+  --sev-low: #6cb6ff;
+  --sev-low-tint: rgba(108, 182, 255, 0.10);
+  --sev-low-border: rgba(108, 182, 255, 0.30);
+  --sev-info: #a3abbf;
+  --sev-info-tint: rgba(163, 171, 191, 0.08);
+  --sev-info-border: rgba(163, 171, 191, 0.25);
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #f5f6f8;
-    --bg-surface: #ffffff;
-    --bg-card: #ffffff;
-    --bg-card-hover: #f8f9fb;
-    --bg-input: #f0f1f4;
-    --border: #dfe1e8;
-    --border-subtle: #eaedf2;
-    --fg: #1a1d27;
-    --fg-muted: #6b7280;
-    --fg-dim: #6b7280;
-    --accent: #4a6cf7;
-    --accent-glow: rgba(74, 108, 247, 0.08);
-    --accent-text: #3b5de7;
-    --critical: #dc2626;
-    --critical-bg: rgba(220, 38, 38, 0.06);
-    --critical-border: rgba(220, 38, 38, 0.15);
-    --high: #d97706;
-    --high-bg: rgba(217, 119, 6, 0.06);
-    --high-border: rgba(217, 119, 6, 0.15);
-    --medium: #ca8a04;
-    --medium-bg: rgba(202, 138, 4, 0.06);
-    --medium-border: rgba(202, 138, 4, 0.15);
-    --low: #0d9488;
-    --low-bg: rgba(13, 148, 136, 0.06);
-    --low-border: rgba(13, 148, 136, 0.15);
-    --clean: var(--fg-muted);
-    --clean-bg: rgba(22, 163, 74, 0.04);
-    color-scheme: light;
-  }
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--text);font:14px/1.5 var(--body);font-variant-numeric:tabular-nums}
+a{color:var(--accent-text);text-underline-offset:2px}
+code,pre,.mono{font-family:var(--mono);font-size:12px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{margin:0;line-height:1.25}
+.dim,.dim-p{color:var(--dim)} .note{color:var(--muted);font-size:12px;margin:8px 0 0}
+.mockband{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:center;background:var(--mock-band);color:var(--mock-band-text);font-size:12px;padding:6px 16px;border-bottom:1px solid var(--border)}
+.mockband strong{letter-spacing:.06em;text-transform:uppercase}
+.mockband .seg-ctl{display:inline-flex;gap:4px;align-items:center}
+.mockband button{font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:4px;padding:2px 8px;min-height:28px;cursor:pointer}
+.mockband button[aria-pressed="true"]{background:var(--mock-band-text);color:var(--mock-band)}
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;background:var(--nav);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:12px 10px}
+.nav-head{display:flex;align-items:center;gap:8px;padding:6px 8px 14px;color:var(--text)}
+.wordmark{font-family:var(--mono);font-weight:700;letter-spacing:-.02em;font-size:17px}
+.nav-close{margin-left:auto;display:none}
+.nav-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);padding:10px 10px 4px}
+.nav ul{list-style:none;margin:0;padding:0}
+.nav-link{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-weight:500}
+.nav-link:hover{background:var(--card-hover);color:var(--text)}
+.nav-link[aria-current="page"]{background:var(--accent-tint);color:var(--accent-text);font-weight:600}
+.nav-text{flex:1}
+.nav-count{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:10px;padding:0 7px;line-height:18px;background:var(--card)}
+.nav-foot{margin-top:auto;padding:12px 10px 4px;font-size:12px;color:var(--muted);border-top:1px solid var(--border-subtle)}
+.nav-foot p{margin:0 0 6px}
+.maincol{min-width:0}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;min-height:56px;padding:8px 24px;background:var(--raised);border-bottom:1px solid var(--border)}
+.menu-btn{display:none}
+.btn-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.btn-icon.menu-btn,.btn-icon.nav-close{display:none}
+.target{display:flex;flex-direction:column;min-width:0}
+.target-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.target-val{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;color:var(--text)}
+.target-val code{font-size:13px;font-weight:600}
+.meta{color:var(--muted);font-size:12px} .meta code{font-weight:500;font-size:12px}
+.sep{color:var(--dim)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.status-pill{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:4px 12px;border-radius:16px;text-decoration:none;font-size:12px;border:1px solid var(--border-strong);color:var(--text);background:var(--card)}
+.status-word{font-weight:700;letter-spacing:.06em}
+.status-partial{background:repeating-linear-gradient(45deg,var(--partial-fill) 0 8px,var(--hatch) 8px 10px),var(--partial-fill);background-blend-mode:normal;color:var(--partial-on);border-color:var(--partial-fill)}
+.status-partial .status-detail{color:var(--partial-on)}
+.status-detail{color:var(--muted)}
+.exit-chip{font-family:var(--mono);font-size:12px;border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border-radius:8px;border:1px solid var(--border-strong);background:var(--card);color:var(--text);font:inherit;font-weight:500;cursor:pointer}
+.btn:hover{background:var(--card-hover)}
+.btn-ghost{border-color:var(--border)}
+.btn-sm{min-height:30px;padding:3px 10px;font-size:12px}
+.content{max-width:1120px;padding:24px 24px 48px}
+.view{margin-bottom:56px}
+html.js .view{display:none;margin-bottom:0}
+html.js .view.active{display:block}
+.view-head{margin:4px 0 16px}
+.view-head h1{font-size:24px;font-weight:650;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:6px 0 0;max-width:80ch}
+.only-partial{display:none!important}
+html[data-scan="partial"] .only-partial{display:revert!important}
+html[data-scan="partial"] .only-complete{display:none!important}
+.banner-partial{margin:0 0 16px;padding:12px 16px;border-radius:8px;color:var(--partial-on);background:repeating-linear-gradient(45deg,var(--partial-fill) 0 10px,var(--hatch) 10px 13px),var(--partial-fill);font-weight:500}
+.banner-partial a{color:var(--partial-on);font-weight:700}
+.result-line{font-size:15px;margin:0 0 16px}
+.tiles{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.tiles-4{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}
+.tile{display:flex;flex-direction:column;gap:2px;min-height:96px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);text-decoration:none;box-shadow:0 1px 2px var(--shadow)}
+a.tile:hover{border-color:var(--border-strong);background:var(--card-hover)}
+.tile-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;gap:6px;align-items:center}
+.tile-num{font-size:28px;font-weight:650;line-height:1.15;margin-top:4px}
+.tile-status .tile-num{font-size:20px;margin-top:10px}
+.tile-foot{font-size:12px;color:var(--muted);margin-top:auto}
+.tile-sev{border-top-width:3px}
+.tile-critical{border-top-color:var(--sev-critical)} .tile-critical .tile-label{color:var(--sev-critical)}
+.tile-high{border-top-color:var(--sev-high)} .tile-high .tile-label{color:var(--sev-high)}
+.tile-medium{border-top-color:var(--sev-medium)} .tile-medium .tile-label{color:var(--sev-medium)}
+.tile-low{border-top-color:var(--sev-low)} .tile-low .tile-label{color:var(--sev-low)}
+.meter{font-family:var(--mono);letter-spacing:-.5px;font-size:10px}
+.dist{margin:14px 0 4px}
+.dist svg{display:block;width:100%;height:10px;border-radius:5px;overflow:hidden;background:var(--inset)}
+.seg-critical,.sw-critical{fill:var(--sev-critical);background:var(--sev-critical)}
+.seg-high,.sw-high{fill:var(--sev-high);background:var(--sev-high)}
+.seg-medium,.sw-medium{fill:var(--sev-medium);background:var(--sev-medium)}
+.seg-low,.sw-low{fill:var(--sev-low);background:var(--sev-low)}
+.legend{list-style:none;display:flex;flex-wrap:wrap;gap:4px 16px;margin:8px 0 0;padding:0;font-size:12px;color:var(--muted)}
+.legend li{display:flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px}
+.strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:16px 0 20px;padding:10px 14px;border:1px solid var(--border);border-left:3px solid var(--text);border-radius:8px;background:var(--inset)}
+html[data-scan="partial"] .strip{border-left-color:var(--partial-fill)}
+.strip-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.strip-items{list-style:none;display:flex;flex-wrap:wrap;gap:4px 14px;margin:0;padding:0;font-size:13px;color:var(--muted)}
+.strip-items strong{color:var(--text)}
+.strip-warn strong{text-decoration:underline;text-decoration-color:var(--partial-fill);text-decoration-thickness:3px}
+.strip-link{margin-left:auto;font-size:13px}
+.grid-2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px;align-items:start}
+.stack{display:grid;gap:16px}
+.panel{border:1px solid var(--border);border-radius:10px;background:var(--card);padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 2px var(--shadow)}
+.grid-2 .panel,.stack .panel{margin-bottom:0}
+.panel-warn{border-left:3px solid var(--partial-fill)}
+.panel-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:10px}
+.panel-head h2{font-size:15px;font-weight:650}
+.panel-head a,.panel-head .dim{margin-left:auto;font-size:12px}
+.h3{font-size:13px;margin:16px 0 4px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.toplist{list-style:none;margin:0;padding:0}
+.toprow{display:grid;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"b r t" ". . l";gap:2px 10px;align-items:center;padding:10px 6px;border-top:1px solid var(--border-subtle);color:var(--text);text-decoration:none}
+.toplist li:first-child .toprow{border-top:0}
+.toprow:hover{background:var(--card-hover)}
+.toprow .sev{grid-area:b}.toprow .rid{grid-area:r}.toprow .ttl{grid-area:t;font-weight:500}.toprow .loc{grid-area:l;grid-column:3}
+.sev{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.06em;border:1px solid;white-space:nowrap}
+.sev-critical{background:var(--failed-fill);color:var(--failed-on);border-color:var(--failed-fill)}
+.sev-high{color:var(--sev-high);background:var(--sev-high-tint);border-color:var(--sev-high-border)}
+.sev-medium{color:var(--sev-medium);background:var(--sev-medium-tint);border-color:var(--sev-medium-border)}
+.sev-low{color:var(--sev-low);background:var(--sev-low-tint);border-color:var(--sev-low-border)}
+.sev-info{color:var(--sev-info);background:var(--sev-info-tint);border-color:var(--sev-info-border)}
+.rid{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent-text)}
+.loc{color:var(--muted);word-break:break-all}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:0 6px;color:var(--muted);background:var(--inset);margin-right:4px;line-height:18px}
+.tag-prov{border-style:dashed}
+.asi-list{list-style:none;margin:0;padding:0}
+.asi-list li{display:grid;grid-template-columns:52px minmax(0,1fr) 80px 20px;gap:8px;align-items:center;padding:5px 0;font-size:13px}
+.asi-id{font-family:var(--mono);font-size:12px;font-weight:600}
+.asi-name{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asi-bar svg{display:block;width:100%;height:8px}
+.asi-bar rect{fill:var(--accent)}
+.asi-n{text-align:right;font-weight:600}
+.kv{margin:0}
+.disclaimer{margin:24px 0 0;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:var(--inset)}
+.filters{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;padding:12px 14px;border:1px solid var(--border);border-radius:10px;background:var(--card);margin-bottom:10px}
+.filters-inline{align-items:center}
+.filters fieldset{border:0;margin:0;padding:0;min-width:0}
+.filters legend,.f-field>span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 10px;border-radius:18px;border:1px solid var(--border-strong);background:var(--card);color:var(--muted);font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{color:var(--text);font-weight:600;background:var(--accent-tint);border-color:var(--accent)}
+.chip[aria-pressed="false"]{text-decoration:line-through}
+.chip-n{font-weight:700}
+.chip-critical .meter{color:var(--sev-critical)} .chip-high .meter{color:var(--sev-high)} .chip-medium .meter{color:var(--sev-medium)} .chip-low .meter{color:var(--sev-low)}
+select,input[type="search"]{font:inherit;font-size:13px;min-height:36px;padding:6px 10px;border:1px solid var(--border-strong);border-radius:8px;background:var(--card);color:var(--text);max-width:100%}
+.f-file input{width:200px}
+.count{color:var(--muted);font-size:12px;margin:6px 2px 10px}
+.empty{border:1px dashed var(--border-strong);border-radius:10px;padding:24px;text-align:center;background:var(--inset)}
+.empty h3{font-size:15px;margin-bottom:6px}
+.empty p{color:var(--muted);margin:0 0 12px}
+.flist{display:grid;gap:10px}
+.fcard{border:1px solid var(--border);border-left:4px solid var(--border-strong);border-radius:10px;background:var(--card);box-shadow:0 1px 2px var(--shadow)}
+.fcard-critical{border-left-color:var(--sev-critical)} .fcard-high{border-left-color:var(--sev-high)} .fcard-medium{border-left-color:var(--sev-medium)} .fcard-low{border-left-color:var(--sev-low)}
+.fcard>summary{list-style:none;display:grid;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"b r t" ". . m";gap:4px 10px;align-items:center;padding:12px 16px;min-height:44px;cursor:pointer}
+.fcard>summary::-webkit-details-marker{display:none}
+.fcard>summary::after{content:"";grid-area:t;justify-self:end;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease-out}
+.fcard[open]>summary::after{transform:rotate(45deg)}
+.fcard>summary .sev{grid-area:b}.fcard>summary .rid{grid-area:r}
+.ftitle{grid-area:t;font-weight:600;padding-right:24px}
+.fmeta{grid-area:m;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--muted)}
+.fcard[open]>summary{border-bottom:1px solid var(--border-subtle)}
+.fcard.is-target{box-shadow:0 0 0 2px var(--accent)}
+.fbody{padding:14px 16px 16px}
+.fmsg{margin:0 0 12px;font-size:15px;max-width:90ch}
+.fcols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px}
+.fbody h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.fmain h4:first-child,.fside h4:first-child{margin-top:0}
+.fbody p{margin:0}
+.fbody .fmsg{margin:0 0 16px}
+.fside .cmd{white-space:pre-wrap;word-break:break-word}
+.flow{list-style:none;margin:0;padding:0;counter-reset:s;position:relative}
+.step{position:relative;display:grid;grid-template-columns:28px auto auto minmax(0,1fr);grid-template-areas:"n role loc note" ". code code code";gap:4px 8px;align-items:center;padding:8px 0 8px}
+.step+.step::before{content:"";position:absolute;left:13px;top:-10px;height:18px;border-left:2px solid var(--border-strong)}
+.step-n{grid-area:n;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:13px;border:2px solid var(--border-strong);font-weight:700;font-size:12px;background:var(--card)}
+.step-source .step-n{border-color:var(--source);color:var(--source)}
+.step-sink .step-n{border-color:var(--sink);color:var(--sink)}
+.role{grid-area:role;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.role-source{color:var(--source)} .role-sink{color:var(--sink)}
+.step .loc{grid-area:loc}
+.step-note{grid-area:note;font-size:12px;color:var(--dim)}
+.step-code{grid-area:code}
+.snip{display:block;padding:6px 10px;border-radius:6px;background:var(--inset);border:1px solid var(--border-subtle);color:var(--text);white-space:pre;overflow-x:auto}
+html[data-wrap="1"] .snip{white-space:pre-wrap;word-break:break-all}
+.nf{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fside{border-left:1px solid var(--border-subtle);padding-left:20px}
+.locs{list-style:none;margin:0;padding:0;font-size:12px}
+.locs li{padding:2px 0}
+.copyrow{display:flex;gap:6px;align-items:flex-start;margin:4px 0}
+.cmd{flex:1;min-width:0;margin:0;padding:7px 10px;border-radius:6px;background:var(--inset);border:1px solid var(--border-subtle);overflow-x:auto;white-space:pre}
+.ctl{display:inline-block;font-family:var(--mono);font-size:10px;padding:0 4px;margin:0 1px;border-radius:3px;border:1px solid var(--sev-critical-border);color:var(--sev-critical);background:var(--sev-critical-tint)}
+.callout{padding:10px 14px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-tint);margin-bottom:16px}
+.tscroll{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--card)}
+.panel .tscroll{border:0;border-radius:0}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:9px 12px;border-top:1px solid var(--border-subtle)}
+.tbl thead th{border-top:0;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--inset);white-space:nowrap}
+.tbl tbody th{font-weight:600}
+.tbl-kv th{width:200px;color:var(--muted);font-weight:500}
+.num{text-align:right}
+.state{font-size:12px;font-weight:600}
+.state-on{color:var(--text)} .state-off{color:var(--muted);text-decoration:line-through}
+.ready{font-size:11px;border:1px dashed var(--border-strong);border-radius:4px;padding:1px 6px;color:var(--muted);white-space:nowrap}
+.just{font-style:normal;quotes:"\201C" "\201D"}
+.flag-new{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;letter-spacing:.04em;padding:0 6px;border-radius:4px;color:var(--accent-text);border:1px solid var(--accent);background:var(--accent-tint)}
+.sstate{font-weight:600}
+.sstate-warn{color:var(--sev-medium)} .sstate-rejected{color:var(--sev-critical)} .sstate-stale{color:var(--muted)}
+.weak{margin:0;padding-left:18px} .weak li{margin:4px 0}
+.fw-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:6px}
+.fw{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--card)}
+.fw-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px}
+.fw p{margin:0;font-size:12px}
+.fw-meta{margin-top:8px!important;color:var(--muted)}
+.graph-wrap{overflow-x:auto;border:1px solid var(--border-subtle);border-radius:8px;background:var(--page)}
+.agraph{display:block;width:100%;min-width:900px;height:auto}
+.g-col{font:700 11px var(--body);letter-spacing:.06em;fill:var(--muted)}
+.g-edge{fill:none;stroke:var(--graph-edge);stroke-width:1.5}
+.g-cycle{stroke-dasharray:5 4}
+.arrowhead{fill:var(--graph-edge)}
+.g-elabel{font:11px var(--body);fill:var(--muted)}
+.g-node rect{fill:var(--graph-node);stroke:var(--border-strong);stroke-width:1.2}
+.g-input rect{stroke-dasharray:4 3}
+.g-agent rect{stroke:var(--text);stroke-width:1.8}
+.g-sink rect{fill:var(--inset)}
+.g-lab{font:600 12.5px var(--mono);fill:var(--text)}
+.g-sub{font:11px var(--body);fill:var(--muted)}
+.g-mark text{font:700 10.5px var(--mono);letter-spacing:.02em}
+.g-m-critical rect{fill:var(--failed-fill)} .g-m-critical text{fill:var(--failed-on)}
+.g-m-high rect{fill:var(--card);stroke:var(--sev-high)} .g-m-high text{fill:var(--sev-high)}
+.g-m-medium rect{fill:var(--card);stroke:var(--sev-medium)} .g-m-medium text{fill:var(--sev-medium)}
+.g-m-low rect{fill:var(--card);stroke:var(--sev-low)} .g-m-low text{fill:var(--sev-low)}
+.g-m-info rect{fill:var(--card);stroke:var(--border-strong);stroke-dasharray:3 2} .g-m-info text{fill:var(--muted)}
+.g-legend{list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;margin:10px 0 0;padding:0;font-size:12px;color:var(--muted)}
+.g-legend li{display:flex;align-items:center;gap:6px}
+.lg{display:inline-block;width:22px;height:12px;border:1.5px solid var(--border-strong);border-radius:3px;background:var(--graph-node)}
+.lg-input{border-style:dashed}.lg-agent{border-color:var(--text);border-width:2px}.lg-tool{border-radius:6px}.lg-sink{background:var(--inset)}
+.lg-cycle{border:0;border-top:2px dashed var(--graph-edge);height:0;border-radius:0;background:none}
+.run-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0}
+.run-meta div{border:1px solid var(--border-subtle);border-radius:8px;padding:8px 10px;background:var(--inset)}
+.run-meta dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.run-meta dd{margin:2px 0 0;font-weight:500}
+.ph-0,.ph-sw-0{fill:var(--accent);background:var(--accent)}
+.ph-1,.ph-sw-1{fill:var(--sev-low);background:var(--sev-low)}
+.ph-2,.ph-sw-2{fill:var(--text);background:var(--text)}
+.ph-3,.ph-sw-3{fill:var(--muted);background:var(--muted)}
+.src{font-size:12px;border-radius:4px;padding:1px 6px;border:1px solid var(--border);white-space:nowrap}
+.src-cli{border-color:var(--accent);color:var(--accent-text)}
+.src-file{border-color:var(--border-strong);color:var(--text);font-weight:600}
+.src-default{color:var(--muted)}
+.weak,.tbl .weak{color:var(--text)}
+.tbl-cfg .weak{font-weight:600}
+.rchips{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;margin:0;padding:0}
+.rchip{display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card)}
+.rchip-off{background:var(--inset);border-style:dashed}
+.prefs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.prefs fieldset{border:1px solid var(--border-subtle);border-radius:8px;padding:10px 12px;margin:0}
+.prefs legend{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:0 4px}
+.radio,.check{display:flex;gap:8px;align-items:center;min-height:32px}
+.radio input,.check input{width:18px;height:18px;accent-color:var(--accent)}
+.lbl{margin:14px 0 4px!important;font-weight:600;font-size:13px}
+.plain{margin:0;padding-left:18px}.plain li{margin:4px 0}
+.scrim{display:none}
+html[data-density="compact"] .fcard>summary{padding:8px 12px}
+html[data-density="compact"] .tbl th,html[data-density="compact"] .tbl td{padding:6px 10px}
+html[data-density="compact"] .tile{min-height:80px;padding:10px 12px}
+@media (max-width:1180px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.fw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .btn-icon.menu-btn{display:inline-flex}
+  html.js .nav{position:fixed;left:0;top:0;bottom:0;z-index:20;width:280px;transform:translateX(-100%);transition:transform .15s ease-out;box-shadow:0 0 24px var(--shadow)}
+  html.js.nav-open .nav{transform:none}
+  html.js.nav-open .scrim{display:block;position:fixed;inset:0;z-index:15;background:var(--scrim)}
+  html:not(.js) .nav{position:static;height:auto}
+  html:not(.js) .shell{display:block}
+  .btn-icon.nav-close{display:inline-flex}
+  .grid-2,.fcols{grid-template-columns:minmax(0,1fr)}
+  .fside{border-left:0;padding-left:0;border-top:1px solid var(--border-subtle);padding-top:12px}
+  .prefs{grid-template-columns:minmax(0,1fr)}
+  .run-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-:root[data-theme="light"] {
-  --bg: #f5f6f8;
-  --bg-surface: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f8f9fb;
-  --bg-input: #f0f1f4;
-  --border: #dfe1e8;
-  --border-subtle: #eaedf2;
-  --fg: #1a1d27;
-  --fg-muted: #6b7280;
-  --fg-dim: #6b7280;
-  --accent: #4a6cf7;
-  --accent-glow: rgba(74, 108, 247, 0.08);
-  --accent-text: #3b5de7;
-  --critical: #dc2626;
-  --critical-bg: rgba(220, 38, 38, 0.06);
-  --critical-border: rgba(220, 38, 38, 0.15);
-  --high: #d97706;
-  --high-bg: rgba(217, 119, 6, 0.06);
-  --high-border: rgba(217, 119, 6, 0.15);
-  --medium: #ca8a04;
-  --medium-bg: rgba(202, 138, 4, 0.06);
-  --medium-border: rgba(202, 138, 4, 0.15);
-  --low: #0d9488;
-  --low-bg: rgba(13, 148, 136, 0.06);
-  --low-border: rgba(13, 148, 136, 0.15);
-  --clean: var(--fg-muted);
-  --clean-bg: rgba(22, 163, 74, 0.04);
-  color-scheme: light;
+@media (max-width:600px){
+  .topbar{padding:8px 16px;gap:10px}
+  .content{padding:16px 16px 40px}
+  .tiles,.tiles-4,.fw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .status-detail,.exit-chip,#themeLabel,.target-val .meta,.target-val .sep{display:none}
+  .theme-btn{min-width:40px;justify-content:center}
+  .f-file input{width:100%}
+  .filters>*{flex:1 1 100%}
+  .strip-link{margin-left:0}
+  .view-head h1{font-size:20px}
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.5;
-  padding: 0 24px;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* -- header -- */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border-subtle);
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.logo-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #a78bfa);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.logo-mark svg { width: 18px; height: 18px; }
-.logo-text {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-}
-.scan-meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 13px;
-  color: var(--fg-muted);
-  flex-wrap: wrap;
-}
-.scan-meta code {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  background: var(--bg-input);
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
-}
-
-/* -- stat tiles -- */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 20px 0;
-}
-.stat {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.stat-label {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-dim);
-}
-.stat-value {
-  font-family: var(--font-mono);
-  font-size: 28px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-}
-.stat-detail {
-  font-size: 12px;
-  color: var(--fg-muted);
-}
-.stat--critical .stat-value { color: var(--critical); }
-.stat--high .stat-value { color: var(--high); }
-.stat--medium .stat-value { color: var(--medium); }
-.stat--findings .stat-value { color: var(--high); }
-.stat--clean .stat-value { color: var(--clean); }
-
-/* -- severity bar -- */
-.severity-bar-wrap {
-  padding: 0 0 20px;
-}
-.severity-bar {
-  display: flex;
-  height: 6px;
-  border-radius: 3px;
-  overflow: hidden;
-  background: var(--bg-input);
-}
-.severity-bar span {
-  display: block;
-  height: 100%;
-  transition: width 0.4s ease;
-}
-.severity-bar .seg-critical { background: var(--critical); }
-.severity-bar .seg-high { background: var(--high); }
-.severity-bar .seg-medium { background: var(--medium); }
-.severity-bar .seg-low { background: var(--low); }
-
-/* -- section heading -- */
-.section-heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 0 12px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fg-muted);
-  border-top: 1px solid var(--border-subtle);
-}
-.section-count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-
-/* -- finding cards -- */
-.findings { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
-
-.finding {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: start;
-  transition: background 0.15s;
-  cursor: default;
-}
-.finding:hover { background: var(--bg-card-hover); }
-
-.finding-severity {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-  margin-top: 2px;
-}
-.sev-critical {
-  color: var(--critical);
-  background: var(--critical-bg);
-  border: 1px solid var(--critical-border);
-}
-.sev-high {
-  color: var(--high);
-  background: var(--high-bg);
-  border: 1px solid var(--high-border);
-}
-.sev-medium {
-  color: var(--medium);
-  background: var(--medium-bg);
-  border: 1px solid var(--medium-border);
-}
-.sev-low {
-  color: var(--low);
-  background: var(--low-bg);
-  border: 1px solid var(--low-border);
-}
-
-.finding-body { min-width: 0; }
-.finding-title {
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.4;
-  margin-bottom: 4px;
-}
-.finding-rule {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--accent-text);
-  margin-right: 6px;
-}
-.finding-owasp {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--fg-dim);
-  background: var(--bg-input);
-  padding: 1px 6px;
-  border-radius: 3px;
-  border: 1px solid var(--border-subtle);
-  margin-left: 2px;
-}
-.finding-message {
-  font-size: 13px;
-  color: var(--fg-muted);
-  line-height: 1.5;
-  margin-top: 6px;
-}
-.finding-loc {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--fg-dim);
-  white-space: nowrap;
-  margin-top: 2px;
-  text-align: right;
-}
-.finding-loc .file { color: var(--fg-muted); }
-.finding-loc .line { color: var(--accent-text); }
-
-/* -- dataflow trace -- */
-.dataflow {
-  margin-top: 8px;
-  padding: 10px 12px;
-  background: var(--bg-input);
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.8;
-  color: var(--fg-muted);
-  overflow-x: auto;
-}
-.dataflow .df-source { color: var(--critical); font-weight: 600; }
-.dataflow .df-step { color: var(--fg-dim); }
-.dataflow .df-sink { color: var(--high); font-weight: 600; }
-.dataflow .df-arrow { color: var(--fg-dim); margin: 0 2px; }
-
-/* -- frameworks detected -- */
-.frameworks {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding-bottom: 20px;
-}
-.framework-tag {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: 4px;
-  background: var(--accent-glow);
-  border: 1px solid rgba(108, 138, 255, 0.2);
-  color: var(--accent-text);
-}
-
-/* -- scan completeness -- */
-.completeness {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  margin-bottom: 20px;
-}
-.completeness-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px 24px;
-  font-size: 13px;
-}
-.comp-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.comp-label { color: var(--fg-muted); }
-.comp-value {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.comp-ok { color: var(--clean); }
-.comp-warn { color: var(--medium); }
-
-/* -- footer -- */
-.footer {
-  padding: 16px 0 24px;
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--fg-dim);
-}
-.footer a {
-  color: var(--accent-text);
-  text-decoration: none;
-}
-.disclaimer {
-  font-size: 13px;
-  color: var(--fg-muted);
-}
-
-/* -- responsive -- */
-@media (max-width: 600px) {
-  body { padding: 0 16px; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
-  .finding {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-  .finding-loc { text-align: left; }
-  .stat-value { font-size: 22px; }
-}
-.mockup-banner{margin:12px 0 0;padding:8px 12px;border:1px dashed var(--medium-border);background:var(--medium-bg);color:var(--medium);border-radius:var(--radius);font-size:12px;font-family:var(--font-mono)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.nav,.topbar,.mockband,.filters,.copy,.scrim{display:none!important}.shell{display:block}html.js .view{display:block!important}}
 </style>
+</head>
+<body>
+<div class="mockband" role="note"><strong>Design mock-up, sample data</strong><span>Invented project. Rules are design only; nothing here is a real scan.</span>
+  <span class="seg-ctl" aria-label="Preview scan state (design review only, not in the product)">Preview state:
+    <button type="button" data-scan-set="complete" aria-pressed="true">Complete</button>
+    <button type="button" data-scan-set="partial" aria-pressed="false">Partial</button></span></div>
+<div class="shell">
+<nav class="nav" id="nav" aria-label="Report sections"><div class="nav-head"><svg class="mark" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="4" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="20" cy="12" r="2.5"/><path d="M6.5 12h3M14.5 12h3"/></svg><span class="wordmark">nexvul</span><button type="button" class="btn-icon nav-close" id="navClose" aria-label="Close menu"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div class="nav-group"><div class="nav-label">Report</div><ul><li><a class="nav-link" href="#overview" data-view="overview"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="nav-text">Overview</span></a></li><li><a class="nav-link" href="#findings" data-view="findings"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="nav-text">Findings</span><span class="nav-count">9</span></a></li><li><a class="nav-link" href="#agents" data-view="agents"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M7.3 11 16.7 6M7.3 13l9.4 5"/></svg><span class="nav-text">Frameworks and agent map</span><span class="nav-count">4</span></a></li><li><a class="nav-link" href="#rules" data-view="rules"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7"/></svg><span class="nav-text">Rules</span><span class="nav-count">22/25</span></a></li><li><a class="nav-link" href="#suppressions" data-view="suppressions"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8"/><circle cx="12" cy="12" r="4"/></svg><span class="nav-text">Suppressions</span><span class="nav-count">5</span></a></li></ul></div><div class="nav-group"><div class="nav-label">This run</div><ul><li><a class="nav-link" href="#history" data-view="history"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span class="nav-text">Scan history</span><span class="nav-count">1</span></a></li></ul></div><div class="nav-group"><div class="nav-label">Preferences</div><ul><li><a class="nav-link" href="#settings" data-view="settings"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span class="nav-text">Settings</span></a></li><li><a class="nav-link" href="#help" data-view="help"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M9.8 9.5a2.3 2.3 0 1 1 3.2 2.1c-.7.3-1 .8-1 1.5V14"/><path d="M12 17.2v.1"/></svg><span class="nav-text">Help and docs</span></a></li></ul></div><div class="nav-foot"><p><strong>Local file.</strong> No account, no sign-in, no network. Opened from your disk; nothing leaves this machine.</p><p class="dim">nexvul 0.1.0 &middot; rules 2026.10.1</p></div></nav>
+<div class="scrim" id="scrim"></div>
+<div class="maincol">
 
-<div class="mockup-banner">DESIGN MOCK-UP: sample data for a project that does not exist. nexvul has no working scanner yet.</div>
-<!-- header -->
-<div class="header">
-  <div class="logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="19" cy="15" r="2"/><path d="M6.5 15.5 10.7 8.7M13.6 8.2 17.5 13.6"/></svg>
-    </div>
-    <span class="logo-text">nexvul</span>
+<header class="topbar">
+  <button type="button" class="btn-icon menu-btn" id="menuBtn" aria-controls="nav" aria-expanded="false" aria-label="Open menu"><svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <div class="target">
+    <span class="target-label">Scan target</span>
+    <span class="target-val"><code>my-agent-project/</code><span class="sep" aria-hidden="true">&middot;</span><span class="meta">commit <code>3f2c1a9</code></span><span class="sep" aria-hidden="true">&middot;</span><span class="meta">2026-10-08 14:32:17 UTC</span></span>
   </div>
-  <div class="scan-meta">
-    <span>Scanned <code>my-agent-project/</code></span>
-    <span>327 files · 2.4s</span>
-    <span>2026-10-08 14:32 UTC</span>
+  <div class="topbar-right">
+    <a class="status-pill status-complete only-complete" href="#history" title="Scan completeness">
+      <span class="status-word">COMPLETE</span><span class="status-detail">312 of 312 files analysed</span></a>
+    <a class="status-pill status-partial only-partial" href="#history" title="Scan completeness">
+      <span class="status-word">PARTIAL SCAN</span><span class="status-detail">4 of 312 files not analysed</span></a>
+    <span class="exit-chip only-complete" title="Exit code of this run">exit 1</span>
+    <span class="exit-chip only-partial" title="Exit code of this run">exit 3</span>
+    <button type="button" class="btn btn-ghost theme-btn" id="themeBtn" aria-label="Change theme"><svg class="ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17A8.5 8.5 0 0 0 12 3.5z" fill="currentColor"/></svg><span id="themeLabel">Theme: system</span></button>
   </div>
-</div>
+</header>
+<main class="content" id="main">
 
-<!-- stat tiles -->
-<div class="stats">
-  <div class="stat stat--findings">
-    <span class="stat-label">Findings</span>
-    <span class="stat-value">12</span>
-    <span class="stat-detail">across 8 files</span>
+<section class="view" id="overview" aria-labelledby="h-overview">
+  <div class="banner-partial only-partial" role="alert"><strong>PARTIAL SCAN</strong> &mdash; 4 of 312 files not analysed. This result is not a clean bill of health. <a href="#history">See what was not analysed</a></div>
+  <div class="view-head"><h1 id="h-overview">Overview</h1>
+    <p class="sub">Scan of <code>my-agent-project/</code> on branch <code>feature/refunds</code> &middot; fail-on <strong>high</strong> &middot; local run</p></div>
+  <p class="result-line only-complete"><strong>5 findings at or above fail-on (high).</strong> Exit code 1. 9 findings in total; 3 suppressed.</p>
+  <p class="result-line only-partial"><strong>5 findings at or above fail-on (high) in the files that were analysed.</strong> Exit code 3 (scan incomplete).</p>
+  <div class="tiles"><a class="tile tile-status" href="#history"><span class="tile-label">Status</span><span class="tile-num only-complete">Complete</span><span class="tile-num only-partial">Partial</span><span class="tile-foot only-complete">312 of 312 files</span><span class="tile-foot only-partial">308 of 312 files</span></a><a class="tile" href="#findings"><span class="tile-label">Findings</span><span class="tile-num">9</span><span class="tile-foot">5 at or above high</span></a><a class="tile tile-sev tile-critical" href="#findings/sev=critical"><span class="tile-label">CRITICAL <span class="meter" aria-hidden="true">████</span></span><span class="tile-num">1</span><span class="tile-foot">fails the build</span></a><a class="tile tile-sev tile-high" href="#findings/sev=high"><span class="tile-label">HIGH <span class="meter" aria-hidden="true">███░</span></span><span class="tile-num">4</span><span class="tile-foot">fails the build</span></a><a class="tile tile-sev tile-medium" href="#findings/sev=medium"><span class="tile-label">MEDIUM <span class="meter" aria-hidden="true">██░░</span></span><span class="tile-num">2</span><span class="tile-foot">below fail-on</span></a><a class="tile tile-sev tile-low" href="#findings/sev=low"><span class="tile-label">LOW <span class="meter" aria-hidden="true">█░░░</span></span><span class="tile-num">2</span><span class="tile-foot">below fail-on</span></a><a class="tile" href="#suppressions"><span class="tile-label">Suppressed</span><span class="tile-num">3</span><span class="tile-foot">1 rejected &middot; 1 stale</span></a></div>
+  <div class="dist"><svg viewBox="0 0 100 10" preserveAspectRatio="none" role="img" aria-label="Findings by severity: 1 critical, 4 high, 2 medium, 2 low"><rect class="seg seg-critical" x="0.00" y="0" width="10.51" height="10"/><rect class="seg seg-high" x="11.11" y="0" width="43.84" height="10"/><rect class="seg seg-medium" x="55.56" y="0" width="21.62" height="10"/><rect class="seg seg-low" x="77.78" y="0" width="21.62" height="10"/></svg><ul class="legend"><li><span class="sw sw-critical" aria-hidden="true"></span>Critical 1</li><li><span class="sw sw-high" aria-hidden="true"></span>High 4</li><li><span class="sw sw-medium" aria-hidden="true"></span>Medium 2</li><li><span class="sw sw-low" aria-hidden="true"></span>Low 2</li></ul></div>
+  <section class="strip" aria-label="What was checked"><div class="strip-label">What was checked</div><ul class="strip-items"><li class="only-complete"><strong>312/312</strong> files analysed</li><li class="only-partial strip-warn"><strong>308/312</strong> files analysed &middot; 4 not analysed</li><li><strong>22/25</strong> rules run</li><li>LangGraph, LangChain, OpenAI Agents SDK, MCP</li><li>cross-file flows on</li><li>3 dynamic imports not followed</li><li>18 files excluded by config (counted)</li></ul><a class="strip-link" href="#history">Full completeness and provenance</a></section>
+  <div class="grid-2">
+    <section class="panel" aria-labelledby="h-top"><div class="panel-head"><h2 id="h-top">Top findings</h2><a href="#findings">All 9 findings</a></div>
+      <ul class="toplist"><li><a class="toprow" href="#findings/F1"><span class="sev sev-critical"><span class="sev-word">CRITICAL</span><span class="meter" aria-hidden="true">████</span></span><span class="rid">NEX018</span><span class="ttl">Financial action without human oversight</span><code class="loc">agent/billing.py:58</code></a></li><li><a class="toprow" href="#findings/F2"><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX020</span><span class="ttl">Dangerous capability combination (shell/code-exec + unrestricted network)</span><code class="loc">agent/tools.py:18</code></a></li><li><a class="toprow" href="#findings/F3"><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX002</span><span class="ttl">External content indexed into a vector store</span><code class="loc">agent/ingest.py:42</code></a></li><li><a class="toprow" href="#findings/F4"><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX007</span><span class="ttl">MCP connection without authentication or over cleartext</span><code class="loc">mcp.json:12</code></a></li><li><a class="toprow" href="#findings/F5"><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX005</span><span class="ttl">Retrieved content promoted to trusted instructions</span><code class="loc">agent/prompts.py:27</code></a></li></ul></section>
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-asi"><div class="panel-head"><h2 id="h-asi">By OWASP ASI category</h2></div>
+        <ul class="asi-list"><li><span class="asi-id">ASI01</span><span class="asi-name">Agent Goal Hijack</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI02</span><span class="asi-name">Tool Misuse</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI04</span><span class="asi-name">Agentic Supply Chain</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI05</span><span class="asi-name">Unexpected Code Execution</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI06</span><span class="asi-name">Memory &amp; Context Poisoning</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="50.0" height="8" rx="1"/></svg></span><span class="asi-n">2</span></li><li><span class="asi-id">ASI07</span><span class="asi-name">Insecure Inter-Agent Communication</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI08</span><span class="asi-name">Cascading Failures</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="100.0" height="8" rx="1"/></svg></span><span class="asi-n">4</span></li><li><span class="asi-id">ASI09</span><span class="asi-name">Human-Agent Trust Exploitation</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li><li><span class="asi-id">ASI10</span><span class="asi-name">Rogue Agents</span><span class="asi-bar" aria-hidden="true"><svg viewBox="0 0 100 8" preserveAspectRatio="none"><rect x="0" y="0" width="25.0" height="8" rx="1"/></svg></span><span class="asi-n">1</span></li></ul>
+        <p class="note">A finding can carry more than one ASI tag. Counts are findings, not coverage of a category.</p></section>
+      <section class="panel" aria-labelledby="h-sup"><div class="panel-head"><h2 id="h-sup">Suppressions</h2><a href="#suppressions">Review</a></div>
+        <p class="kv"><strong>3</strong> applied &middot; <strong>1</strong> rejected (hidden character) &middot; <strong>1</strong> stale</p>
+        <p class="note">3 suppressions were added on this branch. Suppressions are claims made in the scanned code; review the justifications.</p></section>
+    </div>
   </div>
-  <div class="stat stat--critical">
-    <span class="stat-label">Critical</span>
-    <span class="stat-value">2</span>
-    <span class="stat-detail">highest severity</span>
+  <p class="disclaimer">A finding means nexvul identified a risky pattern. It does not prove the code is exploitable. A clean nexvul result does not prove that an application is secure.</p>
+</section>
+<section class="view" id="findings" aria-labelledby="h-findings">
+  <div class="banner-partial only-partial" role="alert"><strong>PARTIAL SCAN</strong> &mdash; 4 of 312 files not analysed. This result is not a clean bill of health. <a href="#history">See what was not analysed</a></div>
+  <div class="view-head"><h1 id="h-findings">Findings</h1>
+    <p class="sub">9 findings from 22 rules run, highest severity first. Select a finding to see its flow, locations and fix.</p></div>
+  <form class="filters" id="filters" aria-label="Filter findings">
+    <fieldset class="f-sev"><legend>Severity</legend><div class="chips"><button type="button" class="chip chip-critical" data-sev="critical" aria-pressed="true">Critical<span class="meter" aria-hidden="true">████</span><span class="chip-n">1</span></button><button type="button" class="chip chip-high" data-sev="high" aria-pressed="true">High<span class="meter" aria-hidden="true">███░</span><span class="chip-n">4</span></button><button type="button" class="chip chip-medium" data-sev="medium" aria-pressed="true">Medium<span class="meter" aria-hidden="true">██░░</span><span class="chip-n">2</span></button><button type="button" class="chip chip-low" data-sev="low" aria-pressed="true">Low<span class="meter" aria-hidden="true">█░░░</span><span class="chip-n">2</span></button></div></fieldset>
+    <label class="f-field"><span>ASI category</span><select id="fAsi"><option value="">All categories</option><option value="ASI01">ASI01 Agent Goal Hijack</option><option value="ASI02">ASI02 Tool Misuse</option><option value="ASI04">ASI04 Agentic Supply Chain</option><option value="ASI05">ASI05 Unexpected Code Execution</option><option value="ASI06">ASI06 Memory &amp; Context Poisoning</option><option value="ASI07">ASI07 Insecure Inter-Agent Communication</option><option value="ASI08">ASI08 Cascading Failures</option><option value="ASI09">ASI09 Human-Agent Trust Exploitation</option><option value="ASI10">ASI10 Rogue Agents</option></select></label>
+    <label class="f-field"><span>Rule</span><select id="fRule"><option value="">All rules</option><option value="NEX002">NEX002 External content indexed into a vector store</option><option value="NEX005">NEX005 Retrieved content promoted to trusted instru…</option><option value="NEX007">NEX007 MCP connection without authentication or ove…</option><option value="NEX011">NEX011 Recursive delegation without depth bound</option><option value="NEX014">NEX014 Agent iteration limit disabled or unbounded</option><option value="NEX015">NEX015 Missing timeout around agent or tool executi…</option><option value="NEX018">NEX018 Financial action without human oversight</option><option value="NEX020">NEX020 Dangerous capability combination (shell/code…</option></select></label>
+    <label class="f-field f-file"><span>File contains</span><input id="fFile" type="search" placeholder="e.g. agent/tools" autocomplete="off" spellcheck="false"></label>
+    <button type="button" class="btn btn-ghost" id="fClear">Clear filters</button>
+  </form>
+  <p class="count" id="fCount" aria-live="polite">Showing 9 of 9 findings</p>
+  <div class="empty" id="fEmpty" hidden>
+    <h3>No findings match these filters</h3>
+    <p>9 findings are hidden by the current filters. This is not a scan result: clear the filters to see them.</p>
+    <button type="button" class="btn" id="fClear2">Clear filters</button>
   </div>
-  <div class="stat stat--high">
-    <span class="stat-label">High</span>
-    <span class="stat-value">4</span>
-    <span class="stat-detail">review next</span>
+  <div class="flist" id="flist">
+<details class="fcard fcard-critical" id="f-F1" data-sev="critical" data-asi="ASI02 ASI09" data-rule="NEX018" data-file="agent/billing.py" open>
+  <summary>
+    <span class="sev sev-critical"><span class="sev-word">CRITICAL</span><span class="meter" aria-hidden="true">████</span></span><span class="rid">NEX018</span><span class="ftitle">Financial action without human oversight</span>
+    <span class="fmeta"><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Human-Agent Trust Exploitation">ASI09</span><span class="conf">confidence medium</span><code class="loc">agent/billing.py:58:9</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">Tool refund_order calls stripe.Refund.create() with an amount chosen by the model. No approval step was found on the path to the call in the scanned code; controls outside this repository are not visible to nexvul.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Flow <span class="dim">(3 steps, source to sink)</span></h4><ol class="flow"><li class="step step-source"><span class="step-n">1</span><span class="role role-source">source</span><code class="loc">agent/billing.py:31</code><span class="step-note">Tool argument chosen by the model</span><div class="step-code"><code class="snip">@function_tool def refund_order(order_id: str, amount: float):</code></div></li><li class="step step-step"><span class="step-n">2</span><span class="role role-step">step</span><code class="loc">agent/billing.py:44</code><span class="step-note">Value converted, not bounded</span><div class="step-code"><code class="snip">amt = int(amount * 100)</code></div></li><li class="step step-sink"><span class="step-n">3</span><span class="role role-sink">sink</span><code class="loc">agent/billing.py:58</code><span class="step-note">Financial action</span><div class="step-code"><code class="snip">stripe.Refund.create(charge=order.charge_id, amount=amt)</code></div></li></ol>
+        <h4>Why it matters</h4><p>A model chooses the refund amount. Text the model reads (a customer email, a retrieved page) can steer that choice, and nothing in the scanned code asks a person before money moves.</p>
+        <h4>How to fix</h4><p>Require human approval before the call (needs_approval=True on the tool), or cap the amount in code and send larger refunds to a review queue.</p>
+        <h4>What nexvul looked for and did not find</h4><p>needs_approval=True, a human-in-the-loop interrupt, an amount cap, a policy check</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/billing.py:31</code></li><li><code class="loc">agent/billing.py:44</code></li><li><code class="loc">agent/billing.py:58</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX018</span> Financial action without human oversight<br><span class="dim">Framework: OpenAI Agents SDK</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Approvals enforced outside this repository (a payment gateway rule, a Stripe Radar policy). Whether a person who approves actually reads the request.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX018] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX018] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX018</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX018">Copy</button></div>
+      </aside>
+    </div>
   </div>
-  <div class="stat stat--medium">
-    <span class="stat-label">Medium</span>
-    <span class="stat-value">4</span>
-    <span class="stat-detail">review recommended</span>
+</details>
+<details class="fcard fcard-high" id="f-F2" data-sev="high" data-asi="ASI10 ASI05" data-rule="NEX020" data-file="agent/tools.py">
+  <summary>
+    <span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX020</span><span class="ftitle">Dangerous capability combination (shell/code-exec + unrestricted network)</span>
+    <span class="fmeta"><span class="tag" title="Rogue Agents">ASI10</span><span class="tag" title="Unexpected Code Execution">ASI05</span><span class="conf">confidence medium</span><code class="loc">agent/tools.py:18:1</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">Agent research_agent can run shell commands (run_shell) and send HTTP requests to any host (fetch_url); no approval step or allowlist was found in the scanned code.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Flow <span class="dim">(3 steps, source to sink)</span></h4><ol class="flow"><li class="step step-source"><span class="step-n">1</span><span class="role role-source">source</span><code class="loc">agent/graph.py:40</code><span class="step-note">Agent definition</span><div class="step-code"><code class="snip">research_agent = create_react_agent(llm, tools=TOOLS)</code></div></li><li class="step step-step"><span class="step-n">2</span><span class="role role-step">step</span><code class="loc">agent/tools.py:18</code><span class="step-note">Tool list</span><div class="step-code"><code class="snip">TOOLS = [search_web, fetch_url, index_docs, run_shell]</code></div></li><li class="step step-sink"><span class="step-n">3</span><span class="role role-sink">sink</span><code class="loc">agent/tools.py:72</code><span class="step-note">Shell execution</span><div class="step-code"><code class="snip">subprocess.run(cmd, shell=True, capture_output=True)</code></div></li></ol>
+        <h4>Why it matters</h4><p>An agent that can both execute commands and reach any host can move data out of the machine it runs on if its instructions are steered.</p>
+        <h4>How to fix</h4><p>Split the tools across two agents, or require approval for run_shell and restrict fetch_url to an allowlist of hosts.</p>
+        <h4>What nexvul looked for and did not find</h4><p>an approval interrupt before run_shell, a host allowlist on fetch_url, a sandbox wrapper</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/graph.py:40</code></li><li><code class="loc">agent/tools.py:18</code> <span class="dim">primary</span></li><li><code class="loc">agent/tools.py:72</code></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX020</span> Dangerous capability combination (shell/code-exec + unrestricted network)<br><span class="dim">Framework: LangGraph</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Container, VM or network-policy sandboxes configured outside this repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX020] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX020] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX020</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX020">Copy</button></div>
+      </aside>
+    </div>
   </div>
-  <div class="stat">
-    <span class="stat-label">Low</span>
-    <span class="stat-value">2</span>
-    <span class="stat-detail">informational</span>
+</details>
+<details class="fcard fcard-high" id="f-F3" data-sev="high" data-asi="ASI06" data-rule="NEX002" data-file="agent/ingest.py">
+  <summary>
+    <span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX002</span><span class="ftitle">External content indexed into a vector store</span>
+    <span class="fmeta"><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span><span class="conf">confidence high</span><code class="loc">agent/ingest.py:42:5</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">Content returned by requests.get() reaches vector_store.add_documents() without an identified validation or trust-boundary check.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Flow <span class="dim">(4 steps, source to sink)</span></h4><ol class="flow"><li class="step step-source"><span class="step-n">1</span><span class="role role-source">source</span><code class="loc">agent/ingest.py:30</code><span class="step-note">HTTP response body</span><div class="step-code"><code class="snip">html = requests.get(url, timeout=10).text</code></div></li><li class="step step-step"><span class="step-n">2</span><span class="role role-step">step</span><code class="loc">agent/ingest.py:35</code><span class="step-note">Sanitiser not recognised</span><div class="step-code"><code class="snip">text = clean(html)</code></div></li><li class="step step-step"><span class="step-n">3</span><span class="role role-step">step</span><code class="loc">agent/ingest.py:38</code><span class="step-note">step</span><div class="step-code"><code class="snip">docs = [Document(page_content=text, metadata={&quot;url&quot;: url})]</code></div></li><li class="step step-sink"><span class="step-n">4</span><span class="role role-sink">sink</span><code class="loc">agent/ingest.py:42</code><span class="step-note">Vector store write</span><div class="step-code"><code class="snip">vector_store.add_documents(docs)</code></div></li></ol>
+        <h4>Why it matters</h4><p>Documents in a vector store are retrieved later and placed in the model&#x27;s context. Text an attacker controls on a web page can carry instructions that the agent follows on a future, unrelated request.</p>
+        <h4>How to fix</h4><p>Allowlist the sources you index, record provenance on every stored document, and keep retrieved text out of system instructions.</p>
+        <h4>What nexvul looked for and did not find</h4><p>a source allowlist, a provenance or trust field checked at retrieval</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/ingest.py:30</code></li><li><code class="loc">agent/ingest.py:35</code></li><li><code class="loc">agent/ingest.py:38</code></li><li><code class="loc">agent/ingest.py:42</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX002</span> External content indexed into a vector store<br><span class="dim">Framework: LangChain</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Poisoned documents already in the corpus. Validation helpers nexvul does not recognise (treated as absent, which can cause a false positive).</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX002] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX002] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX002</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX002">Copy</button></div>
+      </aside>
+    </div>
   </div>
-  <div class="stat">
-    <span class="stat-label">Rules run</span>
-    <span class="stat-value" style="font-size:22px">25 of 25</span>
-    <span class="stat-detail">scope, not a verdict</span>
+</details>
+<details class="fcard fcard-high" id="f-F4" data-sev="high" data-asi="ASI07 ASI04" data-rule="NEX007" data-file="mcp.json">
+  <summary>
+    <span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX007</span><span class="ftitle">MCP connection without authentication or over cleartext</span>
+    <span class="fmeta"><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span><span class="tag" title="Agentic Supply Chain">ASI04</span><span class="conf">confidence high</span><code class="loc">mcp.json:12:7</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">MCP server &quot;search&quot; is reached over http:// at a non-loopback host with no authentication configured.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Location</h4><p class="nf"><code class="loc">mcp.json:12:7</code> <span class="dim">Configuration finding: no data flow to show.</span></p>
+        <h4>Why it matters</h4><p>Without transport security or authentication, anyone on the network path can read or alter the tool results the agent trusts.</p>
+        <h4>How to fix</h4><p>Use https:// and configure authentication for remote MCP servers.</p>
+        <h4>What nexvul looked for and did not find</h4><p>an Authorization header, an OAuth block, an https:// URL</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">mcp.json:12</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX007</span> MCP connection without authentication or over cleartext<br><span class="dim">Framework: MCP</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Authentication added by a proxy or service mesh outside this repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX007] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX007] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX007</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX007">Copy</button></div>
+      </aside>
+    </div>
   </div>
+</details>
+<details class="fcard fcard-high" id="f-F5" data-sev="high" data-asi="ASI06 ASI01" data-rule="NEX005" data-file="agent/prompts.py">
+  <summary>
+    <span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span><span class="rid">NEX005</span><span class="ftitle">Retrieved content promoted to trusted instructions</span>
+    <span class="fmeta"><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span><span class="tag" title="Agent Goal Hijack">ASI01</span><span class="conf">confidence medium</span><code class="loc">agent/prompts.py:27:12</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">Text returned by retriever.invoke() is concatenated into the system message without delimiters or a trust label.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Flow <span class="dim">(3 steps, source to sink)</span></h4><ol class="flow"><li class="step step-source"><span class="step-n">1</span><span class="role role-source">source</span><code class="loc">agent/rag.py:19</code><span class="step-note">Retrieved content</span><div class="step-code"><code class="snip">chunks = retriever.invoke(question)</code></div></li><li class="step step-step"><span class="step-n">2</span><span class="role role-step">step</span><code class="loc">agent/prompts.py:22</code><span class="step-note">step</span><div class="step-code"><code class="snip">ctx = &quot;\n&quot;.join(c.page_content for c in retrieved_chunks_for_customer_support_escalation_workflow_with_extended_context_window_and…[a6cb9c]</code></div></li><li class="step step-sink"><span class="step-n">3</span><span class="role role-sink">sink</span><code class="loc">agent/prompts.py:27</code><span class="step-note">System instructions</span><div class="step-code"><code class="snip">SystemMessage(content=BASE_RULES + ctx)</code></div></li></ol>
+        <h4>Why it matters</h4><p>Content placed in system instructions is treated by the model as the developer&#x27;s own rules.</p>
+        <h4>How to fix</h4><p>Move retrieved text into a user or tool message, wrapped in clear delimiters.</p>
+        <h4>What nexvul looked for and did not find</h4><p>delimiters around retrieved text, placement in a user or tool message</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/prompts.py:22</code></li><li><code class="loc">agent/prompts.py:27</code> <span class="dim">primary</span></li><li><code class="loc">agent/rag.py:19</code></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX005</span> Retrieved content promoted to trusted instructions<br><span class="dim">Framework: LangChain</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Model-side defences. Prompt templates loaded at runtime from outside the repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX005] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX005] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX005</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX005">Copy</button></div>
+      </aside>
+    </div>
+  </div>
+</details>
+<details class="fcard fcard-medium" id="f-F6" data-sev="medium" data-asi="ASI08" data-rule="NEX014" data-file="agent/graph.py">
+  <summary>
+    <span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span><span class="rid">NEX014</span><span class="ftitle">Agent iteration limit disabled or unbounded</span>
+    <span class="fmeta"><span class="tag" title="Cascading Failures">ASI08</span><span class="conf">confidence high</span><code class="loc">agent/graph.py:91:12</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">graph.compile() result is invoked with recursion_limit=None.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Location</h4><p class="nf"><code class="loc">agent/graph.py:91:12</code> <span class="dim">Configuration finding: no data flow to show.</span></p>
+        <h4>Why it matters</h4><p>A run that never reaches its stop condition keeps calling the model and tools.</p>
+        <h4>How to fix</h4><p>Set a finite recursion_limit sized to the longest legitimate run.</p>
+        <h4>What nexvul looked for and did not find</h4><p>a finite recursion_limit in the invoke config</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/graph.py:91</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX014</span> Agent iteration limit disabled or unbounded<br><span class="dim">Framework: LangGraph</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Limits applied by a job runner or timeout outside this repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX014] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX014] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX014</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX014">Copy</button></div>
+      </aside>
+    </div>
+  </div>
+</details>
+<details class="fcard fcard-medium" id="f-F7" data-sev="medium" data-asi="ASI08" data-rule="NEX011" data-file="agent/supervisor.py">
+  <summary>
+    <span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span><span class="rid">NEX011</span><span class="ftitle">Recursive delegation without depth bound</span>
+    <span class="fmeta"><span class="tag" title="Cascading Failures">ASI08</span><span class="conf">confidence medium</span><code class="loc">agent/supervisor.py:64:5</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">supervisor delegates to research_agent, which can route back to supervisor; no depth counter was found on this cycle in the scanned code.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Flow <span class="dim">(3 steps, source to sink)</span></h4><ol class="flow"><li class="step step-source"><span class="step-n">1</span><span class="role role-source">source</span><code class="loc">agent/supervisor.py:51</code><span class="step-note">Edge</span><div class="step-code"><code class="snip">builder.add_edge(&quot;supervisor&quot;, &quot;research_agent&quot;)</code></div></li><li class="step step-step"><span class="step-n">2</span><span class="role role-step">step</span><code class="loc">agent/supervisor.py:58</code><span class="step-note">Edge</span><div class="step-code"><code class="snip">builder.add_conditional_edges(&quot;research_agent&quot;, route)</code></div></li><li class="step step-sink"><span class="step-n">3</span><span class="role role-sink">sink</span><code class="loc">agent/supervisor.py:64</code><span class="step-note">Cycle closes</span><div class="step-code"><code class="snip">return &quot;supervisor&quot;</code></div></li></ol>
+        <h4>Why it matters</h4><p>Two agents that hand work back and forth without a bound can loop until a global limit stops them.</p>
+        <h4>How to fix</h4><p>Carry a hop counter in graph state and route to END when it passes a fixed bound.</p>
+        <h4>What nexvul looked for and did not find</h4><p>a depth or hop counter in state checked by route()</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/supervisor.py:51</code></li><li><code class="loc">agent/supervisor.py:58</code></li><li><code class="loc">agent/supervisor.py:64</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX011</span> Recursive delegation without depth bound<br><span class="dim">Framework: LangGraph</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Bounds enforced by the caller of the graph.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX011] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX011] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX011</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX011">Copy</button></div>
+      </aside>
+    </div>
+  </div>
+</details>
+<details class="fcard fcard-low" id="f-F8" data-sev="low" data-asi="ASI08" data-rule="NEX015" data-file="agent/tools.py">
+  <summary>
+    <span class="sev sev-low"><span class="sev-word">LOW</span><span class="meter" aria-hidden="true">█░░░</span></span><span class="rid">NEX015</span><span class="ftitle">Missing timeout around agent or tool execution</span>
+    <span class="fmeta"><span class="tag" title="Cascading Failures">ASI08</span><span class="conf">confidence medium</span><code class="loc">agent/tools.py:45:16</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">httpx.get() inside tool search_web has no timeout argument.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Location</h4><p class="nf"><code class="loc">agent/tools.py:45:16</code> <span class="dim">Configuration finding: no data flow to show.</span></p>
+        <h4>Why it matters</h4><p>A tool call that never returns holds the agent run open.</p>
+        <h4>How to fix</h4><p>Pass timeout= to the client or wrap the tool in asyncio.wait_for().</p>
+        <h4>What nexvul looked for and did not find</h4><p>timeout= on the call or client, asyncio.wait_for around the tool</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">agent/tools.py:45</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX015</span> Missing timeout around agent or tool execution<br><span class="dim">Framework: LangGraph</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Timeouts set on a shared client created in another repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX015] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX015] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX015</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX015">Copy</button></div>
+      </aside>
+    </div>
+  </div>
+</details>
+<details class="fcard fcard-low" id="f-F9" data-sev="low" data-asi="ASI08" data-rule="NEX015" data-file="tools/&lt;img src=x onerror=alert(1)&gt;.py">
+  <summary>
+    <span class="sev sev-low"><span class="sev-word">LOW</span><span class="meter" aria-hidden="true">█░░░</span></span><span class="rid">NEX015</span><span class="ftitle">Missing timeout around agent or tool execution</span>
+    <span class="fmeta"><span class="tag" title="Cascading Failures">ASI08</span><span class="conf">confidence medium</span><code class="loc">tools/&lt;img src=x onerror=alert(1)&gt;.py:3:1</code></span>
+  </summary>
+  <div class="fbody">
+    <p class="fmsg">httpx.post() inside tool notify has no timeout argument.</p>
+    <div class="fcols">
+      <div class="fmain"><h4>Location</h4><p class="nf"><code class="loc">tools/&lt;img src=x onerror=alert(1)&gt;.py:3:1</code> <span class="dim">Configuration finding: no data flow to show.</span></p>
+        <h4>Why it matters</h4><p>A tool call that never returns holds the agent run open.</p>
+        <h4>How to fix</h4><p>Pass timeout= to the client or wrap the tool in asyncio.wait_for().</p>
+        <h4>What nexvul looked for and did not find</h4><p>timeout= on the call or client</p>
+      </div>
+      <aside class="fside">
+        <h4>Locations</h4><ul class="locs"><li><code class="loc">tools/&lt;img src=x onerror=alert(1)&gt;.py:3</code> <span class="dim">primary</span></li></ul>
+        <h4>Rule</h4><p><span class="rid">NEX015</span> Missing timeout around agent or tool execution<br><span class="dim">Framework: LangGraph</span></p>
+        <h4>Not detected by this rule</h4><p class="dim-p">Timeouts set on a shared client created in another repository.</p>
+        <h4>Suppress this finding</h4><div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX015] -- &lt;why this is mitigated&gt;</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX015] -- &lt;why this is mitigated&gt;">Copy</button></div>
+        <p class="note">Add the comment on the flagged line or the line above. The reason after <code>--</code> is required in CI.</p>
+        <h4>Learn the rule</h4><div class="copyrow"><pre class="cmd"><code>nexvul explain NEX015</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX015">Copy</button></div>
+      </aside>
+    </div>
+  </div>
+</details></div>
+  <p class="disclaimer">A finding means nexvul identified a risky pattern. It does not prove the code is exploitable.</p>
+</section>
+<section class="view" id="agents" aria-labelledby="h-agents">
+  <div class="view-head"><h1 id="h-agents">Frameworks and agent map</h1>
+    <p class="sub">What nexvul recognised in the scanned code: frameworks, agents, their tools, and the sensitive calls those tools can reach.</p></div>
+  <div class="fw-grid"><div class="fw"><div class="fw-head"><strong>LangGraph</strong><span class="tag">0.2.x</span></div><p class="dim-p">import langgraph.graph in 9 files; StateGraph built in agent/graph.py</p><p class="fw-meta"><strong>9</strong> files &middot; <strong>11</strong> rules attached</p></div><div class="fw"><div class="fw-head"><strong>LangChain</strong><span class="tag">0.3.x</span></div><p class="dim-p">langchain_core and langchain_community imports; vector store in agent/ingest.py</p><p class="fw-meta"><strong>6</strong> files &middot; <strong>8</strong> rules attached</p></div><div class="fw"><div class="fw-head"><strong>OpenAI Agents SDK</strong><span class="tag">0.4.x</span></div><p class="dim-p">@function_tool and Agent(...) in agent/billing.py</p><p class="fw-meta"><strong>3</strong> files &middot; <strong>6</strong> rules attached</p></div><div class="fw"><div class="fw-head"><strong>MCP</strong><span class="tag">config</span></div><p class="dim-p">mcpServers block in mcp.json (2 servers)</p><p class="fw-meta"><strong>1</strong> files &middot; <strong>3</strong> rules attached</p></div></div>
+  <p class="note">Not recognised: CrewAI, AutoGen (no imports found). Rules that depend on a framework attach only to the frameworks above.</p>
+  <section class="panel" aria-labelledby="h-graph"><div class="panel-head"><h2 id="h-graph">Agent and tool graph</h2>
+    <span class="dim">Built from static analysis; runtime wiring outside this repository is not shown</span></div>
+    <div class="graph-wrap"><svg class="agraph" viewBox="0 0 1040 470" role="img" aria-labelledby="ag-t ag-d"><title id="ag-t">Agent and tool graph for my-agent-project</title><desc id="ag-d">Inputs reach the supervisor, which delegates to research_agent and billing_agent. research_agent has four tools; billing_agent has refund_order. The table below lists the same information.</desc><defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 8 4 0 8z" class="arrowhead"/></marker></defs><text class="g-col" x="16" y="18">INPUTS</text><text class="g-col" x="262" y="18">AGENTS</text><text class="g-col" x="520" y="18">TOOLS</text><text class="g-col" x="806" y="18">SENSITIVE SINKS</text><path class="g-edge" d="M192 62 C227 62 227 92 260 92" marker-end="url(#arr)"/><path class="g-edge" d="M192 152 C227 152 227 92 260 92" marker-end="url(#arr)"/><path class="g-edge" d="M438 260 C479 260 479 172 518 172" marker-end="url(#arr)"/><path class="g-edge" d="M438 260 C479 260 479 232 518 232" marker-end="url(#arr)"/><path class="g-edge" d="M438 260 C479 260 479 292 518 292" marker-end="url(#arr)"/><path class="g-edge" d="M438 260 C479 260 479 352 518 352" marker-end="url(#arr)"/><path class="g-edge" d="M438 414 C479 414 479 414 518 414" marker-end="url(#arr)"/><path class="g-edge" d="M670 172 C738 172 738 172 804 172" marker-end="url(#arr)"/><path class="g-edge" d="M670 232 C738 232 738 232 804 232" marker-end="url(#arr)"/><path class="g-edge" d="M670 292 C738 292 738 292 804 292" marker-end="url(#arr)"/><path class="g-edge" d="M670 352 C738 352 738 352 804 352" marker-end="url(#arr)"/><path class="g-edge" d="M670 414 C738 414 738 414 804 414" marker-end="url(#arr)"/><path class="g-edge g-cycle" d="M382 238 L382 116" marker-end="url(#arr)"/><text class="g-elabel" x="328" y="168">delegates</text><text class="g-elabel" x="388" y="196">routes back</text><g class="g-node g-input"><rect x="16" y="40" width="176" height="44" rx="8"/><text class="g-lab" x="28" y="59">POST /agents/run</text><text class="g-sub" x="28" y="75">agent/server.py:41</text></g><g class="g-node g-input"><rect x="16" y="130" width="176" height="44" rx="8"/><text class="g-lab" x="28" y="149">User chat message</text><text class="g-sub" x="28" y="165">agent/app.py:12</text></g><g class="g-node g-agent"><rect x="262" y="70" width="176" height="44" rx="8"/><text class="g-lab" x="274" y="89">supervisor</text><text class="g-sub" x="274" y="105">LangGraph node</text></g><g class="g-node g-agent"><rect x="262" y="238" width="176" height="44" rx="8"/><text class="g-lab" x="274" y="257">research_agent</text><text class="g-sub" x="274" y="273">LangGraph ReAct</text></g><g class="g-node g-agent"><rect x="262" y="392" width="176" height="44" rx="8"/><text class="g-lab" x="274" y="411">billing_agent</text><text class="g-sub" x="274" y="427">OpenAI Agents SDK</text></g><g class="g-node g-tool"><rect x="520" y="150" width="150" height="44" rx="22"/><text class="g-lab" x="532" y="169">search_web</text><text class="g-sub" x="532" y="185">tool</text></g><g class="g-node g-tool"><rect x="520" y="210" width="150" height="44" rx="22"/><text class="g-lab" x="532" y="229">fetch_url</text><text class="g-sub" x="532" y="245">tool</text></g><g class="g-node g-tool"><rect x="520" y="270" width="150" height="44" rx="22"/><text class="g-lab" x="532" y="289">index_docs</text><text class="g-sub" x="532" y="305">tool</text></g><g class="g-node g-tool"><rect x="520" y="330" width="150" height="44" rx="22"/><text class="g-lab" x="532" y="349">run_shell</text><text class="g-sub" x="532" y="365">tool</text></g><g class="g-node g-tool"><rect x="520" y="392" width="150" height="44" rx="22"/><text class="g-lab" x="532" y="411">refund_order</text><text class="g-sub" x="532" y="427">tool</text></g><g class="g-node g-sink"><rect x="806" y="150" width="218" height="44" rx="4"/><text class="g-lab" x="818" y="169">MCP server &quot;search&quot;</text><text class="g-sub" x="818" y="185">http:// remote host</text></g><g class="g-node g-sink"><rect x="806" y="210" width="218" height="44" rx="4"/><text class="g-lab" x="818" y="229">Network: any host</text><text class="g-sub" x="818" y="245">requests.get(url)</text></g><g class="g-node g-sink"><rect x="806" y="270" width="218" height="44" rx="4"/><text class="g-lab" x="818" y="289">vector_store.add_documents</text><text class="g-sub" x="818" y="305">LangChain vector store</text></g><g class="g-node g-sink"><rect x="806" y="330" width="218" height="44" rx="4"/><text class="g-lab" x="818" y="349">subprocess.run(shell=True)</text><text class="g-sub" x="818" y="365">shell execution</text></g><g class="g-node g-sink"><rect x="806" y="392" width="218" height="44" rx="4"/><text class="g-lab" x="818" y="411">stripe.Refund.create</text><text class="g-sub" x="818" y="427">financial action</text></g><g class="g-mark g-m-high"><rect x="700" y="136" width="81" height="20" rx="10"/><text x="708" y="150">NEX007 HIGH</text></g><g class="g-mark g-m-high"><rect x="700" y="256" width="81" height="20" rx="10"/><text x="708" y="270">NEX002 HIGH</text></g><g class="g-mark g-m-critical"><rect x="700" y="378" width="107" height="20" rx="10"/><text x="708" y="392">NEX018 CRITICAL</text></g><g class="g-mark g-m-high"><rect x="452" y="296" width="81" height="20" rx="10"/><text x="460" y="310">NEX020 HIGH</text></g><g class="g-mark g-m-medium"><rect x="396" y="150" width="94" height="20" rx="10"/><text x="404" y="164">NEX011 MEDIUM</text></g><g class="g-mark g-m-medium"><rect x="452" y="60" width="94" height="20" rx="10"/><text x="460" y="74">NEX014 MEDIUM</text></g><g class="g-mark g-m-info"><rect x="196" y="22" width="120" height="20" rx="10"/><text x="204" y="36">NEX006 suppressed</text></g><g class="g-mark g-m-low"><rect x="700" y="196" width="74" height="20" rx="10"/><text x="708" y="210">NEX015 LOW</text></g></svg></div>
+    <ul class="g-legend">
+      <li><span class="lg lg-input" aria-hidden="true"></span>Input (where outside data enters)</li>
+      <li><span class="lg lg-agent" aria-hidden="true"></span>Agent</li>
+      <li><span class="lg lg-tool" aria-hidden="true"></span>Tool</li>
+      <li><span class="lg lg-sink" aria-hidden="true"></span>Sensitive sink</li>
+      <li><span class="lg lg-cycle" aria-hidden="true"></span>Cycle (dashed)</li>
+      <li>Pills name the rule and severity in words</li>
+    </ul>
+  </section>
+  <section class="panel" aria-labelledby="h-atable"><div class="panel-head"><h2 id="h-atable">Agents, tools and controls</h2><span class="dim">Same information as the graph, as a table</span></div>
+    <div class="tscroll"><table class="tbl">
+      <thead><tr><th scope="col">Agent</th><th scope="col">Tools</th><th scope="col">Reachable sensitive sinks</th><th scope="col">Controls found</th><th scope="col">Findings</th></tr></thead>
+      <tbody><tr><th scope="row"><code>supervisor</code><br><span class="dim">LangGraph node</span></th><td>(routes only)</td><td>none</td><td>recursion_limit=None (NEX014)</td><td><a href="#findings/F6">NEX014</a> <a href="#findings/F7">NEX011</a></td></tr><tr><th scope="row"><code>research_agent</code><br><span class="dim">LangGraph ReAct agent</span></th><td>search_web, fetch_url, index_docs, run_shell</td><td>shell execution, network (any host), vector store write</td><td>none found</td><td><a href="#findings/F2">NEX020</a> <a href="#findings/F3">NEX002</a> <a href="#findings/F8">NEX015</a></td></tr><tr><th scope="row"><code>billing_agent</code><br><span class="dim">OpenAI Agents SDK</span></th><td>refund_order</td><td>financial action (stripe.Refund.create)</td><td>none found</td><td><a href="#findings/F1">NEX018</a></td></tr></tbody></table></div>
+    <p class="note">"none found" means none in the scanned code. Gateways, IAM and sandboxes outside this repository are not visible to nexvul.</p>
+  </section>
+</section>
+<section class="view" id="rules" aria-labelledby="h-rules">
+  <div class="view-head"><h1 id="h-rules">Rules</h1>
+    <p class="sub">22 of 25 rules ran in this scan. Rule IDs and titles are a public contract; IDs are never reused.</p></div>
+  <div class="callout">Every rule below is <strong>design only</strong> in this mock-up: none is implemented, tested or benchmarked yet. ASI labels marked <span class="tag tag-prov">provisional</span> are pending the mapping decision (OD-02).</div>
+  <div class="filters filters-inline"><label class="f-field"><span>ASI category</span><select id="rAsi"><option value="">All categories</option><option value="ASI01">ASI01 Agent Goal Hijack</option><option value="ASI02">ASI02 Tool Misuse</option><option value="ASI03">ASI03 Identity &amp; Privilege Abuse</option><option value="ASI04">ASI04 Agentic Supply Chain</option><option value="ASI05">ASI05 Unexpected Code Execution</option><option value="ASI06">ASI06 Memory &amp; Context Poisoning</option><option value="ASI07">ASI07 Insecure Inter-Agent Communication</option><option value="ASI08">ASI08 Cascading Failures</option><option value="ASI09">ASI09 Human-Agent Trust Exploitation</option><option value="ASI10">ASI10 Rogue Agents</option></select></label>
+    <p class="count" id="rCount" aria-live="polite">Showing 25 rules</p></div>
+  <div class="tscroll"><table class="tbl tbl-rules" id="rtable">
+    <thead><tr><th scope="col">ID</th><th scope="col">Title</th><th scope="col">OWASP ASI</th><th scope="col">Class</th><th scope="col">Default severity</th><th scope="col">This run</th><th scope="col">Findings</th><th scope="col">Readiness</th></tr></thead>
+    <tbody><tr data-asi="ASI06"><th scope="row"><span class="rid">NEX001</span></th><td>External content written to persistent memory</td><td><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI06"><th scope="row"><span class="rid">NEX002</span></th><td>External content indexed into a vector store</td><td><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX002">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI06 ASI01"><th scope="row"><span class="rid">NEX003</span></th><td>Untrusted tool output persisted into long-term context</td><td><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span><span class="tag" title="Agent Goal Hijack">ASI01</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI06 ASI03"><th scope="row"><span class="rid">NEX004</span></th><td>User-controlled content persisted into shared agent state</td><td><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span></td><td>flow</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-off">off</span><br><span class="dim">experimental, off by default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI06 ASI01"><th scope="row"><span class="rid">NEX005</span></th><td>Retrieved content promoted to trusted instructions</td><td><span class="tag" title="Memory &amp; Context Poisoning">ASI06</span><span class="tag" title="Agent Goal Hijack">ASI01</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX005">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI07"><th scope="row"><span class="rid">NEX006</span></th><td>A2A / agent HTTP endpoint without authentication</td><td><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span></td><td>control-absence</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI07 ASI04"><th scope="row"><span class="rid">NEX007</span></th><td>MCP connection without authentication or over cleartext</td><td><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span><span class="tag" title="Agentic Supply Chain">ASI04</span></td><td>config</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX007">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI07 ASI03"><th scope="row"><span class="rid">NEX008</span></th><td>Remote agent identity not verified</td><td><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span></td><td>control-absence</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI07 ASI03"><th scope="row"><span class="rid">NEX009</span></th><td>Sensitive context sent to an untrusted / non-allowlisted agent</td><td><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI07 ASI03"><th scope="row"><span class="rid">NEX010</span></th><td>Inter-agent request executed without authorisation check</td><td><span class="tag" title="Insecure Inter-Agent Communication">ASI07</span><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span></td><td>control-absence</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI08"><th scope="row"><span class="rid">NEX011</span></th><td>Recursive delegation without depth bound</td><td><span class="tag" title="Cascading Failures">ASI08</span></td><td>graph</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX011">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI08"><th scope="row"><span class="rid">NEX012</span></th><td>Workflow cycle without termination guard</td><td><span class="tag" title="Cascading Failures">ASI08</span></td><td>graph</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI08 ASI02"><th scope="row"><span class="rid">NEX013</span></th><td>Unlimited retries around agent/tool/LLM calls</td><td><span class="tag" title="Cascading Failures">ASI08</span><span class="tag" title="Tool Misuse">ASI02</span></td><td>config</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI08"><th scope="row"><span class="rid">NEX014</span></th><td>Agent iteration limit disabled or unbounded</td><td><span class="tag" title="Cascading Failures">ASI08</span></td><td>config</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX014">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI08"><th scope="row"><span class="rid">NEX015</span></th><td>Missing timeout around agent or tool execution</td><td><span class="tag" title="Cascading Failures">ASI08</span></td><td>control-absence</td><td><span class="sev sev-low"><span class="sev-word">LOW</span><span class="meter" aria-hidden="true">█░░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX015">2</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI02 ASI09"><th scope="row"><span class="rid">NEX016</span></th><td>High-impact tool without approval</td><td><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Human-Agent Trust Exploitation">ASI09</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI02 ASI09"><th scope="row"><span class="rid">NEX017</span></th><td>Destructive tool without confirmation</td><td><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Human-Agent Trust Exploitation">ASI09</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI02 ASI09"><th scope="row"><span class="rid">NEX018</span></th><td>Financial action without human oversight</td><td><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Human-Agent Trust Exploitation">ASI09</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-critical"><span class="sev-word">CRITICAL</span><span class="meter" aria-hidden="true">████</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX018">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI03 ASI02 ASI09"><th scope="row"><span class="rid">NEX019</span></th><td>Privileged operation without policy gate (incl. approval bypass)</td><td><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Human-Agent Trust Exploitation">ASI09</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>control-absence</td><td><span class="sev sev-critical"><span class="sev-word">CRITICAL</span><span class="meter" aria-hidden="true">████</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI10 ASI05"><th scope="row"><span class="rid">NEX020</span></th><td>Dangerous capability combination (shell/code-exec + unrestricted network)</td><td><span class="tag" title="Rogue Agents">ASI10</span><span class="tag" title="Unexpected Code Execution">ASI05</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><a href="#findings/rule=NEX020">1</a></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI02 ASI10"><th scope="row"><span class="rid">NEX021</span></th><td>Arbitrary filesystem access from an agent tool</td><td><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Rogue Agents">ASI10</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>flow</td><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI03 ASI10"><th scope="row"><span class="rid">NEX022</span></th><td>Unrestricted credential access by an agent</td><td><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span><span class="tag" title="Rogue Agents">ASI10</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-off">off</span><br><span class="dim">rules.disabled in .nexvul.yml:9</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI02 ASI10"><th scope="row"><span class="rid">NEX023</span></th><td>Excessive tool permissions on a single agent</td><td><span class="tag" title="Tool Misuse">ASI02</span><span class="tag" title="Rogue Agents">ASI10</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>capability</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-off">off</span><br><span class="dim">experimental, off by default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI03 ASI10"><th scope="row"><span class="rid">NEX024</span></th><td>Unrestricted delegation</td><td><span class="tag" title="Identity &amp; Privilege Abuse">ASI03</span><span class="tag" title="Rogue Agents">ASI10</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>graph</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr><tr data-asi="ASI10 ASI08"><th scope="row"><span class="rid">NEX025</span></th><td>No execution / iteration limits on an autonomous agent with sensitive capabilities</td><td><span class="tag" title="Rogue Agents">ASI10</span><span class="tag" title="Cascading Failures">ASI08</span><span class="tag tag-prov" title="ASI label pending mapping decision OD-02">provisional</span></td><td>control-absence</td><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td><span class="state state-on">runs</span><br><span class="dim">default</span></td><td class="num"><span class="dim">0</span></td><td><span class="ready">design only</span></td></tr></tbody></table></div>
+  <p class="note">Full text of a rule, with examples and what it does not detect: <code>nexvul explain NEX018</code> or <code>docs/rules/NEX018.md</code>.</p>
+</section>
+<section class="view" id="suppressions" aria-labelledby="h-supp">
+  <div class="view-head"><h1 id="h-supp">Suppressions</h1>
+    <p class="sub">A suppression is a claim made in the scanned code by the person whose code was flagged. nexvul never hides one: every suppression is counted and shown here.</p></div>
+  <div class="tiles tiles-4">
+    <div class="tile"><span class="tile-label">Applied</span><span class="tile-num">3</span><span class="tile-foot">1 without a justification</span></div>
+    <div class="tile"><span class="tile-label">Added on this branch</span><span class="tile-num">3</span><span class="tile-foot">vs <code>main</code></span></div>
+    <div class="tile"><span class="tile-label">Rejected</span><span class="tile-num">1</span><span class="tile-foot">finding stays active</span></div>
+    <div class="tile"><span class="tile-label">Stale</span><span class="tile-num">1</span><span class="tile-foot">matched nothing</span></div>
+  </div>
+  <div class="tscroll"><table class="tbl">
+    <thead><tr><th scope="col">Rule</th><th scope="col">Location</th><th scope="col">Kind</th><th scope="col">Justification (from the scanned code)</th><th scope="col">Status</th></tr></thead>
+    <tbody><tr><th scope="row"><span class="rid">NEX006</span></th><td><code class="loc">agent/server.py:41</code></td><td>inline</td><td><q class="just">auth enforced by the API gateway (infra/gateway.tf, route /agents/*)</q> </td><td><span class="sstate sstate-applied">Applied</span></td></tr><tr><th scope="row"><span class="rid">NEX002</span></th><td><code class="loc">scripts/seed.py:12</code></td><td>inline</td><td><q class="just">offline seed of first-party docs from our own S3 bucket; never user-supplied</q> <span class="flag-new">Added on this branch</span></td><td><span class="sstate sstate-applied">Applied</span></td></tr><tr><th scope="row"><span class="rid">NEX015</span></th><td><code class="loc">agent/tools.py:88</code></td><td>inline</td><td><span class="dim">(no justification)</span> <span class="flag-new">Added on this branch</span></td><td><span class="sstate sstate-warn">Applied locally, no justification</span><br><span class="dim">In CI this suppression is NOT applied and the finding stays active.</span></td></tr><tr><th scope="row"><span class="rid">NEX016</span></th><td><code class="loc">agent/admin.py:30</code></td><td>inline</td><td><q class="just">approved by <span class="ctl" title="RIGHT-TO-LEFT OVERRIDE">U+202E</span>neerg<span class="ctl" title="POP DIRECTIONAL FORMATTING">U+202C</span> security team</q> <span class="flag-new">Added on this branch</span></td><td><span class="sstate sstate-rejected">Rejected: hidden character</span><br><span class="dim">Contains U+202E RIGHT-TO-LEFT OVERRIDE. The finding stays active.</span></td></tr><tr><th scope="row"><span class="rid">NEX014</span></th><td><code class="loc">agent/old.py:12</code></td><td>inline</td><td><q class="just">legacy graph, removed next sprint</q> </td><td><span class="sstate sstate-stale">Stale: matched no finding</span><br><span class="dim">Remove it, or check whether the code moved.</span></td></tr></tbody></table></div>
+  <p class="note">Justifications are untrusted text from the repository. They are shown escaped and truncated to 120 characters; hidden characters are shown as their code point.</p>
+  <section class="panel" aria-labelledby="h-weak"><div class="panel-head"><h2 id="h-weak">Protections weakened by repository configuration</h2></div>
+    <ul class="weak">
+      <li><code>rules.disabled: [NEX022]</code> &mdash; applied (local run, <code>.nexvul.yml:9</code>). <strong>In CI mode: NOT APPLIED</strong> unless the base branch has the same value.</li>
+      <li><code>exclude: ["gen/**", "vendor/**"]</code> &mdash; applied; 18 files excluded and counted. <strong>In CI mode:</strong> the base-branch value is used.</li>
+    </ul></section>
+  <section class="panel" aria-labelledby="h-syntax"><div class="panel-head"><h2 id="h-syntax">Suppression syntax</h2></div>
+    <div class="copyrow"><pre class="cmd"><code># nexvul: ignore[NEX006] -- auth enforced by the API gateway (infra/gateway.tf)</code></pre><button type="button" class="btn btn-sm copy" data-copy="# nexvul: ignore[NEX006] -- auth enforced by the API gateway (infra/gateway.tf)">Copy</button></div> <div class="copyrow"><pre class="cmd"><code>// nexvul: ignore[NEX016] -- tool runs only in the sandbox account</code></pre><button type="button" class="btn btn-sm copy" data-copy="// nexvul: ignore[NEX016] -- tool runs only in the sandbox account">Copy</button></div>
+    <p class="note">Name the rule; a blanket <code>ignore</code> is rejected. Several rules: <code>ignore[NEX016,NEX017]</code>. Applies to the same line or the next non-comment line.</p></section>
+</section>
+<section class="view" id="history" aria-labelledby="h-hist">
+  <div class="banner-partial only-partial" role="alert"><strong>PARTIAL SCAN</strong> &mdash; 4 of 312 files not analysed. This result is not a clean bill of health. <a href="#history">See what was not analysed</a></div>
+  <div class="view-head"><h1 id="h-hist">Scan history</h1>
+    <p class="sub">This report holds one run: the scan that wrote this file. nexvul keeps no history between runs and sends nothing anywhere.</p></div>
+  <section class="panel run" aria-labelledby="h-run"><div class="panel-head"><h2 id="h-run">This run</h2><span class="dim">2026-10-08 14:32:05 UTC &rarr; 2026-10-08 14:32:17 UTC &middot; 11.6 s</span></div>
+    <dl class="run-meta">
+      <div><dt>Result</dt><dd class="only-complete">5 at or above fail-on &middot; exit code 1</dd><dd class="only-partial">Scan incomplete &middot; exit code 3</dd></div>
+      <div><dt>Mode</dt><dd>local (not CI)</dd></div>
+      <div><dt>Branch</dt><dd><code>feature/refunds</code> at <code>3f2c1a9</code></dd></div>
+      <div><dt>Compared with</dt><dd>nothing: no earlier run is stored</dd></div>
+    </dl>
+    <h3 class="h3">Time by phase</h3>
+    <div class="dist"><svg viewBox="0 0 100 12" preserveAspectRatio="none" role="img" aria-label="Time by phase: Discovering 0.4 s, Parsing 3.1 s, Analysing 7.8 s, Reporting 0.3 s"><rect class="ph ph-0" x="0.00" y="0" width="3.05" height="12"/><rect class="ph ph-1" x="3.45" y="0" width="26.32" height="12"/><rect class="ph ph-2" x="30.17" y="0" width="66.84" height="12"/><rect class="ph ph-3" x="97.41" y="0" width="2.19" height="12"/></svg><ul class="legend"><li><span class="sw ph-sw-0" aria-hidden="true"></span>Discovering <strong>0.4 s</strong></li><li><span class="sw ph-sw-1" aria-hidden="true"></span>Parsing <strong>3.1 s</strong></li><li><span class="sw ph-sw-2" aria-hidden="true"></span>Analysing <strong>7.8 s</strong></li><li><span class="sw ph-sw-3" aria-hidden="true"></span>Reporting <strong>0.3 s</strong></li></ul></div>
+  </section>
+  <section class="panel only-partial" aria-labelledby="h-na"><div class="panel-head"><h2 id="h-na">Not analysed (4 files)</h2></div>
+    <table class="tbl"><thead><tr><th scope="col">Reason</th><th scope="col">Files</th><th scope="col">Paths (first 50)</th></tr></thead><tbody><tr><td>parse error</td><td class="num">2</td><td><code class="loc">agent/legacy.py</code>, <code class="loc">agent/<span class="ctl" title="RIGHT-TO-LEFT OVERRIDE">U+202E</span>txt.py</code></td></tr><tr><td>over size limit (1 MB)</td><td class="num">1</td><td><code class="loc">data/fixtures.py (3.1 MB)</code></td></tr><tr><td>parser timeout (30 s)</td><td class="num">1</td><td><code class="loc">agent/huge_graph.py</code></td></tr></tbody></table>
+    <p class="note">Code in these files was not checked. Fix the parse errors, or exclude generated files in <code>.nexvul.yml</code>; exclusions are counted in every report.</p>
+  </section>
+  <section class="panel" aria-labelledby="h-prov"><div class="panel-head"><h2 id="h-prov">Completeness and provenance</h2></div>
+    <table class="tbl tbl-kv"><tbody><tr><th scope="row">Status</th><td><span class="only-complete">COMPLETE</span><span class="only-partial"><strong>PARTIAL</strong></span></td></tr><tr><th scope="row">Files discovered</th><td>312 (Python 241, TypeScript 56, configs 15)</td></tr><tr><th scope="row">Files analysed</th><td><span class="only-complete">312</span><span class="only-partial">308 (4 not analysed)</span></td></tr><tr><th scope="row">Excluded by config</th><td>18 files (<code>gen/**</code>, <code>vendor/**</code>); counted, not analysed</td></tr><tr><th scope="row">Rules run</th><td>22 of 25 (2 experimental off, 1 disabled by .nexvul.yml)</td></tr><tr><th scope="row">Limits hit</th><td>none</td></tr><tr><th scope="row">Budgets exhausted</th><td>none</td></tr><tr><th scope="row">Findings truncated</th><td>no</td></tr><tr><th scope="row">Analysis-limited</th><td>3 dynamic imports not followed (agent/plugins.py)</td></tr><tr><th scope="row">Suppressions</th><td>3 applied, 1 rejected, 1 stale</td></tr><tr><th scope="row">Config sources</th><td><code>.nexvul.yml</code> (local file, sha256 4be1…), CLI flags, defaults</td></tr><tr><th scope="row">Plugins</th><td>none loaded</td></tr><tr><th scope="row">nexvul</th><td>0.1.0 &middot; rules 2026.10.1 (sha256:9c1e4f…) &middot; Python 3.12.6</td></tr><tr><th scope="row">Command</th><td><code>nexvul scan . --format html --output nexvul-report.html</code></td></tr></tbody></table></section>
+  <section class="panel" aria-labelledby="h-cmp"><div class="panel-head"><h2 id="h-cmp">Compare runs yourself</h2></div>
+    <p>Keep a JSON result per run and compare them with your own tools. Reports stay on your machine.</p>
+    <div class="copyrow"><pre class="cmd"><code>nexvul scan . --format json --output runs/2026-10-08.json</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul scan . --format json --output runs/2026-10-08.json">Copy</button></div></section>
+</section>
+<section class="view" id="settings" aria-labelledby="h-set">
+  <div class="view-head"><h1 id="h-set">Settings</h1>
+    <p class="sub">The configuration this scan used, and where each value came from. Read-only: this report never writes to <code>.nexvul.yml</code> or to your source files.</p></div>
+  <div class="callout">To change a setting, edit <code>.nexvul.yml</code> or pass a flag, then run the scan again. Copy the lines you need from <a href="#change">Change a setting</a>.</div>
+  <section class="panel" aria-labelledby="h-eff"><div class="panel-head"><h2 id="h-eff">Effective configuration</h2><span class="dim">Precedence: CLI flag &gt; .nexvul.yml &gt; default</span></div>
+    <div class="tscroll"><table class="tbl tbl-cfg"><thead><tr><th scope="col">Key</th><th scope="col">Value used</th><th scope="col">Source</th><th scope="col">Weakens the scan</th><th scope="col">In CI mode</th></tr></thead>
+    <tbody><tr><th scope="row"><code>severity.fail_on</code></th><td><code>high</code></td><td><span class="src src-default">default</span></td><td><span class="dim">no</span></td><td>applied</td></tr><tr><th scope="row"><code>rules.enabled</code></th><td><code>[ASI06, ASI07, ASI08, ASI09, ASI10]</code></td><td><span class="src src-file">.nexvul.yml:7 (local file)</span></td><td><span class="dim">no</span></td><td>applied</td></tr><tr><th scope="row"><code>rules.disabled</code></th><td><code>[NEX022]</code></td><td><span class="src src-file">.nexvul.yml:9 (local file)</span></td><td><span class="weak">weakens</span></td><td><strong>NOT APPLIED from a pull request head; applied only if the base branch has the same value</strong></td></tr><tr><th scope="row"><code>exclude</code></th><td><code>[&quot;gen/**&quot;, &quot;vendor/**&quot;]</code></td><td><span class="src src-file">.nexvul.yml:12 (local file)</span></td><td><span class="weak">weakens (18 files excluded, counted)</span></td><td><strong>NOT APPLIED from a pull request head; base-branch value used</strong></td></tr><tr><th scope="row"><code>frameworks.auto_detect</code></th><td><code>true</code></td><td><span class="src src-default">default</span></td><td><span class="dim">no</span></td><td>applied</td></tr><tr><th scope="row"><code>analysis.cross_file</code></th><td><code>true</code></td><td><span class="src src-default">default</span></td><td><span class="dim">no</span></td><td>applied</td></tr><tr><th scope="row"><code>analysis.max_files</code></th><td><code>10000</code></td><td><span class="src src-default">default</span></td><td><span class="dim">no</span></td><td>applied (may only be lowered by repo config)</td></tr><tr><th scope="row"><code>suppressions.require_justification</code></th><td><code>false</code></td><td><span class="src src-default">default for local runs</span></td><td><span class="weak">weakens</span></td><td><strong>forced to true in CI unless set by trusted config</strong></td></tr><tr><th scope="row"><code>output</code></th><td><code>html → nexvul-report.html</code></td><td><span class="src src-cli">CLI flag --format html --output</span></td><td><span class="dim">no</span></td><td>n/a</td></tr><tr><th scope="row"><code>color</code></th><td><code>auto</code></td><td><span class="src src-default">default</span></td><td><span class="dim">no</span></td><td>plain output in CI logs</td></tr></tbody></table></div></section>
+  <section class="panel panel-warn" aria-labelledby="h-ci"><div class="panel-head"><h2 id="h-ci">Not applied in CI mode</h2></div>
+    <p>In CI, settings that weaken the scan are read only from the base branch. If this branch were scanned in CI, these values from the working copy would <strong>not</strong> be applied:</p>
+    <ul class="weak"><li><code>rules.disabled: [NEX022]</code> &mdash; NEX022 would run.</li>
+      <li><code>exclude: ["gen/**", "vendor/**"]</code> &mdash; the base branch's <code>exclude</code> would be used.</li>
+      <li><code>suppressions.require_justification</code> &mdash; forced to <code>true</code>; the suppression at <code>agent/tools.py:88</code> would not apply.</li></ul></section>
+  <section class="panel" aria-labelledby="h-rs"><div class="panel-head"><h2 id="h-rs">Rules enabled in this scan</h2><span class="dim">22 on &middot; 3 off</span></div>
+    <ul class="rchips"><li class="rchip rchip-on" title="External content written to persistent memory - default"><span class="rid">NEX001</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="External content indexed into a vector store - default"><span class="rid">NEX002</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Untrusted tool output persisted into long-term context - default"><span class="rid">NEX003</span><span class="state state-on">on</span></li><li class="rchip rchip-off" title="User-controlled content persisted into shared agent state - experimental, off by default"><span class="rid">NEX004</span><span class="state state-off">off</span></li><li class="rchip rchip-on" title="Retrieved content promoted to trusted instructions - default"><span class="rid">NEX005</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="A2A / agent HTTP endpoint without authentication - default"><span class="rid">NEX006</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="MCP connection without authentication or over cleartext - default"><span class="rid">NEX007</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Remote agent identity not verified - default"><span class="rid">NEX008</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Sensitive context sent to an untrusted / non-allowlisted agent - default"><span class="rid">NEX009</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Inter-agent request executed without authorisation check - default"><span class="rid">NEX010</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Recursive delegation without depth bound - default"><span class="rid">NEX011</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Workflow cycle without termination guard - default"><span class="rid">NEX012</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Unlimited retries around agent/tool/LLM calls - default"><span class="rid">NEX013</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Agent iteration limit disabled or unbounded - default"><span class="rid">NEX014</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Missing timeout around agent or tool execution - default"><span class="rid">NEX015</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="High-impact tool without approval - default"><span class="rid">NEX016</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Destructive tool without confirmation - default"><span class="rid">NEX017</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Financial action without human oversight - default"><span class="rid">NEX018</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Privileged operation without policy gate (incl. approval bypass) - default"><span class="rid">NEX019</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Dangerous capability combination (shell/code-exec + unrestricted network) - default"><span class="rid">NEX020</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="Arbitrary filesystem access from an agent tool - default"><span class="rid">NEX021</span><span class="state state-on">on</span></li><li class="rchip rchip-off" title="Unrestricted credential access by an agent - rules.disabled in .nexvul.yml:9"><span class="rid">NEX022</span><span class="state state-off">off</span></li><li class="rchip rchip-off" title="Excessive tool permissions on a single agent - experimental, off by default"><span class="rid">NEX023</span><span class="state state-off">off</span></li><li class="rchip rchip-on" title="Unrestricted delegation - default"><span class="rid">NEX024</span><span class="state state-on">on</span></li><li class="rchip rchip-on" title="No execution / iteration limits on an autonomous agent with sensitive capabilities - default"><span class="rid">NEX025</span><span class="state state-on">on</span></li></ul>
+    <p class="note">Off: NEX004 and NEX023 (experimental, off by default); NEX022 (<code>rules.disabled</code> in <code>.nexvul.yml:9</code>).</p></section>
+  <section class="panel" aria-labelledby="h-disp"><div class="panel-head"><h2 id="h-disp">Display preferences</h2><span class="dim">Saved in this browser only</span></div>
+    <form class="prefs" id="prefs">
+      <fieldset><legend>Theme</legend>
+        <label class="radio"><input type="radio" name="theme" value="system" checked> Match system</label>
+        <label class="radio"><input type="radio" name="theme" value="light"> Light</label>
+        <label class="radio"><input type="radio" name="theme" value="dark"> Dark</label></fieldset>
+      <fieldset><legend>Density</legend>
+        <label class="radio"><input type="radio" name="density" value="comfortable" checked> Comfortable</label>
+        <label class="radio"><input type="radio" name="density" value="compact"> Compact</label></fieldset>
+      <fieldset><legend>Findings</legend>
+        <label class="check"><input type="checkbox" name="show_low_info" checked> Show low and info findings when the Findings view opens</label>
+        <label class="check"><input type="checkbox" name="wrap_code"> Wrap long code lines</label></fieldset>
+    </form>
+    <p class="note" id="prefStatus" aria-live="polite">Preferences are stored in this browser's local storage under <code>nexvul.report.prefs</code>. They never change the scan, the config file or the result.</p></section>
+  <section class="panel" id="change" aria-labelledby="h-chg"><div class="panel-head"><h2 id="h-chg">Change a setting</h2></div>
+    <p class="lbl">Fail on medium for one run</p><div class="copyrow"><pre class="cmd"><code>nexvul scan . --fail-on medium</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul scan . --fail-on medium">Copy</button></div>
+    <p class="lbl">Re-enable NEX022 (remove it from <code>.nexvul.yml</code>)</p><div class="copyrow"><pre class="cmd"><code>rules:
+  disabled: []</code></pre><button type="button" class="btn btn-sm copy" data-copy="rules:
+  disabled: []">Copy</button></div>
+    <p class="lbl">Turn on an experimental rule</p><div class="copyrow"><pre class="cmd"><code>rules:
+  enabled: [ASI06, ASI07, ASI08, ASI09, ASI10, NEX004]</code></pre><button type="button" class="btn btn-sm copy" data-copy="rules:
+  enabled: [ASI06, ASI07, ASI08, ASI09, ASI10, NEX004]">Copy</button></div>
+    <p class="lbl">See every effective value and its source in the terminal</p><div class="copyrow"><pre class="cmd"><code>nexvul scan . --verbose</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul scan . --verbose">Copy</button></div>
+  </section>
+</section>
+<section class="view" id="help" aria-labelledby="h-help">
+  <div class="view-head"><h1 id="h-help">Help and docs</h1>
+    <p class="sub">How to read this report. Everything here is also in the docs folder of the nexvul repository.</p></div>
+  <div class="grid-2">
+    <section class="panel"><div class="panel-head"><h2>Reading a finding</h2></div>
+      <ol class="plain"><li><strong>Severity</strong> is a word and a meter, never colour alone.</li>
+        <li><strong>Rule ID</strong> (<code>NEX018</code>) and title say which pattern matched.</li>
+        <li><strong>Flow</strong> lists numbered steps from <em>source</em> (where outside data enters) to <em>sink</em> (where it has an effect).</li>
+        <li><strong>Confidence</strong> is high, medium or low: how sure nexvul is that the pattern is really there.</li>
+        <li><strong>How to fix</strong> names the control to add.</li></ol>
+      <p class="note">A finding means nexvul identified a risky pattern. It does not prove the code is exploitable.</p></section>
+    <section class="panel"><div class="panel-head"><h2>Scan status</h2></div>
+      <table class="tbl"><tbody>
+        <tr><th scope="row">COMPLETE</th><td>Every discovered, non-excluded file was parsed and analysed within limits.</td></tr>
+        <tr><th scope="row">PARTIAL SCAN</th><td>Something was not analysed. The result is not a clean bill of health.</td></tr>
+        <tr><th scope="row">SCAN FAILED</th><td>No usable result. The report still explains why.</td></tr></tbody></table></section>
+    <section class="panel"><div class="panel-head"><h2>Severity</h2></div>
+      <table class="tbl"><thead><tr><th scope="col">Label</th><th scope="col">GitHub security-severity</th><th scope="col">Fails at default fail-on</th></tr></thead><tbody><tr><td><span class="sev sev-critical"><span class="sev-word">CRITICAL</span><span class="meter" aria-hidden="true">████</span></span></td><td>9.5</td><td>yes</td></tr><tr><td><span class="sev sev-high"><span class="sev-word">HIGH</span><span class="meter" aria-hidden="true">███░</span></span></td><td>8.0</td><td>yes</td></tr><tr><td><span class="sev sev-medium"><span class="sev-word">MEDIUM</span><span class="meter" aria-hidden="true">██░░</span></span></td><td>5.5</td><td>no</td></tr><tr><td><span class="sev sev-low"><span class="sev-word">LOW</span><span class="meter" aria-hidden="true">█░░░</span></span></td><td>3.0</td><td>no</td></tr><tr><td><span class="sev sev-info"><span class="sev-word">INFO</span><span class="meter" aria-hidden="true">░░░░</span></span></td><td>not uploaded</td><td>no</td></tr></tbody></table></section>
+    <section class="panel"><div class="panel-head"><h2>Exit codes</h2></div>
+      <table class="tbl"><tbody>
+        <tr><th scope="row">0</th><td>Scan complete, no findings at or above fail-on</td></tr>
+        <tr><th scope="row">1</th><td>Scan complete, findings at or above fail-on</td></tr>
+        <tr><th scope="row">2</th><td>Usage or configuration error; nothing was scanned</td></tr>
+        <tr><th scope="row">3</th><td>Scan incomplete (files not analysed, limits hit, or nothing to analyse)</td></tr>
+        <tr><th scope="row">4</th><td>Internal error in nexvul</td></tr></tbody></table></section>
+    <section class="panel"><div class="panel-head"><h2>Commands</h2></div>
+      <div class="copyrow"><pre class="cmd"><code>nexvul explain NEX018</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul explain NEX018">Copy</button></div> <div class="copyrow"><pre class="cmd"><code>nexvul rules --asi ASI07</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul rules --asi ASI07">Copy</button></div> <div class="copyrow"><pre class="cmd"><code>nexvul doctor</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul doctor">Copy</button></div> <div class="copyrow"><pre class="cmd"><code>nexvul scan . --format sarif --output nexvul.sarif</code></pre><button type="button" class="btn btn-sm copy" data-copy="nexvul scan . --format sarif --output nexvul.sarif">Copy</button></div></section>
+    <section class="panel"><div class="panel-head"><h2>Privacy and this file</h2></div>
+      <ul class="plain"><li>This report is a single file on your disk. It makes no network requests and loads no fonts, images or scripts from elsewhere.</li>
+        <li>There is no account, sign-in or server. Nothing to sign up for or log out of.</li>
+        <li>Display preferences stay in this browser's local storage. Clearing site data removes them.</li>
+        <li>Paths, code and justifications come from the scanned repository and are shown as escaped text.</li></ul>
+      <p class="note">Docs: <code>docs/rules/NEX0nn.md</code> for each rule, <code>README.md</code> for CI and pre-commit setup.</p></section>
+  </div>
+  <p class="disclaimer">A clean nexvul result does not prove that an application is secure.</p>
+</section>
+</main>
+<footer class="content foot note">nexvul 0.1.0 &middot; rules sha256:9c1e4f… &middot; A clean nexvul result does not prove that an application is secure. &middot; Design mock-up, sample data</footer>
 </div>
-<!-- severity distribution bar -->
-<div class="severity-bar-wrap">
-  <div class="severity-bar">
-    <span class="seg-critical" style="width:16.6%"></span>
-    <span class="seg-high" style="width:33.3%"></span>
-    <span class="seg-medium" style="width:33.3%"></span>
-    <span class="seg-low" style="width:16.6%"></span>
-  </div>
 </div>
-
-<!-- frameworks detected -->
-<div class="section-heading">Frameworks Detected</div>
-<div class="frameworks">
-  <span class="framework-tag">LangGraph</span>
-  <span class="framework-tag">MCP</span>
-  <span class="framework-tag">OpenAI Agents SDK</span>
-  <span class="framework-tag">ChromaDB</span>
-</div>
-
-<!-- findings -->
-<div class="section-heading">Critical findings <span class="section-count">2</span></div>
-<div class="findings">
-  <div class="finding">
-    <span class="finding-severity sev-critical">Critical</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX001</span>External content written to persistent memory <span class="finding-owasp">ASI06</span></div>
-      <div class="finding-message">Content returned by <code>requests.get()</code> reaches <code>vector_store.add_documents()</code>. No validation or trust-boundary step was found on the path in the scanned code.</div>
-      <div class="dataflow"><span class="df-source">requests.get(url).text</span><span class="df-arrow"> → </span><span class="df-step">process_content(raw)</span><span class="df-arrow"> → </span><span class="df-step">Document(page_content=…)</span><span class="df-arrow"> → </span><span class="df-sink">vector_store.add_documents(docs)</span></div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/memory.py</span>:<span class="line">42</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-critical">Critical</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX020</span>Dangerous capability combination (shell + unrestricted network) <span class="finding-owasp">ASI10 · ASI02</span></div>
-      <div class="finding-message">Agent <code>research_agent</code> is given <code>ShellTool</code> and an unrestricted HTTP client. No approval step or iteration limit was found in the scanned code.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/tools.py</span>:<span class="line">18</span></div>
-  </div>
-</div>
-
-<div class="section-heading">High findings <span class="section-count">4</span></div>
-<div class="findings">
-  <div class="finding">
-    <span class="finding-severity sev-high">High</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX007</span>MCP connection without authentication or over cleartext <span class="finding-owasp">ASI07 · ASI04</span></div>
-      <div class="finding-message">The MCP server entry in <code>mcp_config.json</code> uses an HTTP transport bound to <code>0.0.0.0:8080</code>. No authentication setting was found in this config.</div>
-    </div>
-    <div class="finding-loc"><span class="file">mcp_config.json</span>:<span class="line">12</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-high">High</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX012</span>Workflow cycle without termination guard <span class="finding-owasp">ASI08</span></div>
-      <div class="finding-message">The graph has a cycle <code>planner → researcher → planner</code>. No <code>recursion_limit</code> is set here; the effective default depends on the LangGraph version in your lockfile.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/workflow.py</span>:<span class="line">91</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-high">High</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX017</span>Destructive tool without confirmation <span class="finding-owasp">ASI02 · ASI09</span></div>
-      <div class="finding-message">Tool <code>delete_database</code> is registered on <code>admin_agent</code>. No <code>interrupt_before</code> or other approval step was found on the path to the call.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/admin.py</span>:<span class="line">67</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-high">High</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX005</span>Retrieved content promoted to trusted instructions <span class="finding-owasp">ASI06 · ASI01</span></div>
-      <div class="finding-message">Output of <code>retriever.invoke()</code> is interpolated into the system message. Anyone who can influence indexed documents can influence these instructions.</div>
-      <div class="dataflow"><span class="df-source">retriever.invoke(query)</span><span class="df-arrow"> → </span><span class="df-step">docs[0].page_content</span><span class="df-arrow"> → </span><span class="df-sink">SystemMessage(f"…{context}")</span></div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/prompts.py</span>:<span class="line">23</span></div>
-  </div>
-</div>
-
-<div class="section-heading">Medium findings <span class="section-count">4</span></div>
-<div class="findings">
-  <div class="finding">
-    <span class="finding-severity sev-medium">Medium</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX014</span>Agent iteration limit disabled or unbounded <span class="finding-owasp">ASI08</span></div>
-      <div class="finding-message"><code>AgentExecutor</code> is created with <code>max_iterations=None</code>, which removes the framework default limit.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/chain.py</span>:<span class="line">55</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-medium">Medium</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX021</span>Arbitrary filesystem access from an agent tool <span class="finding-owasp">ASI02 · ASI10</span></div>
-      <div class="finding-message">Tool <code>read_file</code> opens a path supplied by the model with no allow-listed root visible in the scanned code.</div>
-    </div>
-    <div class="finding-loc"><span class="file">mcp/server.py</span>:<span class="line">34</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-medium">Medium</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX024</span>Unrestricted delegation <span class="finding-owasp">ASI03 · ASI10</span></div>
-      <div class="finding-message">CrewAI agent <code>lead_agent</code> sets <code>allow_delegation=True</code> with no restriction on delegates visible in this code.</div>
-    </div>
-    <div class="finding-loc"><span class="file">crew/agents.py</span>:<span class="line">12</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-medium">Medium</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX003</span>Untrusted tool output persisted into long-term context <span class="finding-owasp">ASI06 · ASI01</span></div>
-      <div class="finding-message">Output of <code>search_web</code> is saved with <code>save_context()</code> on a memory that persists across sessions.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/chat.py</span>:<span class="line">89</span></div>
-  </div>
-</div>
-
-<div class="section-heading">Low findings <span class="section-count">2</span></div>
-<div class="findings">
-  <div class="finding">
-    <span class="finding-severity sev-low">Low</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX015</span>Missing timeout around agent or tool execution <span class="finding-owasp">ASI08</span></div>
-      <div class="finding-message">The HTTP call in tool <code>search_web</code> has no <code>timeout</code> argument.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/tools.py</span>:<span class="line">45</span></div>
-  </div>
-  <div class="finding">
-    <span class="finding-severity sev-low">Low</span>
-    <div class="finding-body">
-      <div class="finding-title"><span class="finding-rule">NEX013</span>Unlimited retries around agent, tool or LLM calls <span class="finding-owasp">ASI08 · ASI02</span></div>
-      <div class="finding-message">The retry decorator on <code>call_model</code> has no attempt limit.</div>
-    </div>
-    <div class="finding-loc"><span class="file">agent/llm.py</span>:<span class="line">17</span></div>
-  </div>
-</div>
-
-<!-- scan completeness -->
-<div class="section-heading">Scan completeness (scope, not a verdict)</div>
-<div class="completeness">
-  <div class="completeness-grid">
-    <div class="comp-item">
-      <span class="comp-label">Files scanned</span>
-      <span class="comp-value comp-ok">327 / 327</span>
-    </div>
-    <div class="comp-item">
-      <span class="comp-label">Parse failures</span>
-      <span class="comp-value comp-ok">0</span>
-    </div>
-    <div class="comp-item">
-      <span class="comp-label">Timeouts</span>
-      <span class="comp-value comp-ok">0</span>
-    </div>
-    <div class="comp-item">
-      <span class="comp-label">Files skipped</span>
-      <span class="comp-value comp-warn">3 skipped (binary)</span>
-    </div>
-    <div class="comp-item">
-      <span class="comp-label">Rules executed</span>
-      <span class="comp-value comp-ok">42 / 42</span>
-    </div>
-    <div class="comp-item">
-      <span class="comp-label">Cross-file analysis</span>
-      <span class="comp-value comp-ok">enabled</span>
-    </div>
-  </div>
-</div>
-
-<!-- footer -->
-<div class="footer">
-  <div>
-    <span>nexvul v0.1.0</span> ·
-    <span>Scan completed in 2.4s</span> ·
-    <span>42 rules checked</span>
-  </div>
-  <div class="disclaimer">
-    A clean nexvul result does not prove that an application is secure. These findings are code patterns, not proof of exploitation.
-  </div>
-</div>
+<script>
+(function(){
+  var d=document.documentElement; d.classList.add('js');
+  var KEY='nexvul.report.prefs';
+  function load(){try{var v=window.localStorage.getItem(KEY);return v?JSON.parse(v):{};}catch(e){return null;}}
+  function save(p){try{window.localStorage.setItem(KEY,JSON.stringify(p));return true;}catch(e){return false;}}
+  var stored=load(); var storageOk=stored!==null; var prefs=stored||{};
+  var q=window.location.search;
+  var qTheme=/[?&]theme=(light|dark)/.exec(q); var qScan=/[?&]scan=(partial|complete)/.exec(q);
+  var qNav=/[?&]nav=open/.test(q);
+  function $(s,r){return (r||document).querySelector(s);} function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+  function applyPrefs(){
+    var t=qTheme?qTheme[1]:(prefs.theme||'system');
+    if(t==='system'){d.removeAttribute('data-theme');}else{d.setAttribute('data-theme',t);}
+    var lab=$('#themeLabel'); if(lab){lab.textContent='Theme: '+t;}
+    d.setAttribute('data-density',prefs.density||'comfortable');
+    d.setAttribute('data-wrap',prefs.wrap_code?'1':'0');
+    var f=$('#prefs'); if(f){
+      $$('input[name="theme"]',f).forEach(function(i){i.checked=(i.value===(prefs.theme||'system'));});
+      $$('input[name="density"]',f).forEach(function(i){i.checked=(i.value===(prefs.density||'comfortable'));});
+      f.elements.show_low_info.checked=prefs.show_low_info!==false; f.elements.wrap_code.checked=!!prefs.wrap_code;}
+  }
+  function persist(){
+    var ok=save(prefs); var s=$('#prefStatus');
+    if(s){s.textContent=ok?'Saved in this browser only. Preferences never change the scan, the config file or the result.':'Could not save: this browser blocks local storage here. Preferences apply until you close this tab.';}
+  }
+  applyPrefs();
+  if(!storageOk){var s0=$('#prefStatus'); if(s0){s0.textContent='Local storage is not available in this browser. Preferences apply until you close this tab.';}}
+  if(qScan){d.setAttribute('data-scan',qScan[1]);}
+  $$('[data-scan-set]').forEach(function(b){
+    b.setAttribute('aria-pressed',String((d.getAttribute('data-scan')||'complete')===b.getAttribute('data-scan-set')));
+    b.addEventListener('click',function(){d.setAttribute('data-scan',b.getAttribute('data-scan-set'));
+      $$('[data-scan-set]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});});});
+  var order=['system','light','dark'];
+  $('#themeBtn').addEventListener('click',function(){var c=prefs.theme||'system';prefs.theme=order[(order.indexOf(c)+1)%3];qTheme=null;applyPrefs();persist();});
+  var pf=$('#prefs'); if(pf){pf.addEventListener('change',function(){
+    prefs.theme=pf.elements.theme.value; prefs.density=pf.elements.density.value;
+    prefs.show_low_info=pf.elements.show_low_info.checked; prefs.wrap_code=pf.elements.wrap_code.checked;
+    qTheme=null; applyPrefs(); persist();});}
+  // narrow menu
+  var nav=$('#nav'), mb=$('#menuBtn');
+  function setNav(open){d.classList.toggle('nav-open',open); mb.setAttribute('aria-expanded',String(open)); if(open){var a=$('.nav-link[aria-current="page"]')||$('.nav-link'); a.focus();}}
+  mb.addEventListener('click',function(){setNav(!d.classList.contains('nav-open'));});
+  $('#navClose').addEventListener('click',function(){setNav(false);mb.focus();});
+  $('#scrim').addEventListener('click',function(){setNav(false);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&d.classList.contains('nav-open')){setNav(false);mb.focus();}
+    if(e.key==='/'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){var ff=$('#fFile'); if(ff&&$('#findings').classList.contains('active')){e.preventDefault();ff.focus();}}
+  });
+  // findings filters
+  var cards=$$('#flist .fcard');
+  function filt(){
+    var sev={}; $$('.chip[data-sev]').forEach(function(c){sev[c.getAttribute('data-sev')]=c.getAttribute('aria-pressed')==='true';});
+    var a=$('#fAsi').value, r=$('#fRule').value, f=$('#fFile').value.trim().toLowerCase(), n=0;
+    cards.forEach(function(c){var ok=sev[c.getAttribute('data-sev')]&&(!a||(' '+c.getAttribute('data-asi')+' ').indexOf(' '+a+' ')>=0)&&(!r||c.getAttribute('data-rule')===r)&&(!f||c.getAttribute('data-file').toLowerCase().indexOf(f)>=0);
+      c.hidden=!ok; if(ok){n++;}});
+    $('#fCount').textContent='Showing '+n+' of '+cards.length+' findings'; $('#fEmpty').hidden=n!==0;
+  }
+  function clearF(){$$('.chip[data-sev]').forEach(function(c){c.setAttribute('aria-pressed','true');}); $('#fAsi').value=''; $('#fRule').value=''; $('#fFile').value=''; filt();}
+  $$('.chip[data-sev]').forEach(function(c){c.addEventListener('click',function(){c.setAttribute('aria-pressed',String(c.getAttribute('aria-pressed')!=='true'));filt();});});
+  ['#fAsi','#fRule'].forEach(function(s){$(s).addEventListener('change',filt);}); $('#fFile').addEventListener('input',filt);
+  $('#fClear').addEventListener('click',clearF); $('#fClear2').addEventListener('click',clearF);
+  $('#filters').addEventListener('submit',function(e){e.preventDefault();});
+  if(prefs.show_low_info===false){$$('.chip[data-sev="low"],.chip[data-sev="info"]').forEach(function(c){c.setAttribute('aria-pressed','false');});}
+  filt();
+  // rules filter
+  var rrows=$$('#rtable tbody tr');
+  $('#rAsi').addEventListener('change',function(){var v=this.value,n=0; rrows.forEach(function(tr){var ok=!v||(' '+tr.getAttribute('data-asi')+' ').indexOf(' '+v+' ')>=0; tr.hidden=!ok; if(ok){n++;}}); $('#rCount').textContent='Showing '+n+' rules';});
+  // copy
+  $$('.copy').forEach(function(b){b.addEventListener('click',function(){
+    var t=b.getAttribute('data-copy'); function done(w){b.textContent=w; setTimeout(function(){b.textContent='Copy';},1600);}
+    try{navigator.clipboard.writeText(t).then(function(){done('Copied');},function(){done('Select and copy');});}catch(e){done('Select and copy');}});});
+  // routing
+  var views=$$('.view'), links=$$('.nav-link');
+  function route(){
+    var h=decodeURIComponent(window.location.hash.slice(1))||'overview', parts=h.split('/'), v=parts[0];
+    if(!$('#'+v)||!$('#'+v).classList.contains('view')){var el=document.getElementById(h); var p=el&&el.closest?el.closest('.view'):null; v=p?p.id:'overview';}
+    views.forEach(function(s){s.classList.toggle('active',s.id===v);});
+    links.forEach(function(a){if(a.getAttribute('data-view')===v){a.setAttribute('aria-current','page');}else{a.removeAttribute('aria-current');}});
+    document.title=($('.nav-link[data-view="'+v+'"] .nav-text')||{textContent:''}).textContent+' - nexvul report';
+    setNav(false);
+    var arg=parts[1]||'', target=null;
+    if(v==='findings'){
+      cards.forEach(function(c){c.classList.remove('is-target');});
+      if(/^sev=/.test(arg)){var s=arg.slice(4); $$('.chip[data-sev]').forEach(function(c){c.setAttribute('aria-pressed',String(c.getAttribute('data-sev')===s));}); $('#fAsi').value='';$('#fRule').value='';$('#fFile').value=''; filt();}
+      else if(/^rule=/.test(arg)){clearF(); $('#fRule').value=arg.slice(5); filt();}
+      else if(/^F\d+$/.test(arg)){target=$('#f-'+arg); if(target){clearF(); cards.forEach(function(c){if(c!==target){c.open=false;}}); target.open=true; target.classList.add('is-target');}}
+    }
+    pending={el:target,top:!target&&!(v==='settings'&&arg==='change')}; doScroll();
+  }
+  var pending=null;
+  function doScroll(){if(!pending){return;} if(pending.el){pending.el.scrollIntoView({block:'start'}); window.scrollBy(0,-72);} else if(pending.top){window.scrollTo(0,0);}}
+  if('scrollRestoration' in history){history.scrollRestoration='manual';}
+  window.addEventListener('hashchange',route); route();
+  window.addEventListener('load',function(){setTimeout(doScroll,0);});
+  if(qNav){setNav(true);}
+})();
+</script>
+</body>
+</html>

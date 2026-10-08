@@ -74,6 +74,7 @@ Recorded in `.nexvul/decisions/`. The product owner delegated these calls ("make
 | DEC-0008 | AutoGPT excluded from the corpus entirely (mixed licence) |
 | DEC-0009 | The v1 dashboard is a local static app shell (menu, views, read-only Settings), white by default, no accounts |
 | DEC-0010 | Hosted team dashboard with accounts, history and trends is wanted: a separate product and repo, opt-in metadata-only upload, threat model first, after the local slice ships |
+| DEC-0011 | Hosted dashboard is free for open-source projects only (public GitHub repo, OSI licence). Findings detail kept 90 days, aggregate trends 24 months, self-serve deletion with primary data gone in 7 days and backups in 35, breach notice within 72 hours. Needs legal review before it is published |
 | DEC-0007 | All 16 design open decisions accepted: suppression syntax `# nexvul: ignore[NEX006] -- reason`; exit codes 0/1/2/3/4 (precedence 2>4>3>1>0); nothing-to-analyse exits 3; HTML report ships in the thin slice; default `fail-on: high` |
 
 Environments (configured on GitHub): `dev` (any branch), `staging` (`main` only), `prod` (`v*` tags only, reviewer required).

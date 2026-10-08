@@ -298,7 +298,7 @@ def v_findings():
     asis = sorted({a for f in FIND for a in f["asi"]})
     rules = sorted({f["rule"] for f in FIND})
     asi_opts = "".join('<option value="%s">%s %s</option>' % (a, a, esc(D.ASI_NAMES[a])) for a in asis)
-    rule_opts = "".join('<option value="%s">%s %s</option>' % (r, r, esc(trunc(RULE_TITLE[r], 44))) for r in rules)
+    rule_opts = "".join('<option value="%s">%s %s</option>' % (r, r, esc(RULE_TITLE[r][:44] + ("\u2026" if len(RULE_TITLE[r]) > 44 else ""))) for r in rules)
     cards = "".join(finding_card(f, open_=(i == 0)) for i, f in enumerate(FIND))
     return """
 <section class="view" id="findings" aria-labelledby="h-findings">
@@ -712,6 +712,7 @@ h1,h2,h3,h4{margin:0;line-height:1.25}
 .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:16px;min-height:56px;padding:8px 24px;background:var(--raised);border-bottom:1px solid var(--border)}
 .menu-btn{display:none}
 .btn-icon{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.btn-icon.menu-btn,.btn-icon.nav-close{display:none}
 .target{display:flex;flex-direction:column;min-width:0}
 .target-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
 .target-val{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;color:var(--text)}
@@ -839,6 +840,8 @@ select,input[type="search"]{font:inherit;font-size:13px;min-height:36px;padding:
 .fbody h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
 .fmain h4:first-child,.fside h4:first-child{margin-top:0}
 .fbody p{margin:0}
+.fbody .fmsg{margin:0 0 16px}
+.fside .cmd{white-space:pre-wrap;word-break:break-word}
 .flow{list-style:none;margin:0;padding:0;counter-reset:s;position:relative}
 .step{position:relative;display:grid;grid-template-columns:28px auto auto minmax(0,1fr);grid-template-areas:"n role loc note" ". code code code";gap:4px 8px;align-items:center;padding:8px 0 8px}
 .step+.step::before{content:"";position:absolute;left:13px;top:-10px;height:18px;border-left:2px solid var(--border-strong)}
@@ -936,13 +939,13 @@ html[data-density="compact"] .tile{min-height:80px;padding:10px 12px}
 @media (max-width:1180px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.fw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:900px){
   .shell{grid-template-columns:minmax(0,1fr)}
-  .menu-btn{display:inline-flex}
+  .btn-icon.menu-btn{display:inline-flex}
   html.js .nav{position:fixed;left:0;top:0;bottom:0;z-index:20;width:280px;transform:translateX(-100%);transition:transform .15s ease-out;box-shadow:0 0 24px var(--shadow)}
   html.js.nav-open .nav{transform:none}
   html.js.nav-open .scrim{display:block;position:fixed;inset:0;z-index:15;background:var(--scrim)}
   html:not(.js) .nav{position:static;height:auto}
   html:not(.js) .shell{display:block}
-  .nav-close{display:inline-flex}
+  .btn-icon.nav-close{display:inline-flex}
   .grid-2,.fcols{grid-template-columns:minmax(0,1fr)}
   .fside{border-left:0;padding-left:0;border-top:1px solid var(--border-subtle);padding-top:12px}
   .prefs{grid-template-columns:minmax(0,1fr)}
@@ -1051,9 +1054,13 @@ JS = r"""
       else if(/^rule=/.test(arg)){clearF(); $('#fRule').value=arg.slice(5); filt();}
       else if(/^F\d+$/.test(arg)){target=$('#f-'+arg); if(target){clearF(); cards.forEach(function(c){if(c!==target){c.open=false;}}); target.open=true; target.classList.add('is-target');}}
     }
-    if(target){target.scrollIntoView({block:'start'}); window.scrollBy(0,-72);} else if(v!=='settings'||arg!=='change'){window.scrollTo(0,0);}
+    pending={el:target,top:!target&&!(v==='settings'&&arg==='change')}; doScroll();
   }
+  var pending=null;
+  function doScroll(){if(!pending){return;} if(pending.el){pending.el.scrollIntoView({block:'start'}); window.scrollBy(0,-72);} else if(pending.top){window.scrollTo(0,0);}}
+  if('scrollRestoration' in history){history.scrollRestoration='manual';}
   window.addEventListener('hashchange',route); route();
+  window.addEventListener('load',function(){setTimeout(doScroll,0);});
   if(qNav){setNav(true);}
 })();
 """
@@ -1112,8 +1119,8 @@ def shots():
     jobs = [
         ("dashboard-hero.png", "?theme=light#overview", 1280, 800, False),
         ("dashboard-full.png", "?theme=light#overview", 1280, 2400, True),
-        ("dashboard-findings-expanded.png", "?theme=light#findings/F1", 1280, 1400, False),
-        ("dashboard-findings-filtered-empty.png", "?theme=light#findings/rule=NEX007", 1280, 900, False),
+        ("dashboard-findings-expanded.png", "?theme=light#findings", 1280, 1500, False),
+        ("dashboard-findings-filtered-empty.png", "?theme=light#findings/sev=info", 1280, 760, False),
         ("dashboard-agent-map.png", "?theme=light#agents", 1280, 2000, True),
         ("dashboard-rules.png", "?theme=light#rules", 1280, 2000, True),
         ("dashboard-suppressions.png", "?theme=light#suppressions", 1280, 2000, True),

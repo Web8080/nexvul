@@ -43,9 +43,9 @@ design after the threat model.
 ## Open questions for the product owner (not blocking the scoping)
 - Hosting and stack. The owner's other projects use Next.js with Clerk or Supabase; reusing them is likely,
   but each is a dependency with supply-chain and data-residency implications.
-- Paid product, or free for open-source projects only? This affects billing, abuse handling and support load.
+- Pricing: decided in DEC-0011 (free for open-source projects only).
 - Where the code lives (a new repo under the same GitHub account is the default).
-- Data residency and retention promises you are willing to make publicly.
+- Retention and deletion promises: decided in DEC-0011 (needs legal review before public wording).
 
 ## Why not build it into this repo
 A service with accounts has a different threat model, release process and on-call burden from a local CLI.

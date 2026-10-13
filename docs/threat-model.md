@@ -27,8 +27,16 @@ Two failure classes matter equally:
 nexvul is a Python 3.12+ CLI distributed on PyPI (`nexvul`), as a GitHub Action, and as a pre-commit hook. It
 walks a directory, parses Python with stdlib `ast` and JS/TS with tree-sitter (compiled grammar wheels), builds
 an IR, runs taint/graph/pattern rules, and writes findings to terminal, JSON, SARIF and (planned) HTML. It reads
-`.nexvul.yml`, may keep a content-hash cache (`architecture.md` §8 proposes `.nexvul/cache/`), and discovers
-third-party rule packs via the `nexvul.rules` entry point (`architecture.md` §6.3). It makes no network calls.
+`.nexvul.yml` and keeps a content-hash cache in a per-user cache directory **outside the scanned repo**
+(`architecture.md` §8; the cache is treated as untrusted input on read, SR-08). Parsing and regex matching run in
+worker processes with wall-clock timeouts enforced by the supervisor, which hard-kills a worker that overruns
+(SR-03, SR-09). Rules are the built-in set only; third-party rule packs via the `nexvul.rules` entry point are not
+loaded before 1.0 and, afterwards, only when allowlisted (`architecture.md` §6.3, SR-22). In git checkouts,
+tracked files are scanned regardless of `.gitignore` and other ignore files (SR-16); the tracked-file list comes
+from a bounded, read-only parse of `.git/index` and `.git/HEAD`, a narrow carve-out from SR-06's "never read
+`.git/`" that treats both files as hostile input (`architecture.md` §4, R-6). A partial scan (any file skipped,
+truncated or crashed) exits 3 and fails CI by default; only trusted CLI/user config (`--allow-partial`) can
+downgrade it, and the downgrade is recorded in the output. It makes no network calls.
 
 ### 1.1 Data-flow diagram
 
@@ -60,11 +68,11 @@ third-party rule packs via the `nexvul.rules` entry point (`architecture.md` §6
   |  |        |                       .gitignore, inline suppressions,        | |
   |  |        |                       committed .nexvul/ dir                  | |
   |  |        v                                                               | |
-  |  |  [Parser workers: ast / tree-sitter]  (resource-limited, TB-1 inside)   | |
+  |  |  [Parser workers: ast / tree-sitter]  (separate processes, hard-kill timeouts, TB-1 inside)   | |
   |  |        v                                                               | |
-  |  |  [IR + cache] <====TB-3====> cache dir (must be OUTSIDE repo)          | |
+  |  |  [IR + cache] <====TB-3====> cache dir (OUTSIDE repo; untrusted on read)| |
   |  |        v                                                               | |
-  |  |  [Rule engine] <==TB-6== plugin rule packs (entry points, other pkgs)  | |
+  |  |  [Rule engine] <==TB-6== plugin rule packs (not loaded before 1.0)      | |
   |  |        v                                                               | |
   |  |  [Normaliser + completeness accounting]                                | |
   |  |        v                                                               | |
@@ -724,22 +732,29 @@ Each requirement is testable; "Test" names the evidence the QA/Test agent must p
 | SR-29 | SARIF and JSON column/line positions are computed consistently with the declared `columnKind` across line-ending and Unicode variants. | T-30 | MF-180..185. |
 | SR-30 | Every hostile fixture in `.nexvul/security/malicious-input-test-plan.md` exists as an automated test that runs in nexvul's CI on every PR and cannot be skipped or marked xfail without Supervisor approval (brief §21). | all | CI configuration audit. |
 
-## 9. Findings against the current proposed architecture
+## 9. Findings against the architecture (revision 2)
 
-Items in `docs/architecture.md` that conflict with this model (for the Principal Supervisor):
+Items in the original `docs/architecture.md` (revision 1) that conflicted with this model, and how revision 2
+(`docs/architecture.md`, Phase 0 revision 2) resolves each. Numbering is kept stable.
 
-1. **§8.1 cache at `.nexvul/cache/`** — inside the scanned repo ⇒ T-21. Move to user cache dir (SR-08). Also
-   collides with `.nexvul/` being this project's agent workspace (brief §4).
-2. **§9.5 `signal.alarm` regex timeouts** — main-thread-only and unreliable for C-level work; use process
-   isolation (SR-03, SR-09).
-3. **§8.3 `multiprocessing.Pool`** — a pool hides which file killed a worker and can lose tasks on worker
-   death; use a supervisor that tracks per-file assignment and restarts workers (SR-03).
-4. **§6.3 entry-point plugin discovery** — auto-loading ⇒ T-25; require allowlist (SR-22).
-5. **§1 Discovery "respecting .gitignore"** — ⇒ T-16 (SR-16).
-6. **§9.6 "Strip ANSI from SARIF/JSON"** — correct but insufficient: terminal output also needs escaping of
-   untrusted text even on a TTY (SR-10, SR-11).
-7. **§9.1 limits "skipped with a warning"** — warnings are not enough; skips must flow into completeness and
-   exit codes (Section 7).
+1. **Cache at `.nexvul/cache/`** (inside the scanned repo, T-21). Resolved: cache moved to the per-user cache
+   directory outside the repo and treated as untrusted on read (SR-08). Also removes the collision with
+   `.nexvul/` as this project's agent workspace (brief §4).
+2. **`signal.alarm` regex timeouts.** Resolved: process-based timeouts with a supervisor hard kill (SR-03, SR-09).
+3. **`multiprocessing.Pool`.** Resolved: supervisor tracks per-file assignment and restarts workers, so a
+   crashed worker is attributed to its file (SR-03).
+4. **Entry-point plugin discovery** (T-25). Resolved: built-in rules only until after 1.0; afterwards
+   allowlist-only (SR-22).
+5. **Discovery "respecting .gitignore"** (T-16). Resolved: tracked files are scanned regardless of ignore files;
+   every exclusion is counted by reason (SR-16).
+6. **"Strip ANSI from SARIF/JSON"** was correct but insufficient: terminal output also escapes untrusted text
+   even on a TTY (SR-10, SR-11). Resolved in revision 2.
+7. **Limits "skipped with a warning".** Resolved: skips flow into completeness accounting and exit codes
+   (Section 7); a partial scan exits 3 and fails CI by default, and only trusted config/CLI may downgrade it
+   (`--allow-partial`).
+
+New in revision 2: reading `.git/index` and `.git/HEAD` to list tracked files is an explicit, bounded carve-out
+from SR-06 (architecture §4.2, R-6), recorded in SR-06 above.
 
 ## 10. Sources (primary)
 

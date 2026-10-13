@@ -243,7 +243,7 @@ def resolve_exit_code(
 ) -> ExitCode:
     """Apply the OD-06 precedence 2 > 4 > 3 > 1 > 0.
 
-    ``partial_is_warning`` is the trusted ``--partial=warn`` downgrade (architecture §12.4): it may
+    ``partial_is_warning`` is the trusted ``--allow-partial`` downgrade (architecture §12.4): it may
     only be set from CLI flags or user config, never from repository config. The caller must
     record that the downgrade was used.
     """

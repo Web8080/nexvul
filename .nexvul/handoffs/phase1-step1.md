@@ -99,3 +99,17 @@ While I was working, files I had just written (`pyproject.toml` and most of `src
 - Reporters must render the completeness block (`Completeness.to_dict()`), `ResolvedConfig.changes` as `protections_weakened_by_repo_config`, and `config_sources` with SHA-256 hashes. Every path and key must go through `sanitize.display_text` / `display_path`.
 - Decide the items in §3 (flag names, status vocabulary, enabled/disabled precedence, gitignore for untracked files).
 - Set up Linux CI so that MF-25, MF-51 and MF-64 actually execute.
+
+## Follow-up (DEC-0012)
+
+Changes:
+- Docs: no leftover `--partial=warn` or loosening label `ignored` remained in docs/ (only historical mentions in DEC-0012 and this handoff); the `completeness.py` docstring now says `--allow-partial`.
+- `docs/threat-model.md` section 1 (text and DFD labels) and section 9 rewritten for architecture rev 2: cache outside repo and untrusted, process-based timeouts with hard kill, built-in rules only until after 1.0, tracked files scanned regardless of ignore files, partial scans exit 3 and fail CI by default (`--allow-partial` trusted-only), SR-06 carve-out for bounded `.git/index`/`.git/HEAD` parsing. T/SR IDs unchanged.
+- New `tests/unit/test_discovery_coverage.py` (21 tests): hostile index shapes (truncated count, v4 unterminated/overlong, v2 padding overrun) and syscall-edge failures (stat/scandir/readlink/read errors, .git swapped after lstat, index growing after fstat, tracked-pass errors, unopenable root). No pragmas, no skips added.
+- Unreachable defensive code: none found; discovery.py is now 100% line and branch.
+
+Results (run in /Users/innovations/nexvul with .venv):
+- `pytest -q --cov=nexvul --cov-branch`: 370 passed, 2 skipped (pre-existing Linux-only MF-25, MF-64); discovery.py 100%, TOTAL 99%.
+- `ruff check .`: All checks passed.
+- `ruff format --check .`: 27 files already formatted.
+- `mypy --strict src`: Success, no issues in 11 source files.

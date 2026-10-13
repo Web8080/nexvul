@@ -274,6 +274,26 @@ def test_ci_head_cannot_remove_base_enabled_rules() -> None:
     assert len(r.not_applied) == 1 and "ASI06" in r.not_applied[0].detail
 
 
+def test_enabled_wins_when_rule_enabled_and_disabled_across_layers() -> None:
+    """DEC-0012: enabled in one layer, disabled in another -> enabled, in either order."""
+    user = layer(ConfigSource.USER, rules_disabled=frozenset({"NEX004", "NEX005"}))
+    repo = layer(rules_enabled=frozenset({"NEX004"}))
+    r = resolve_config(repo=repo, trusted=[user], ci=False)
+    assert r.effective.rules_enabled == frozenset({"NEX004"})
+    assert r.effective.rules_disabled == frozenset({"NEX005"})
+
+    base = layer(ConfigSource.BASE_REF, rules_enabled=frozenset({"NEX004"}))
+    head = layer(rules_disabled=frozenset({"NEX004"}))
+    r2 = resolve_config(repo=head, trusted=[base], ci=False)
+    assert "NEX004" in r2.effective.rules_enabled
+    assert "NEX004" not in r2.effective.rules_disabled
+    assert any("enabled wins" in c.reason for c in r2.changes)
+
+    r3 = resolve_config(repo=head, trusted=[base], ci=True)
+    assert "NEX004" in r3.effective.rules_enabled
+    assert "NEX004" not in r3.effective.rules_disabled
+
+
 def test_ci_head_can_remove_base_excludes() -> None:
     base = layer(ConfigSource.BASE_REF, exclude=("vendor/", "gen/"))
     head = layer(exclude=("vendor/",))

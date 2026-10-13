@@ -15,6 +15,9 @@ Two halves:
    possibly a PR head) applies in full locally, but in CI mode only its *tightening* changes are
    applied; every loosening is reported with status ``not_applied`` ("NOT APPLIED").
 
+A rule that is enabled by one layer and disabled by another ends up **enabled** (DEC-0012,
+DEC-0004: a stricter layer may only tighten); the override is listed as an applied change.
+
 Repository config can never set output paths, cache locations, plugin sources or regexes: those
 keys do not exist in the schema, so they are rejected as unknown keys (MF-43, MF-59).
 
@@ -674,6 +677,26 @@ def _apply_layer(b: _Builder, layer: LoadedConfig, *, tighten_only: bool) -> Non
             b.set(KEY_MAX_FILE_SIZE, "max_file_size", v.max_file_size, src)
 
 
+def _enabled_wins(b: _Builder) -> None:
+    """DEC-0012: a rule both enabled and disabled across layers ends up enabled.
+
+    Per DEC-0004 a stricter layer may only tighten the scan, so ``rules.enabled`` always beats
+    ``rules.disabled`` regardless of which layer set which. The overridden disables are removed
+    from the effective disabled set and reported as ``applied`` changes (never silently).
+    """
+    both = b.cfg.rules_enabled & b.cfg.rules_disabled
+    if not both:
+        return
+    b.note(
+        KEY_RULES_DISABLED,
+        f"remove {_fmt_items(both)}",
+        ConfigSource.DEFAULT,
+        ChangeStatus.APPLIED,
+        "rule enabled in another layer: enabled wins",
+    )
+    b.set(KEY_RULES_DISABLED, "rules_disabled", b.cfg.rules_disabled - both, ConfigSource.DEFAULT)
+
+
 def resolve_config(
     *,
     repo: LoadedConfig | None,
@@ -703,6 +726,7 @@ def resolve_config(
             raise ValueError("repo layer must have source REPO")
         _apply_layer(b, repo, tighten_only=ci)
         provenance.append(ConfigProvenance(repo.source, repo.display_path, repo.sha256, repo.ref))
+    _enabled_wins(b)
     return ResolvedConfig(
         effective=b.cfg, changes=tuple(b.changes), config_sources=tuple(provenance), ci=ci
     )

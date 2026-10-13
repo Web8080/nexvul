@@ -176,7 +176,7 @@
 | MF-105 | config-symlinked | `.nexvul.yml -> /etc/passwd` or `-> ../../other.yml`. | Not followed; config error; content not echoed. |
 | MF-106 | gitignore-hides-tp | TP file force-added to git while matching `.gitignore`. | Scanned (tracked); listed. |
 | MF-107 | nested-gitignore | `agent/.gitignore` containing `*`. | Tracked files still scanned. |
-| MF-108 | non-git-dir | Same as MF-106 but no `.git`. | Falls back to `.gitignore`; exclusion counted and reported. |
+| MF-108 | non-git-dir | Same as MF-106 but no `.git`. | Scanned. Ignore files are never used to skip files (architecture §4.1); only explicit `exclude` / built-in prunes apply, and those are counted and reported. |
 | MF-110 | inline-specific | `# nexvul: ignore[NEX001]` on TP line. | Finding emitted `suppressed: true`, SARIF `suppressions[{kind:"inSource"}]`, counted. |
 | MF-111 | inline-blanket | `# nexvul: ignore` (no rule ID), `# nexvul: skip-file`. | Not honoured (or disabled in CI mode); reported. |
 | MF-112 | inline-in-string | Suppression text inside a multi-line string / f-string / JS template literal. | Not treated as suppression (token-based parse). |

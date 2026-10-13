@@ -179,7 +179,7 @@ CI mode is enabled by `--ci` or automatically when `CI=true` / `GITHUB_ACTIONS=t
   inline-suppression checks = **loosen**.
 - In CI mode, tightening values from the PR-head `.nexvul.yml` are applied; loosening values are applied only
   from ranks 1–3. Loosening values found in PR-head config and not applied are listed under
-  `protections_weakened_by_repo_config` with status `ignored`; loosening values that *were* applied from a
+  `protections_weakened_by_repo_config` with status `not_applied` (displayed "NOT APPLIED"); loosening values that *were* applied from a
   trusted ref are listed with status `applied` (SR-15).
 - Outside CI mode the repo config is honoured in full (local developer use), and every loosening is still
   listed in the output.
@@ -685,8 +685,8 @@ Presentation rules:
 | 4 | internal error / scan failed / startup guard tripped |
 
 Precedence: 2 > 4 > 3 > 1 > 0. A partial scan is never exit 0. The default is that exit 3 **fails CI**
-[pending human approval — D4]; trusted config/CLI (`--partial=warn`) may map partial to the findings-based code
-(0/1), and that downgrade is itself recorded in the output. Repo-local config cannot set `--partial=warn`.
+[pending human approval — D4]; trusted config/CLI (`--allow-partial`) may map partial to the findings-based code
+(0/1), and that downgrade is itself recorded in the output. Repo-local config cannot set `--allow-partial`.
 
 ---
 
@@ -797,35 +797,46 @@ collided with `.nexvul/` as the agent workspace (brief §4). Replaced by:
 
 ## 17. Package layout
 
+Legend: **implemented** = present in `src/nexvul` today (Phase 1 step 1); **planned** = target layout, not yet written.
+Modules are flat files for now; the sub-packages shown under `core/` in earlier revisions (`config/`, `discovery/`,
+`workers/`) are a planned split, to be made only if a module outgrows a single file.
+
 ```
 nexvul/
-  __main__.py            isolated-startup guard + re-exec (§2.2); imports only sys/os before the check
-  cli/                   main.py (scan, precommit, rules, explain, doctor, version), args.py (path validation)
+  __init__.py            implemented
+  __main__.py            implemented: isolated-startup guard + re-exec (§2.2); imports only sys/os before the check
+  cli/
+    __init__.py          implemented
+    main.py              implemented (current commands); planned: scan, precommit, rules, explain, doctor, version
+    args.py              planned: path validation
   core/
-    startup.py           module-origin assertion (SR-02)
-    config/              loader.py, schema.py, trust.py (tighten/loosen directions), defaults.py
-    discovery/           walker.py, gitindex.py (bounded .git/index reader), policy.py
-    workers/             supervisor.py, worker_main.py, limits.py (rlimits), ipc.py (JSON framing)
-    ledger.py            completeness accounting
-    cache.py             per-user, HMAC (§14)
-    errors.py
-  ir/                    nodes.py, facts.py, edges.py, builder.py, walk.py (iterative)
-  parser/
+    __init__.py          implemented
+    limits.py            implemented: self-protection limits and hard caps
+    completeness.py      implemented: completeness ledger, partial-scan accounting, exit codes
+    config.py            implemented: .nexvul.yml loader, schema, trust-aware resolution (tighten/loosen, DEC-0004, DEC-0012)
+    discovery.py         implemented: walker, bounded .git/index reader, scope policy
+    sanitize.py          implemented: display sanitiser
+    startup.py           implemented: module-origin assertion (SR-02)
+    workers/             planned: supervisor.py, worker_main.py, rlimits, ipc.py (JSON framing)
+    cache.py             planned: per-user, HMAC (§14)
+    errors.py            planned
+  ir/                    planned: nodes.py, facts.py, edges.py, builder.py, walk.py (iterative)
+  parser/                planned
     python/              decode.py (PEP 263), prescan.py (nesting estimate), parser.py, to_ir.py
     javascript/          parser.py (tree-sitter), to_ir.py           (Phase 5)
     typescript/          grammar selection for .ts/.tsx              (Phase 5)
     manifests/           json_safe.py, yaml_safe.py, toml_safe.py, lockfiles.py, mcp_config.py
-  analysis/
+  analysis/              planned
     symbols.py  imports.py  callgraph.py  cfg.py
     taint/               specs.py, lattice.py, intra.py, summaries.py, crossfile.py, budgets.py
     graphs/              agent_graph.py (ASI08), capabilities.py (ASI10)
     versions.py          FrameworkVersion facts + versioned defaults table loader
-  frameworks/            base.py, registry.py, langchain.py, langgraph.py, crewai.py, autogen.py,
+  frameworks/            planned: base.py, registry.py, langchain.py, langgraph.py, crewai.py, autogen.py,
                          openai_agents.py, llamaindex.py, vercel_ai.py, mcp/{eras.py, python.py, ts.py, configs.py}, a2a.py
-  data/                  defaults_table/*.json (cited), sensitivity_catalogue/*.json
-  rules/                 base.py, _registry.py (frozen), engine.py, suppressions.py, asi06/ … asi10/
-  reporting/             sanitise.py, normaliser.py, terminal.py, json_reporter.py, sarif.py, html.py
-  schemas/               finding/v1.json, completeness/v1.json
+  data/                  planned: defaults_table/*.json (cited), sensitivity_catalogue/*.json
+  rules/                 planned: base.py, _registry.py (frozen), engine.py, suppressions.py, asi06/ … asi10/
+  reporting/             planned: sanitise.py, normaliser.py, terminal.py, json_reporter.py, sarif.py, html.py
+  schemas/               planned: finding/v1.json, completeness/v1.json
 ```
 
 ## 18. Dependency policy

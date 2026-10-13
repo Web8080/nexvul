@@ -73,6 +73,9 @@ class SkipReason(StrEnum):
     NON_UTF8_UNDECODABLE = "non_utf8_undecodable"
     SYNTAX_UNSUPPORTED_BY_RUNTIME = "syntax_unsupported_by_runtime"
     SUBMODULE_NOT_SCANNED = "submodule_not_scanned"
+    # In-scope language (selected by discovery) for which this build has no parser yet, e.g.
+    # JS/TS before Phase 5. The content was not analysed, so the scan is partial.
+    PARSER_UNAVAILABLE = "parser_unavailable"
     # --- policy (counted, not partial) ---
     SYMLINK_NOT_FOLLOWED = "symlink_not_followed"
     SYMLINK_ESCAPES_ROOT = "symlink_escapes_root"
@@ -103,6 +106,7 @@ _IMPACT: dict[SkipReason, Impact] = {
     SkipReason.NON_UTF8_UNDECODABLE: Impact.PARTIAL,
     SkipReason.SYNTAX_UNSUPPORTED_BY_RUNTIME: Impact.PARTIAL,
     SkipReason.SUBMODULE_NOT_SCANNED: Impact.PARTIAL,
+    SkipReason.PARSER_UNAVAILABLE: Impact.PARTIAL,
     SkipReason.SYMLINK_NOT_FOLLOWED: Impact.COUNTED,
     SkipReason.SYMLINK_ESCAPES_ROOT: Impact.COUNTED,
     SkipReason.SPECIAL_FILE: Impact.COUNTED,

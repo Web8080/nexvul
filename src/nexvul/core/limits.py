@@ -99,3 +99,68 @@ MAX_DISPLAY_PATH_CHARS: Final = 240
 #: Maximum number of individual skipped paths kept in the completeness ledger. Counts by reason
 #: stay exact; only the illustrative path list is capped (threat model §7 rule 7).
 MAX_SKIPPED_PATHS_LISTED: Final = 1_000
+
+# --------------------------------------------------------------------------------------------
+# Parse stage (worker isolation and per-file parse limits) - T-02, T-03, SR-03..05, arch §5.2-5.3
+# --------------------------------------------------------------------------------------------
+
+#: Maximum bracket + indentation nesting estimated from the token stream before ``ast.parse``.
+#: CPython's own tokenizer stops at 200 nested brackets and 100 indent levels; real code is far
+#: below either. Architecture §5.3 "max_nesting".
+MAX_NESTING: Final = 100
+
+#: Maximum number of AST nodes (every node yielded by an iterative child walk, operators
+#: included). Architecture §5.3 "max_ast_nodes".
+MAX_AST_NODES: Final = 500_000
+
+#: Maximum characters of one string literal kept in the IR (longer: truncated and flagged).
+#: Truncation does not make the scan partial (architecture §5.3 ``literal_truncated``).
+MAX_LITERAL_CHARS: Final = 10_000
+
+#: Maximum characters of a rendered expression summary or dotted name kept in the IR.
+MAX_EXPR_TEXT_CHARS: Final = 200
+
+#: Maximum AST depth rendered into one expression summary (deeper parts become ``...``).
+MAX_EXPR_RENDER_DEPTH: Final = 6
+
+#: Maximum AST nodes visited while summarising one expression (bounds quadratic blow-up on
+#: nested calls such as ``f(g(h(...)))``).
+MAX_EXPR_VISIT_NODES: Final = 256
+
+#: Maximum names recorded as referenced by one expression summary.
+MAX_EXPR_NAMES: Final = 32
+
+#: Maximum attribute-chain length resolved into a dotted name (longer chains are ``dynamic``).
+MAX_ATTRIBUTE_CHAIN: Final = 32
+
+#: Default per-file wall-clock limit for read + decode + parse + IR, enforced by the supervisor
+#: with a hard kill of the worker process (architecture §5.1-5.2).
+DEFAULT_PARSE_TIMEOUT_SECONDS: Final = 10.0
+
+#: Absolute ceiling for the per-file parse timeout from any source.
+HARD_MAX_PARSE_TIMEOUT_SECONDS: Final = 120.0
+
+#: Default ceiling on the number of parse workers (architecture §5.2: ``min(cpu_count, 8)``).
+DEFAULT_MAX_WORKERS: Final = 8
+
+#: Worker address-space limit (``RLIMIT_AS``), applied on Linux only; macOS does not enforce it
+#: reliably (open risk R-3). Also the RSS cap the supervisor polls on Linux.
+WORKER_MEMORY_LIMIT_BYTES: Final = 1 * GIB
+
+#: Soft file-descriptor limit inside a worker (it needs stdio, one pipe, and a short fd chain).
+WORKER_MAX_OPEN_FILES: Final = 64
+
+#: Extra CPU seconds above the wall-clock limit for the ``RLIMIT_CPU`` backstop.
+WORKER_CPU_MARGIN_SECONDS: Final = 2
+
+#: Maximum size of one JSON message a worker may send to the supervisor. Larger => the worker is
+#: killed and the file recorded as ``parser_crashed`` (protocol violation).
+MAX_WORKER_RESULT_BYTES: Final = 64 * MIB
+
+#: Number of worker deaths a single file may cause before it is not retried (architecture §5.2:
+#: "a file that kills two workers is not retried a third time").
+MAX_CRASH_ATTEMPTS_PER_FILE: Final = 2
+
+#: Maximum characters of a resolved dotted name. A longer name (only possible with absurd
+#: identifiers) is recorded as ``dynamic`` rather than truncated, so it can never match a spec.
+MAX_DOTTED_NAME_CHARS: Final = 1024

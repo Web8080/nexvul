@@ -1,0 +1,32 @@
+nexvul 0.1.0  ./my-agent-project
+  308 of 312 files · rules: 3 of 3 enabled · fail-on high
+  none recognised (no framework recognisers in this
+  version)
+────────────────────────────────────────────────────────────
+
+No findings in the 308 files that were analysed. 4 files
+were not analysed.
+
+Scan completeness
+  Status        PARTIAL
+  Analysed      308 of 312 files
+  Not analysed  4 files
+                  over size limit    1   data/fixtures.py
+                                         (3145728 > 1048576)
+                  parse error        2   agent/legacy.py,
+                                         tools/gen_api.py
+                  parser timeout     1   agent/huge_graph.py
+                                         (10 s limit)
+  Limits hit    none
+  Not in scope  unsupported file type: 1
+  Rules run     3 of 3 enabled rules finished
+  Not followed  3 dynamic constructs (analysis-limited;
+                see --verbose)
+
+  Code in these files was not checked. Run with --verbose
+  for details.
+
+Result  0 findings in analysed files.
+        Exit code 3 (scan incomplete).
+PARTIAL SCAN — 4 of 312 files not analysed. This result is
+not a clean bill of health.

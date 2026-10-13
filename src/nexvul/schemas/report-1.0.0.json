@@ -1,0 +1,1139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nexvul/schemas/report-1.0.0.json",
+  "title": "nexvul JSON report",
+  "description": "Shipped with nexvul; never fetched at run time (SR-23). completeness is required (threat model section 7).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "nexvul",
+    "scan",
+    "config",
+    "completeness",
+    "summary",
+    "findings",
+    "suppressed",
+    "suppressions",
+    "analysis_limited",
+    "untrusted_fields"
+  ],
+  "properties": {
+    "nexvul": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report_format",
+        "schema_version",
+        "version",
+        "rule_pack",
+        "python",
+        "platform",
+        "parsers",
+        "plugins_loaded"
+      ],
+      "properties": {
+        "report_format": {
+          "const": "nexvul-json"
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+        },
+        "version": {
+          "type": "string"
+        },
+        "rule_pack": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "sha256",
+            "rules"
+          ],
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "rules": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "python": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "parsers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "plugins_loaded": {
+          "type": "array",
+          "maxItems": 0
+        }
+      }
+    },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "mode",
+        "commit",
+        "started_at",
+        "ended_at",
+        "ci",
+        "ci_reason",
+        "scope",
+        "position_encoding"
+      ],
+      "properties": {
+        "target": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "git",
+            "directory"
+          ]
+        },
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "started_at": {
+          "type": "string"
+        },
+        "ended_at": {
+          "type": "string"
+        },
+        "ci": {
+          "type": "boolean"
+        },
+        "ci_reason": {
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "repository",
+            "explicit-paths"
+          ]
+        },
+        "position_encoding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "line_base",
+            "column_base",
+            "column_unit"
+          ],
+          "properties": {
+            "line_base": {
+              "const": 1
+            },
+            "column_base": {
+              "const": 1
+            },
+            "column_unit": {
+              "const": "utf8_bytes"
+            }
+          }
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effective",
+        "sources",
+        "changes"
+      ],
+      "properties": {
+        "effective": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "value",
+              "sources"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "path",
+              "sha256",
+              "ref"
+            ],
+            "properties": {
+              "source": {
+                "enum": [
+                  "cli",
+                  "user",
+                  "base_ref",
+                  "repo",
+                  "default"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ref": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "detail",
+              "source",
+              "status",
+              "reason"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "applied",
+                  "not_applied"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "completeness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "failed_cause",
+        "files_discovered",
+        "files_analysed",
+        "files_not_analysed",
+        "files_failed",
+        "files_timed_out",
+        "files_skipped",
+        "files_skipped_truncated",
+        "skipped_by_reason",
+        "limits_hit",
+        "analysis_budgets_exhausted",
+        "rule_failures",
+        "findings_truncated",
+        "suppressed",
+        "protections_weakened_by_repo_config",
+        "config_sources",
+        "plugins_loaded",
+        "dynamic_constructs_not_analysed",
+        "allow_partial",
+        "notes"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed"
+          ]
+        },
+        "failed_cause": {
+          "enum": [
+            "nothing_to_analyse",
+            "none_analysed",
+            null
+          ]
+        },
+        "files_discovered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_analysed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_not_analysed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_timed_out": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "reason",
+              "detail",
+              "makes_partial"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "detail": {
+                "type": "string"
+              },
+              "makes_partial": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "files_skipped_truncated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped_by_reason": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "limits_hit": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "analysis_budgets_exhausted": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rule_failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rule_id",
+              "error_type"
+            ],
+            "properties": {
+              "rule_id": {
+                "type": "string"
+              },
+              "error_type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "findings_truncated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suppressed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "inline",
+            "baseline"
+          ],
+          "properties": {
+            "inline": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "baseline": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "protections_weakened_by_repo_config": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "config_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "path",
+              "sha256",
+              "ref"
+            ],
+            "properties": {
+              "source": {
+                "enum": [
+                  "cli",
+                  "user",
+                  "base_ref",
+                  "repo",
+                  "default"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ref": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "plugins_loaded": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "dynamic_constructs_not_analysed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allow_partial": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "exit_code",
+        "fail_on",
+        "findings",
+        "by_severity",
+        "at_or_above_fail_on",
+        "suppressed",
+        "rules",
+        "disclaimer"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "complete",
+            "partial",
+            "failed"
+          ]
+        },
+        "exit_code": {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "fail_on": {
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "info"
+          ]
+        },
+        "findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "info"
+          ],
+          "properties": {
+            "critical": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "high": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "low": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "info": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "at_or_above_fail_on": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "suppressed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "available",
+            "enabled",
+            "failed"
+          ],
+          "properties": {
+            "available": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "enabled": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^NEX[0-9]{3}$"
+              }
+            },
+            "failed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "disclaimer": {
+          "type": "string"
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "title",
+          "severity",
+          "confidence",
+          "owasp",
+          "cwe",
+          "file",
+          "line",
+          "column",
+          "end_line",
+          "end_column",
+          "raw_path_b64",
+          "message",
+          "fingerprint",
+          "dataflow",
+          "evidence",
+          "limitations",
+          "remediation",
+          "references",
+          "suppressed",
+          "suppression",
+          "untrusted_fields"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^NEX[0-9]{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
+          },
+          "confidence": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "owasp": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ASI(0[1-9]|10)$"
+            },
+            "minItems": 1
+          },
+          "cwe": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_column": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "raw_path_b64": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "dataflow": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "step",
+                "role",
+                "file",
+                "line",
+                "column",
+                "code"
+              ],
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "role": {
+                  "enum": [
+                    "source",
+                    "step",
+                    "call",
+                    "sink"
+                  ]
+                },
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "column": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "code": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "description",
+                "snippet"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remediation": {
+            "type": "string"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "suppressed": {
+            "type": "boolean"
+          },
+          "suppression": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "kind",
+              "line",
+              "justification",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "none",
+                  "suppressed",
+                  "not_applied"
+                ]
+              },
+              "kind": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "justification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "untrusted_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "suppressed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "title",
+          "severity",
+          "confidence",
+          "owasp",
+          "cwe",
+          "file",
+          "line",
+          "column",
+          "end_line",
+          "end_column",
+          "raw_path_b64",
+          "message",
+          "fingerprint",
+          "dataflow",
+          "evidence",
+          "limitations",
+          "remediation",
+          "references",
+          "suppressed",
+          "suppression",
+          "untrusted_fields"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "pattern": "^NEX[0-9]{3}$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
+          },
+          "confidence": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "owasp": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ASI(0[1-9]|10)$"
+            },
+            "minItems": 1
+          },
+          "cwe": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "file": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "column": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_column": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "raw_path_b64": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          },
+          "dataflow": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "step",
+                "role",
+                "file",
+                "line",
+                "column",
+                "code"
+              ],
+              "properties": {
+                "step": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "role": {
+                  "enum": [
+                    "source",
+                    "step",
+                    "call",
+                    "sink"
+                  ]
+                },
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "column": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "code": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "description",
+                "snippet"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "snippet": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remediation": {
+            "type": "string"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "suppressed": {
+            "type": "boolean"
+          },
+          "suppression": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "kind",
+              "line",
+              "justification",
+              "reason"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "none",
+                  "suppressed",
+                  "not_applied"
+                ]
+              },
+              "kind": {
+                "type": "string"
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "justification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          },
+          "untrusted_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "suppressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "path",
+          "line",
+          "problem",
+          "rule_ids",
+          "message"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "rejected",
+              "not_applied",
+              "no_justification",
+              "unmatched"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "problem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rule_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "analysis_limited": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "line",
+          "reason"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "untrusted_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

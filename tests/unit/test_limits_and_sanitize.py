@@ -74,3 +74,19 @@ def test_unassigned_and_private_use_escaped() -> None:
     assert is_display_safe("caf" + chr(0xE9))  # e-acute is ordinary text
     assert not is_display_safe(chr(0xE000))  # private use
     assert not is_display_safe("\\")
+
+
+def test_ensure_display_safe_is_idempotent_and_escapes_leftovers() -> None:
+    from nexvul.core.sanitize import (
+        describe_char,
+        display_text,
+        ensure_display_safe,
+        first_hidden_char,
+    )
+
+    once = display_text("a\\b\x1b[2J\u202e")
+    assert ensure_display_safe(once) == once
+    assert ensure_display_safe("x\x1by") == "x\\x1by"
+    assert describe_char("\u202e") == "U+202E RIGHT-TO-LEFT OVERRIDE"
+    assert first_hidden_char("ok\u200bno") == "\u200b"
+    assert first_hidden_char("plain \\ text") is None

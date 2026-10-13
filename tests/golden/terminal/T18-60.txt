@@ -1,0 +1,24 @@
+nexvul 0.1.0  ./docs
+  0 of 0 files · rules: 3 of 3 enabled · fail-on high
+  none recognised (no framework recognisers in this
+  version)
+────────────────────────────────────────────────────────────
+
+SCAN FAILED — nothing to analyse in ./docs.
+
+  Found 3 files: 2 .md, 1 .png; none is a source file
+  nexvul reads.
+  This version of nexvul analyses Python source files
+  (.py).
+
+  Did you mean to scan the project root? Try: nexvul scan
+  .
+
+Scan completeness
+  Status        FAILED
+  Analysed      0 of 0 files
+  Limits hit    none
+  Not in scope  unsupported file type: 3
+  Rules run     none (nothing was analysed)
+
+Result  No result. Exit code 3 (scan incomplete).

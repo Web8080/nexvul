@@ -84,6 +84,9 @@ class SkipReason(StrEnum):
     DEFAULT_EXCLUDED_DIR = "default_excluded_dir"
     # --- out of scope (info) ---
     UNSUPPORTED_FILE_TYPE = "unsupported_file_type"
+    # The scan root's own .nexvul.yml: read by the config loader (as untrusted config), not
+    # analysed as source.
+    NEXVUL_CONFIG = "nexvul_config"
     VCS_METADATA = "vcs_metadata"
 
 
@@ -113,6 +116,7 @@ _IMPACT: dict[SkipReason, Impact] = {
     SkipReason.EXCLUDED_BY_CONFIG: Impact.COUNTED,
     SkipReason.DEFAULT_EXCLUDED_DIR: Impact.COUNTED,
     SkipReason.UNSUPPORTED_FILE_TYPE: Impact.INFO,
+    SkipReason.NEXVUL_CONFIG: Impact.INFO,
     SkipReason.VCS_METADATA: Impact.INFO,
 }
 
@@ -150,6 +154,18 @@ class SkippedEntry:
     detail: str = ""  # trusted text composed by nexvul (sizes, limit names), never file content
 
 
+@dataclass(frozen=True)
+class RuleFailure:
+    """A rule raised while running. Its results are incomplete, so the scan is partial.
+
+    ``error_type`` is the exception class name only: exception messages may echo scanned text
+    and are never recorded (SR-24).
+    """
+
+    rule_id: str
+    error_type: str
+
+
 @dataclass
 class Completeness:
     """Mutable ledger owned by the supervisor. Not thread-safe; one per scan."""
@@ -163,6 +179,8 @@ class Completeness:
     limits_hit: list[LimitHit] = field(default_factory=list)
     internal_error: bool = False
     notes: list[str] = field(default_factory=list)  # trusted strings only
+    rule_failures: list[RuleFailure] = field(default_factory=list)
+    findings_truncated: int = 0
 
     # -- recording ---------------------------------------------------------------------------
 
@@ -184,6 +202,14 @@ class Completeness:
     def record_limit(self, limit: LimitHit) -> None:
         if limit not in self.limits_hit:
             self.limits_hit.append(limit)
+
+    def record_rule_failure(self, rule_id: str, error_type: str) -> None:
+        """A rule raised: never swallowed, always recorded, and the scan becomes partial."""
+        self.rule_failures.append(RuleFailure(rule_id, error_type))
+
+    def record_findings_truncated(self, count: int) -> None:
+        """Findings dropped by a per-file or total cap (architecture §15): partial."""
+        self.findings_truncated += count
 
     def record_internal_error(self) -> None:
         self.internal_error = True
@@ -215,7 +241,12 @@ class Completeness:
     def status(self) -> Status:
         if self.internal_error:
             return Status.FAILED
-        if self.limits_hit or self.files_not_analysed_partial > 0:
+        if (
+            self.limits_hit
+            or self.files_not_analysed_partial > 0
+            or self.rule_failures
+            or self.findings_truncated
+        ):
             return Status.PARTIAL
         return Status.COMPLETE
 
@@ -233,6 +264,10 @@ class Completeness:
             ],
             "skipped_list_truncated": self.skipped_list_truncated,
             "limits_hit": [lim.value for lim in self.limits_hit],
+            "rule_failures": [
+                {"rule_id": f.rule_id, "error_type": f.error_type} for f in self.rule_failures
+            ],
+            "findings_truncated": self.findings_truncated,
             "notes": list(self.notes),
         }
 

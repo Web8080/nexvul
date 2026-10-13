@@ -33,6 +33,7 @@ from nexvul.ir.model import (
     ResolutionStatus,
     ReturnFact,
     StringConstant,
+    SuppressionComment,
     SymbolRef,
     failed_module,
 )
@@ -63,6 +64,7 @@ __all__ = [
     "ResolutionStatus",
     "ReturnFact",
     "StringConstant",
+    "SuppressionComment",
     "SymbolRef",
     "failed_module",
     "from_dict",

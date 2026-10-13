@@ -273,7 +273,10 @@ def test_analyse_files_no_python_files_spawns_nothing(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
-    "bad", ["", "/abs.py", "../x.py", "a//b.py", "./a.py", "a\\b.py", "a\x00.py"]
+    # "a\\b.py" was in this list until step 3a: a backslash is a legal POSIX name byte and
+    # rejecting it aborted whole scans (see test_backslash_in_file_name_is_parsed_not_rejected).
+    "bad",
+    ["", "/abs.py", "../x.py", "a//b.py", "./a.py", "a\x00.py"],
 )
 def test_analyse_files_rejects_bad_paths(tmp_path: Path, bad: str) -> None:
     with pytest.raises(ValueError):
@@ -285,3 +288,12 @@ def test_fold_defaults_missing_reason() -> None:
     workers._fold(ledger, [FileOutcome("a.py", OutcomeStatus.CRASHED)], memory_enforced=True)
     assert ledger.count(SkipReason.PARSER_CRASHED) == 1
     assert not any("memory limit" in n for n in ledger.notes)
+
+
+def test_backslash_in_file_name_is_parsed_not_rejected(tmp_path: Path) -> None:
+    """Step-3a regression: a POSIX name containing a backslash aborted the whole scan."""
+    from nexvul.core.workers import WorkerOptions, analyse_files
+
+    (tmp_path / "a\\b.py").write_text("x = 1\n")
+    result = analyse_files(str(tmp_path), ["a\\b.py"], options=WorkerOptions(max_workers=1))
+    assert result.outcomes[0].status.value == "scanned"

@@ -18,6 +18,7 @@ which provides the hard wall-clock and memory bounds that in-process code cannot
 from __future__ import annotations
 
 import ast
+import bisect
 import builtins
 import codecs
 import hashlib
@@ -54,6 +55,7 @@ from nexvul.ir.model import (
     ResolutionStatus,
     ReturnFact,
     StringConstant,
+    SuppressionComment,
     SymbolRef,
     failed_module,
 )
@@ -151,7 +153,7 @@ def decode_source(data: bytes) -> tuple[str, str, tuple[str, ...]]:
     chars = set(text)
     if chars & _BIDI_CONTROLS:
         notes.append("bidi_control")
-    if any(unicodedata.category(c) == "Cf" and c not in _BIDI_CONTROLS for c in chars - {"﻿"}):
+    if any(unicodedata.category(c) == "Cf" and c not in _BIDI_CONTROLS for c in chars - {"\ufeff"}):
         notes.append("invisible_format_character")
     return text, name, tuple(notes)
 
@@ -1088,6 +1090,81 @@ def _referenced_names(node: ast.AST) -> tuple[tuple[str, ...], bool]:
 
 
 # =============================================================================================
+# Suppression comments (architecture §11.5, SR-17, T-17)
+# =============================================================================================
+
+_SUPPRESSION_PREFIX: Final = "nexvul:"
+_NON_CODE_TOKENS: Final = frozenset(
+    {
+        tokenize.COMMENT,
+        tokenize.NL,
+        tokenize.NEWLINE,
+        tokenize.INDENT,
+        tokenize.DEDENT,
+        tokenize.ENDMARKER,
+        tokenize.ENCODING,
+    }
+)
+
+
+def _is_suppression_comment(body: str) -> bool:
+    """True when a comment body is aimed at nexvul (``nexvul:`` after optional whitespace).
+
+    Invisible format characters and whitespace before the prefix are skipped for this test only,
+    so a comment hiding a bidi override in front of ``nexvul:`` is still recorded and later
+    rejected by the supervisor instead of being silently ignored. ``nexvul-expect:`` fixture
+    annotations do not match.
+    """
+    head = "".join(
+        ch for ch in body[:64] if not ch.isspace() and unicodedata.category(ch) != "Cf"
+    ).casefold()
+    return head.startswith(_SUPPRESSION_PREFIX)
+
+
+def extract_suppression_comments(
+    text: str,
+    *,
+    max_comments: int = limits.MAX_SUPPRESSION_COMMENTS_PER_FILE,
+    max_chars: int = limits.MAX_SUPPRESSION_COMMENT_CHARS,
+) -> tuple[tuple[SuppressionComment, ...], bool]:
+    """Collect ``# nexvul:`` comments from real COMMENT tokens of already-parsed source.
+
+    Returns ``(comments, overflowed)``. A trailing comment targets its own line; a comment on a
+    line without code targets the next line that holds code (screen-inventory C03).
+    """
+    code_lines: set[int] = set()
+    found: list[tuple[str, bool, Location, bool]] = []
+    overflowed = False
+    try:
+        for tok in _tokens(text):
+            if tok.type == tokenize.COMMENT:
+                body = tok.string[1:]
+                if not _is_suppression_comment(body):
+                    continue
+                if len(found) >= max_comments:
+                    overflowed = True
+                    continue
+                line, col = tok.start
+                trailing = line in code_lines
+                loc = Location(line, col, tok.end[0], tok.end[1])
+                found.append((body[:max_chars], len(body) > max_chars, loc, trailing))
+            elif tok.type not in _NON_CODE_TOKENS:
+                code_lines.update(range(tok.start[0], tok.end[0] + 1))
+    except (SyntaxError, tokenize.TokenError):  # pragma: no cover - text already parsed by ast
+        return (), False
+    ordered = sorted(code_lines)
+    comments: list[SuppressionComment] = []
+    for body, truncated, loc, trailing in found:
+        if trailing:
+            target = loc.line
+        else:
+            index = bisect.bisect_right(ordered, loc.line)
+            target = ordered[index] if index < len(ordered) else 0
+        comments.append(SuppressionComment(body, truncated, loc, target))
+    return tuple(comments), overflowed
+
+
+# =============================================================================================
 # Entry point
 # =============================================================================================
 
@@ -1108,6 +1185,9 @@ def parse_python(data: bytes, path: str, *, parse_limits: ParseLimits | None = N
         node_count = count_nodes(tree, lim.max_ast_nodes)
         extractor = _Extractor(module_name, is_package, lim)
         extractor.run(tree)
+        suppressions, overflowed = extract_suppression_comments(text)
+        if overflowed:
+            notes = (*notes, "suppression_comments_truncated")
     except _ParseFailureError as exc:
         return failed_module(
             language=LANGUAGE,
@@ -1167,5 +1247,6 @@ def parse_python(data: bytes, path: str, *, parse_limits: ParseLimits | None = N
         returns=tuple(extractor.returns),
         strings=tuple(extractor.strings),
         limited=tuple(extractor.limited),
+        suppressions=suppressions,
         notes=notes,
     )

@@ -21,7 +21,7 @@ trusted CI inputs, never from a PR head. Locally, developers' own config applies
 
 ## 2. Inline suppressions
 **Decision:** in CI, an inline suppression must carry a written justification and the rule ID (`# nexvul: ignore
-NEX001 -- reason`). A bare ignore is rejected as a config error in CI and allowed with a warning locally.
+NEX001 -- reason`). A bare ignore is not honoured, in CI or locally: the finding stays active and a warning is shown (amended by DEC-0014 §1; not a hard error so unrelated CI is not blocked).
 Suppressions added by a PR are listed in the report and in the job summary, and suppressed findings remain in
 JSON/SARIF marked as suppressed.
 **Why:** an attacker or a hurried developer can silence a finding with one comment; this keeps it visible and reviewable.

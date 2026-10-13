@@ -29,7 +29,7 @@ from typing import Final
 
 #: Semantic version of the IR JSON shape. Bump the minor version for additive changes and the
 #: major version for anything a consumer of an older version would misread.
-IR_SCHEMA_VERSION: Final = "0.1.0"
+IR_SCHEMA_VERSION: Final = "0.2.0"
 
 #: Column unit used by every :class:`Location` produced by the Python front end. CPython's
 #: ``col_offset`` counts UTF-8 bytes of the decoded line (SR-29: reporters declare columnKind).
@@ -303,6 +303,24 @@ class AnalysisLimited:
 
 
 @dataclass(frozen=True)
+class SuppressionComment:
+    """A comment token whose text starts with ``nexvul:`` (architecture §11.5, DEC-0007 OD-04).
+
+    Extracted in the parse worker from real ``tokenize`` COMMENT tokens, never by searching raw
+    text, so a ``# nexvul:`` inside a string literal is not a suppression (T-17). ``text`` is the
+    comment body after ``#`` (untrusted, capped at ``MAX_SUPPRESSION_COMMENT_CHARS``);
+    ``target_line`` is the line it applies to: its own line for a trailing comment, else the next
+    line holding code (``0`` when no code follows). Interpretation (rule IDs, justification,
+    hidden characters) happens in the supervisor, on this data only.
+    """
+
+    text: str
+    truncated: bool
+    location: Location
+    target_line: int
+
+
+@dataclass(frozen=True)
 class ParseFailure:
     """Why no IR was produced. ``detail`` is composed by nexvul only (line numbers, limit
     values); it never contains file content or parser messages, which may echo source text."""
@@ -343,6 +361,7 @@ class ModuleIR:
     returns: tuple[ReturnFact, ...] = ()
     strings: tuple[StringConstant, ...] = ()
     limited: tuple[AnalysisLimited, ...] = ()
+    suppressions: tuple[SuppressionComment, ...] = ()
     notes: tuple[str, ...] = ()
 
     @property

@@ -1,0 +1,343 @@
+{
+  "nexvul": {
+    "report_format": "nexvul-json",
+    "schema_version": "1.0.0",
+    "version": "0.1.0",
+    "rule_pack": {
+      "version": "0.0.0",
+      "sha256": "sha256:9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e",
+      "rules": 3
+    },
+    "python": "3.13.0",
+    "platform": "Test-arch",
+    "parsers": [
+      "python: stdlib ast (CPython 3.13)"
+    ],
+    "plugins_loaded": []
+  },
+  "scan": {
+    "target": "my-agent-project",
+    "mode": "git",
+    "commit": "9e41d0c",
+    "started_at": "2026-10-13T00:00:00+00:00",
+    "ended_at": "2026-10-13T00:00:05+00:00",
+    "ci": true,
+    "ci_reason": "--ci",
+    "scope": "repository",
+    "position_encoding": {
+      "line_base": 1,
+      "column_base": 1,
+      "column_unit": "utf8_bytes"
+    }
+  },
+  "config": {
+    "effective": [
+      {
+        "key": "severity.fail_on",
+        "value": "high",
+        "sources": [
+          "default"
+        ]
+      },
+      {
+        "key": "rules.disabled",
+        "value": "[NEX004]",
+        "sources": [
+          "default",
+          "repo"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "source": "repo",
+        "path": ".nexvul.yml",
+        "sha256": "4be1000000000000000000000000000000000000000000000000000000000000",
+        "ref": null
+      }
+    ],
+    "changes": [
+      {
+        "key": "severity.fail_on",
+        "detail": "high -> critical",
+        "source": "repo",
+        "status": "not_applied",
+        "reason": "loosening from untrusted repository config in CI mode"
+      }
+    ]
+  },
+  "completeness": {
+    "status": "complete",
+    "failed_cause": null,
+    "files_discovered": 312,
+    "files_analysed": 312,
+    "files_not_analysed": 0,
+    "files_failed": 0,
+    "files_timed_out": 0,
+    "files_skipped": [],
+    "files_skipped_truncated": 0,
+    "skipped_by_reason": {},
+    "limits_hit": [],
+    "analysis_budgets_exhausted": [],
+    "rule_failures": [],
+    "findings_truncated": 0,
+    "suppressed": {
+      "inline": 1,
+      "baseline": 0
+    },
+    "protections_weakened_by_repo_config": [
+      "severity.fail_on: high -> critical [NOT APPLIED] (repo: loosening from untrusted repository config in CI mode)"
+    ],
+    "config_sources": [
+      {
+        "source": "repo",
+        "path": ".nexvul.yml",
+        "sha256": "4be1000000000000000000000000000000000000000000000000000000000000",
+        "ref": null
+      }
+    ],
+    "plugins_loaded": [],
+    "dynamic_constructs_not_analysed": 3,
+    "allow_partial": false,
+    "notes": []
+  },
+  "summary": {
+    "status": "complete",
+    "exit_code": 1,
+    "fail_on": "high",
+    "findings": 2,
+    "by_severity": {
+      "critical": 1,
+      "high": 0,
+      "medium": 0,
+      "low": 1,
+      "info": 0
+    },
+    "at_or_above_fail_on": 1,
+    "suppressed": 1,
+    "rules": {
+      "available": 3,
+      "enabled": [
+        "NEX002",
+        "NEX007",
+        "NEX014"
+      ],
+      "failed": []
+    },
+    "disclaimer": "A clean nexvul result does not prove that an application is secure."
+  },
+  "findings": [
+    {
+      "rule_id": "NEX018",
+      "title": "Financial action without human oversight",
+      "severity": "critical",
+      "confidence": "medium",
+      "owasp": [
+        "ASI02",
+        "ASI09"
+      ],
+      "cwe": [],
+      "file": "agent/billing.py",
+      "line": 58,
+      "column": 9,
+      "end_line": 58,
+      "end_column": 19,
+      "raw_path_b64": null,
+      "message": "Tool refund_order calls stripe.Refund.create() with an amount chosen by the model. No approval step was found on the path to the call in the scanned code.",
+      "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+      "dataflow": [
+        {
+          "step": 1,
+          "role": "source",
+          "file": "agent/billing.py",
+          "line": 31,
+          "column": 1,
+          "code": "@function_tool def refund_order(amount)"
+        },
+        {
+          "step": 2,
+          "role": "step",
+          "file": "agent/billing.py",
+          "line": 44,
+          "column": 1,
+          "code": "amt = int(amount * 100)"
+        },
+        {
+          "step": 3,
+          "role": "sink",
+          "file": "agent/billing.py",
+          "line": 58,
+          "column": 1,
+          "code": "stripe.Refund.create(amount=amt, currency=order.currency)"
+        }
+      ],
+      "evidence": [],
+      "limitations": [],
+      "remediation": "Require human approval before the call (needs_approval=True on the tool), or cap the amount in code.",
+      "references": [
+        "docs/rules/NEX018.md"
+      ],
+      "suppressed": false,
+      "suppression": {
+        "status": "none",
+        "kind": "inline",
+        "line": 0,
+        "justification": null,
+        "reason": ""
+      },
+      "untrusted_fields": [
+        "file",
+        "message",
+        "dataflow[].file",
+        "dataflow[].code",
+        "evidence[].description",
+        "evidence[].snippet",
+        "limitations[]",
+        "suppression.justification"
+      ]
+    },
+    {
+      "rule_id": "NEX015",
+      "title": "Missing timeout around agent or tool execution",
+      "severity": "low",
+      "confidence": "medium",
+      "owasp": [
+        "ASI08"
+      ],
+      "cwe": [],
+      "file": "agent/tools.py",
+      "line": 45,
+      "column": 16,
+      "end_line": 45,
+      "end_column": 26,
+      "raw_path_b64": null,
+      "message": "httpx.get() inside tool search_web has no timeout argument.",
+      "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+      "dataflow": [],
+      "evidence": [],
+      "limitations": [],
+      "remediation": "Pass timeout= to the client or wrap the tool in asyncio.wait_for().",
+      "references": [
+        "docs/rules/NEX015.md"
+      ],
+      "suppressed": false,
+      "suppression": {
+        "status": "not_applied",
+        "kind": "inline",
+        "line": 87,
+        "justification": null,
+        "reason": "CI requires a justification of at least 10 characters after ' -- '"
+      },
+      "untrusted_fields": [
+        "file",
+        "message",
+        "dataflow[].file",
+        "dataflow[].code",
+        "evidence[].description",
+        "evidence[].snippet",
+        "limitations[]",
+        "suppression.justification"
+      ]
+    }
+  ],
+  "suppressed": [
+    {
+      "rule_id": "NEX006",
+      "title": "A2A / agent HTTP endpoint without authentication",
+      "severity": "high",
+      "confidence": "high",
+      "owasp": [
+        "ASI07"
+      ],
+      "cwe": [],
+      "file": "agent/server.py",
+      "line": 41,
+      "column": 1,
+      "end_line": 41,
+      "end_column": 11,
+      "raw_path_b64": null,
+      "message": "POST /agents/run has no authentication dependency.",
+      "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+      "dataflow": [],
+      "evidence": [],
+      "limitations": [],
+      "remediation": "Add an authentication dependency.",
+      "references": [
+        "docs/rules/NEX006.md"
+      ],
+      "suppressed": true,
+      "suppression": {
+        "status": "suppressed",
+        "kind": "inline",
+        "line": 40,
+        "justification": "auth enforced by the API gateway (infra/gateway.tf, route /agents/*)",
+        "reason": ""
+      },
+      "untrusted_fields": [
+        "file",
+        "message",
+        "dataflow[].file",
+        "dataflow[].code",
+        "evidence[].description",
+        "evidence[].snippet",
+        "limitations[]",
+        "suppression.justification"
+      ]
+    }
+  ],
+  "suppressions": [
+    {
+      "kind": "rejected",
+      "path": "agent/admin.py",
+      "line": 30,
+      "problem": "no_rule_id",
+      "rule_ids": [],
+      "message": "suppression ignored: no rule ID. Write ignore[NEX0nn] -- <reason>."
+    },
+    {
+      "kind": "unmatched",
+      "path": "agent/old.py",
+      "line": 12,
+      "problem": null,
+      "rule_ids": [
+        "NEX014"
+      ],
+      "message": "ignore[NEX014] matched no finding."
+    }
+  ],
+  "analysis_limited": [
+    {
+      "path": "agent/plugins.py",
+      "line": 12,
+      "reason": "dynamic_import"
+    }
+  ],
+  "untrusted_fields": [
+    "scan.target",
+    "scan.commit",
+    "config.effective[].value",
+    "config.sources[].path",
+    "config.changes[].detail",
+    "completeness.files_skipped[].path",
+    "completeness.protections_weakened_by_repo_config[]",
+    "findings[].file",
+    "findings[].message",
+    "findings[].dataflow[].file",
+    "findings[].dataflow[].code",
+    "findings[].evidence[].description",
+    "findings[].evidence[].snippet",
+    "findings[].limitations[]",
+    "findings[].suppression.justification",
+    "suppressed[].file",
+    "suppressed[].message",
+    "suppressed[].dataflow[].file",
+    "suppressed[].dataflow[].code",
+    "suppressed[].evidence[].description",
+    "suppressed[].evidence[].snippet",
+    "suppressed[].limitations[]",
+    "suppressed[].suppression.justification",
+    "suppressions[].path",
+    "suppressions[].message",
+    "analysis_limited[].path"
+  ]
+}

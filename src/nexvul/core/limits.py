@@ -164,3 +164,35 @@ MAX_CRASH_ATTEMPTS_PER_FILE: Final = 2
 #: Maximum characters of a resolved dotted name. A longer name (only possible with absurd
 #: identifiers) is recorded as ``dynamic`` rather than truncated, so it can never match a spec.
 MAX_DOTTED_NAME_CHARS: Final = 1024
+
+
+# ---------------------------------------------------------------------------------------------
+# Suppressions, findings and reports (Phase 1 step 3a)
+# ---------------------------------------------------------------------------------------------
+
+#: Characters of one suppression comment kept in the IR (longer comments are flagged truncated).
+MAX_SUPPRESSION_COMMENT_CHARS: Final = 1_000
+
+#: Suppression comments recorded per file; more are counted in a module note, not recorded.
+MAX_SUPPRESSION_COMMENTS_PER_FILE: Final = 1_000
+
+#: Rule IDs accepted in one ``ignore[...]`` list.
+MAX_SUPPRESSION_RULE_IDS: Final = 20
+
+#: Minimum justification length required in CI mode (screen-inventory C03: 10-300 characters).
+MIN_CI_JUSTIFICATION_CHARS: Final = 10
+
+#: Finding caps (architecture §15). Hitting either is recorded and makes the scan partial.
+MAX_FINDINGS_PER_FILE: Final = 100
+MAX_FINDINGS_TOTAL: Final = 10_000
+
+#: Display caps for finding text (tokens.json -> truncation).
+MAX_MESSAGE_CHARS: Final = 400
+MAX_IDENTIFIER_CHARS: Final = 80
+MAX_JUSTIFICATION_DISPLAY_CHARS: Final = 120
+MAX_SNIPPET_CHARS: Final = 200
+MAX_FLOW_STEPS: Final = 50
+MAX_EVIDENCE_ITEMS: Final = 20
+
+#: Analysis-limited notes kept for ``--verbose`` / JSON (the count is always exact).
+MAX_LIMITED_NOTES: Final = 200

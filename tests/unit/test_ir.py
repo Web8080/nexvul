@@ -200,3 +200,12 @@ def test_loads_strict_rejects(raw: bytes) -> None:
 
 def test_module_ok_property() -> None:
     assert _full_module().ok
+
+
+def test_suppression_comments_round_trip_through_codec() -> None:
+    from nexvul.ir.codec import module_from_json, module_to_json
+    from nexvul.parser.python import parse_python
+
+    module = parse_python(b"x = 1  # nexvul: ignore[NEX001] -- reason here\n", "a.py")
+    assert module.suppressions
+    assert module_from_json(module_to_json(module)) == module

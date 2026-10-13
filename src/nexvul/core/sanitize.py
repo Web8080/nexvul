@@ -97,3 +97,34 @@ def display_path(value: str | bytes, *, max_chars: int = MAX_DISPLAY_PATH_CHARS)
 def is_display_safe(value: str) -> bool:
     """True when ``value`` contains nothing :func:`display_text` would escape (used by tests)."""
     return all(ch != "\\" and not _needs_escape(ch) for ch in value)
+
+
+def ensure_display_safe(value: str) -> str:
+    """Escape anything unsafe left in an already-sanitised string; idempotent.
+
+    Reporters call this on every string they print, as defence in depth behind the
+    sanitisation done when findings are built. Unlike :func:`display_text` it leaves backslashes
+    alone, so text that was already sanitised passes through unchanged (no double escaping),
+    while a raw control or format character that slipped through is still escaped.
+    """
+    if not any(_needs_escape(ch) for ch in value):
+        return value
+    return "".join(_escape_char(ch) if _needs_escape(ch) else ch for ch in value)
+
+
+def describe_char(ch: str) -> str:
+    """Name a hidden character without reproducing it: ``U+202E RIGHT-TO-LEFT OVERRIDE``.
+
+    Used for rejected suppressions (C05): printing the character would reproduce the attack.
+    """
+    code = ord(ch)
+    name = unicodedata.name(ch, "")
+    return f"U+{code:04X} {name}".rstrip()
+
+
+def first_hidden_char(value: str) -> str | None:
+    """The first control, format (bidi, zero-width), separator or private-use character."""
+    for ch in value:
+        if ch != "\\" and _needs_escape(ch) and ch not in _CONFUSABLE_PATH_CHARS:
+            return ch
+    return None

@@ -1,0 +1,22 @@
+nexvul 0.1.0  scan of ./my-agent-project
+  Files       0 of 2 analysed
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled · fail-on high · config .nexvul.yml (local)
+────────────────────────────────────────────────────────────────────────────────
+
+ SCAN FAILED — none of the 2 files in scope could be analysed.
+
+   Every file in scope was skipped or failed to parse. The reasons are listed
+   under Scan completeness; run with --verbose to see every file.
+
+ Scan completeness
+   Status        FAILED
+   Analysed      0 of 2 files
+   Not analysed  2 files
+                   parse error    2   agent/legacy.py, tools/gen_api.py
+   Limits hit    none
+   Rules run     none (nothing was analysed)
+
+   Code in these files was not checked. Run with --verbose for details.
+
+ Result  No result. Exit code 3 (scan incomplete).

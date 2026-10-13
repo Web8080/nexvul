@@ -52,6 +52,10 @@ version = { attr = "nexvul.__version__" }
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+# The JSON report schema ships in the package; nexvul never fetches a schema URL (SR-23).
+nexvul = ["schemas/*.json"]
+
 # ---------------------------------------------------------------------------------------------
 # pytest. Fixtures are data, never collected or imported (architecture §11.6, test-strategy §4.1).
 # ---------------------------------------------------------------------------------------------
@@ -59,7 +63,7 @@ where = ["src"]
 minversion = "8.0"
 testpaths = ["tests"]
 # Test-only helper modules (hostile-tree builders). Never the scanned tree, never the repo root.
-pythonpath = ["tests/security"]
+pythonpath = ["tests/security", "tests/support"]
 python_files = ["test_*.py"]
 norecursedirs = [
     "tests/fixtures",

@@ -703,6 +703,7 @@ def resolve_config(
     trusted: Sequence[LoadedConfig] = (),
     ci: bool,
     defaults: EffectiveConfig = DEFAULTS,
+    overrides: Sequence[LoadedConfig] = (),
 ) -> ResolvedConfig:
     """Pure resolution of the effective config (no I/O).
 
@@ -711,6 +712,10 @@ def resolve_config(
     ``applied``. ``repo`` is the scanned tree's own ``.nexvul.yml`` (in CI: the PR head). In CI
     mode only its tightening changes apply and every loosening is reported as ``not_applied``.
     Outside CI mode it applies in full and every loosening is listed as ``applied``.
+
+    ``overrides`` are trusted layers applied **after** the repo layer (CLI flags such as
+    ``--fail-on``): CLI flags rank above repository config (architecture §3.1), so a value given
+    on the command line is never replaced by the scanned tree's own config.
     """
     b = _Builder(cfg=defaults, changes=[])
     provenance: list[ConfigProvenance] = []
@@ -726,6 +731,13 @@ def resolve_config(
             raise ValueError("repo layer must have source REPO")
         _apply_layer(b, repo, tighten_only=ci)
         provenance.append(ConfigProvenance(repo.source, repo.display_path, repo.sha256, repo.ref))
+    for layer in overrides:
+        if layer.source not in TRUSTED_SOURCES:
+            raise ValueError("override layers must come from a trusted source")
+        _apply_layer(b, layer, tighten_only=False)
+        provenance.append(
+            ConfigProvenance(layer.source, layer.display_path, layer.sha256, layer.ref)
+        )
     _enabled_wins(b)
     return ResolvedConfig(
         effective=b.cfg, changes=tuple(b.changes), config_sources=tuple(provenance), ci=ci

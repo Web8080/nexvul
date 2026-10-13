@@ -1,0 +1,75 @@
+nexvul 0.1.0  ./my-agent-project
+  312 of 312 files · rules: 3 of 3 enabled · fail-on high
+  none recognised (no framework recognisers in this
+  version)
+  CI mode (--ci)
+────────────────────────────────────────────────────────────
+
+CRITICAL ████  NEX018
+Financial action without human oversight
+ASI02 · ASI09 · confidence medium
+agent/billing.py:58:9
+
+  Tool refund_order calls stripe.Refund.create() with an
+  amount chosen by the model. No approval step was found
+  on the path to the call in the scanned code.
+
+  Flow
+  1 source agent/billing.py:31
+           @function_tool def refund_order(amount)
+  2        agent/billing.py:44
+           amt = int(amount * 100)
+  3 sink   agent/billing.py:58
+           stripe.Refund.create(amount=amt, currency=order.…
+
+  Fix  Require human approval before the call
+       (needs_approval=True on the tool), or cap the
+       amount in code.
+
+LOW █░░░  NEX015
+Missing timeout around agent or tool execution
+ASI08 · confidence medium
+agent/tools.py:45:16
+
+  httpx.get() inside tool search_web has no timeout
+  argument.
+  Suppression on line 87 NOT APPLIED: CI requires a
+  justification of at least 10 characters after ' -- '.
+
+  Fix  Pass timeout= to the client or wrap the tool in
+       asyncio.wait_for().
+
+Learn a rule: nexvul explain NEX018
+────────────────────────────────────────────────────────────
+
+Suppressed (1)
+  NEX006  agent/server.py:40  inline  "auth enforced by the
+                                      API gateway
+                                      (infra/gateway.tf,
+                                      route /agents/*)"
+  NEX015  agent/tools.py:87  inline  (no justification) ·
+                                     NOT APPLIED: CI
+                                     requires a
+                                     justification of at
+                                     least 10 characters
+                                     after ' -- '
+  unmatched  agent/old.py:12  ignore[NEX014] matched no
+             finding.
+
+Rejected suppressions (1)
+  agent/admin.py:30  suppression ignored: no rule ID. Write
+    ignore[NEX0nn] -- <reason>.
+
+Scan completeness
+  Status        COMPLETE
+  Analysed      312 of 312 files · 0 skipped · 0 parse
+                errors · 0 timeouts
+  Rules run     3 of 3 enabled rules finished
+  Suppressed    1 inline
+  Weakened      severity.fail_on: high -> critical NOT
+                APPLIED (repository config; CI mode)
+  Not followed  3 dynamic constructs (analysis-limited;
+                see --verbose)
+
+Result  2 findings: 1 critical, 1 low · 1 suppressed
+        1 at or above fail-on (high). Exit code 1.

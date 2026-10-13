@@ -1,0 +1,77 @@
+[1mnexvul 0.1.0[0m  scan of ./my-agent-project
+  Files       308 of 312 analysed (Python 241)
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled · fail-on high · config .nexvul.yml (local)
+[2m────────────────────────────────────────────────────────────────────────────────[0m
+
+ [1;97;41mCRITICAL[0m [1;97;41m████[0m  [36mNEX018[0m  [1mFinancial action without human oversight[0m
+                ASI02 · ASI09 · confidence medium
+                agent/billing.py:58:9
+
+    Tool refund_order calls stripe.Refund.create() with an amount chosen by
+    the model. No approval step was found on the path to the call in the
+    scanned code.
+
+    Flow
+      1 [35msource[0m  agent/billing.py:31  @function_tool def refund_order(amount)
+      2         agent/billing.py:44  amt = int(amount * 100)
+      3 [33msink[0m    agent/billing.py:58  stripe.Refund.create(amount=amt, currenc…
+
+    Fix  Require human approval before the call (needs_approval=True on the
+         tool), or cap the amount in code.
+
+ [1;31mHIGH[0m     [1;31m███░[0m  [36mNEX002[0m  [1mExternal content indexed into a vector store[0m
+                ASI06 · confidence high
+                agent/ingest.py:42:5
+
+    Content returned by requests.get() reaches vector_store.add_documents()
+    without an identified validation or trust-boundary check.
+
+    Flow
+      1 [35msource[0m  agent/ingest.py:30  html = requests.get(url).text
+      2         agent/ingest.py:35  text = clean(html)
+      3         agent/ingest.py:38  docs = [Document(page_content=text)]
+      4 [33msink[0m    agent/ingest.py:42  vector_store.add_documents(docs)
+
+    Fix  Record provenance on stored documents and validate or allowlist
+         sources before indexing.
+
+ [1;31mHIGH[0m     [1;31m███░[0m  [36mNEX007[0m  [1mMCP connection without authentication or over cleartext[0m
+                ASI07 · ASI04 · confidence high
+                mcp.json:12:7
+
+    Server "search" is reached over http:// at a non-loopback host with no
+    auth headers or OAuth configuration.
+
+    Fix  Use https:// and configure authentication for remote MCP servers.
+
+ [33mMEDIUM[0m   [33m██░░[0m  [36mNEX014[0m  [1mAgent iteration limit disabled or unbounded[0m
+                ASI08 · confidence high
+                agent/graph.py:91:12
+
+    graph.compile() is invoked with recursion_limit=None.
+
+    Fix  Set a finite recursion_limit sized to the longest legitimate run.
+
+ Learn a rule: nexvul explain NEX018
+[2m────────────────────────────────────────────────────────────────────────────────[0m
+
+ [1mScan completeness[0m
+   Status        [1;30;43mPARTIAL[0m
+   Analysed      308 of 312 files
+   Not analysed  4 files
+                   over size limit    1   data/fixtures.py (3145728 > 1048576)
+                   parse error        2   agent/legacy.py, tools/gen_api.py
+                   parser timeout     1   agent/huge_graph.py (10 s limit)
+   Limits hit    none
+   Not in scope  unsupported file type: 1
+   Rules run     3 of 3 enabled rules finished
+   Weakened      rules.disabled: add NEX004 (applied; local config)
+   Not followed  3 dynamic constructs (analysis-limited; see --verbose)
+
+   Code in these files was not checked. Run with --verbose for details.
+
+ [1mResult[0m  4 findings: 1 critical, 2 high, 1 medium
+         3 at or above fail-on (high). Exit code 3 (scan incomplete).
+[1;30;43m PARTIAL SCAN — 4 of 312 files not analysed. This result is not a clean bill of [0m
+[1;30;43m health.                                                                        [0m

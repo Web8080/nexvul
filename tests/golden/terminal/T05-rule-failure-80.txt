@@ -1,0 +1,29 @@
+nexvul 0.1.0  scan of ./my-agent-project
+  Files       312 of 312 analysed (Python 241)
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled · fail-on high · config .nexvul.yml (local)
+────────────────────────────────────────────────────────────────────────────────
+
+ MEDIUM   ██░░  NEX014  Agent iteration limit disabled or unbounded
+                ASI08 · confidence high
+                agent/graph.py:91:12
+
+    graph.compile() is invoked with recursion_limit=None.
+
+    Fix  Set a finite recursion_limit sized to the longest legitimate run.
+
+ Learn a rule: nexvul explain NEX014
+────────────────────────────────────────────────────────────────────────────────
+
+ Scan completeness
+   Status        PARTIAL
+   Analysed      312 of 312 files
+   Limits hit    none
+   Rules run     2 of 3 enabled rules finished
+   Rule error    NEX014 raised RuntimeError; its results are incomplete
+   Not followed  3 dynamic constructs (analysis-limited; see --verbose)
+
+ Result  1 finding: 1 medium
+         0 at or above fail-on (high). Exit code 3 (scan incomplete).
+ PARTIAL SCAN — 1 rule did not finish. This result is not a clean bill of
+ health.

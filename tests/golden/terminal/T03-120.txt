@@ -1,0 +1,29 @@
+nexvul 0.1.0  scan of ./my-agent-project
+  Files       312 of 312 analysed (Python 241)
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled · fail-on high · config .nexvul.yml (local, sha256 4be1…)
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ MEDIUM   ██░░  NEX014  Agent iteration limit disabled or unbounded                                 agent/graph.py:91:12
+                ASI08 · confidence high
+
+    graph.compile() is invoked with recursion_limit=None.
+
+    Fix   Set a finite recursion_limit sized to the longest legitimate run.
+
+ LOW      █░░░  NEX015  Missing timeout around agent or tool execution                              agent/tools.py:45:16
+                ASI08 · confidence medium
+
+    httpx.get() inside tool search_web has no timeout argument.
+
+    Fix   Pass timeout= to the client or wrap the tool in asyncio.wait_for().
+
+ Learn a rule: nexvul explain NEX014
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Scan completeness   COMPLETE · 312 of 312 files analysed · 0 skipped · 0 parse errors · 0 timeouts
+   Rules run         3 of 3 enabled rules finished
+   Not followed      3 dynamic constructs (analysis-limited; see --verbose)
+
+ Result  2 findings: 1 medium, 1 low · 0 at or above fail-on (high).
+         Exit code 0. Lower-severity findings are listed above.

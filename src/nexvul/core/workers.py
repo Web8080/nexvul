@@ -125,6 +125,16 @@ def default_worker_count() -> int:
     return max(1, min(os.cpu_count() or 1, limits.DEFAULT_MAX_WORKERS))
 
 
+def platform_label(name: str | None = None) -> str:
+    """Human name of the OS for trusted notes (``macOS``, ``Linux``, ...)."""
+    name = sys.platform if name is None else name
+    if name == "darwin":
+        return "macOS"
+    if name.startswith("linux"):
+        return "Linux"
+    return name
+
+
 def _is_linux() -> bool:
     return sys.platform.startswith("linux")
 
@@ -594,7 +604,9 @@ class _Pool:
 
 
 def _validate_rel_path(path: str) -> None:
-    if not path or "\x00" in path or path.startswith("/") or "\\" in path:
+    # A backslash is an ordinary byte in a POSIX file name (and a hostile one, MF-61); only "/"
+    # separates components, so it must not be rejected here (step-3a fix: it aborted the scan).
+    if not path or "\x00" in path or path.startswith("/"):
         raise ValueError("file paths must be non-empty, relative, '/'-separated and NUL-free")
     if any(part in ("", ".", "..") for part in path.split("/")):
         raise ValueError("file paths must be normalised (no empty, '.' or '..' components)")
@@ -625,8 +637,9 @@ def _fold(ledger: Completeness, outcomes: Sequence[FileOutcome], memory_enforced
     if bidi_files:
         ledger.add_note(f"{bidi_files} file(s) contain bidirectional control characters")
     if outcomes and not memory_enforced:
+        # DEC-0013 §2: shown on every scan, does not by itself make the scan partial.
         ledger.add_note(
-            "worker memory limit is not enforced on this platform; pre-parse limits apply"
+            f"limit not enforced: memory ({platform_label()}); file-size and nesting caps apply"
         )
 
 

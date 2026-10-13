@@ -1,0 +1,66 @@
+nexvul 0.1.0  scan of ./my-agent-project
+  Files       312 of 312 analysed (Python 241)
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled · fail-on high · config .nexvul.yml (local, sha256 4be1…)
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ CRITICAL ████  NEX018  Financial action without human oversight                                   agent/billing.py:58:9
+                ASI02 · ASI09 · confidence medium
+
+    Tool refund_order calls stripe.Refund.create() with an amount chosen by the model. No approval
+    step was found on the path to the call in the scanned code.
+
+    Flow  1 source  agent/billing.py:31  @function_tool def refund_order(amount)
+          2         agent/billing.py:44  amt = int(amount * 100)
+          3 sink    agent/billing.py:58  stripe.Refund.create(amount=amt, currency=order.currency)
+
+    Fix   Require human approval before the call (needs_approval=True on the tool), or cap the
+          amount in code.
+
+ HIGH     ███░  NEX002  External content indexed into a vector store                                agent/ingest.py:42:5
+                ASI06 · confidence high
+
+    Content returned by requests.get() reaches vector_store.add_documents() without an identified
+    validation or trust-boundary check.
+
+    Flow  1 source  agent/ingest.py:30  html = requests.get(url).text
+          2         agent/ingest.py:35  text = clean(html)
+          3         agent/ingest.py:38  docs = [Document(page_content=text)]
+          4 sink    agent/ingest.py:42  vector_store.add_documents(docs)
+
+    Fix   Record provenance on stored documents and validate or allowlist sources before indexing.
+
+ HIGH     ███░  NEX007  MCP connection without authentication or over cleartext                            mcp.json:12:7
+                ASI07 · ASI04 · confidence high
+
+    Server "search" is reached over http:// at a non-loopback host with no auth headers or OAuth
+    configuration.
+
+    Fix   Use https:// and configure authentication for remote MCP servers.
+
+ MEDIUM   ██░░  NEX014  Agent iteration limit disabled or unbounded                                 agent/graph.py:91:12
+                ASI08 · confidence high
+
+    graph.compile() is invoked with recursion_limit=None.
+
+    Fix   Set a finite recursion_limit sized to the longest legitimate run.
+
+ LOW      █░░░  NEX015  Missing timeout around agent or tool execution                              agent/tools.py:45:16
+                ASI08 · confidence medium
+
+    httpx.get() inside tool search_web has no timeout argument.
+
+    Fix   Pass timeout= to the client or wrap the tool in asyncio.wait_for().
+
+ Learn a rule: nexvul explain NEX018
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+ Suppressed (1)
+   NEX006  agent/server.py:40  inline  "auth enforced by the API gateway (infra/gateway.tf, route /agents/*)"
+
+ Scan completeness   COMPLETE · 312 of 312 files analysed · 0 skipped · 0 parse errors · 0 timeouts
+   Rules run         3 of 3 enabled rules finished
+   Suppressed        1 inline
+   Not followed      3 dynamic constructs (analysis-limited; see --verbose)
+
+ Result  5 findings: 1 critical, 2 high, 1 medium, 1 low · 1 suppressed · 3 at or above fail-on (high). Exit code 1.

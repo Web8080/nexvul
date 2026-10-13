@@ -1,0 +1,25 @@
+nexvul 0.1.0  scan of ./my-agent-project
+  Files       312 of 312 analysed (Python 241)
+  Frameworks  none recognised (no framework recognisers in this version)
+  Rules       3 of 3 enabled - fail-on high - config .nexvul.yml (local)
+--------------------------------------------------------------------------------
+
+ No findings from enabled rules. This does not prove the application is secure.
+
+ What was checked
+   3 rules (ASI04, ASI06, ASI07, ASI08)
+   312 files: every discovered source file was parsed
+   3 dynamic constructs could not be followed
+
+ What was not checked
+   Runtime behaviour, deployed configuration, model behaviour, MCP servers
+   configured outside this repository, and risks no enabled rule targets.
+   List of rules: nexvul rules
+
+ Scan completeness
+   Status        COMPLETE
+   Analysed      312 of 312 files - 0 skipped - 0 parse errors - 0 timeouts
+   Rules run     3 of 3 enabled rules finished
+   Not followed  3 dynamic constructs (analysis-limited; see --verbose)
+
+ Result  0 findings - scan complete. Exit code 0.

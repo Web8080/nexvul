@@ -38,9 +38,13 @@ def test_help_mentions_disclaimer(capsys: pytest.CaptureFixture[str]) -> None:
     assert "never proves" in out
 
 
-def test_no_scan_command_yet(capsys: pytest.CaptureFixture[str]) -> None:
-    assert run_main(["scan", "."]) == 2
-    assert "No such command" in capsys.readouterr().err
+def test_scan_of_missing_path_is_usage_error(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    # Step 3a added `scan`; a missing path is a usage error (T10) and nothing is scanned.
+    assert run_main(["scan", str(tmp_path / "missing")]) == 2
+    err = capsys.readouterr().err
+    assert "path not found" in err and "Nothing was scanned. Exit code 2." in err
 
 
 def test_unknown_option_is_usage_error() -> None:

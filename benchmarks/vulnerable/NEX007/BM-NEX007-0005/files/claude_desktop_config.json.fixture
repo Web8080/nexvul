@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "notes": { "command": "uvx", "args": ["mcp-server-notes"] },
+    "crm": { "url": "http://crm.example.com/mcp" }
+  }
+}

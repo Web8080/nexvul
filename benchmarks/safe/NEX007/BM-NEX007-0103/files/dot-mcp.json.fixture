@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "api": {
+      "type": "http",
+      "url": "https://api.example.com/mcp",
+      "headers": { "Authorization": "Bearer ${API_KEY}" }
+    }
+  }
+}

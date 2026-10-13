@@ -1,0 +1,2 @@
+# JSONC is read; locations stay correct
+nexvul-expect: NEX007 file=.vscode/mcp.json line=7 severity=high confidence=high

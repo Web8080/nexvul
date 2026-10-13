@@ -117,7 +117,8 @@ def test_repo_config_can_tighten_in_ci(tmp_path: Path) -> None:
 
 
 def test_partial_scan_exits_3_and_allow_partial_downgrades(tmp_path: Path) -> None:
-    root = tree(tmp_path, {"a.py": SHELL, "b.py": "def (:\n", "c.json": "{}"})
+    # c.ts: in scope, no parser (c.json until step 4; JSON is parsed as configuration data now)
+    root = tree(tmp_path, {"a.py": SHELL, "b.py": "def (:\n", "c.ts": "let x = 1\n"})
     r = scan(root)
     assert r.status is ScanStatus.PARTIAL and r.exit_code == 3
     assert r.completeness.files_not_analysed == 2 and r.findings

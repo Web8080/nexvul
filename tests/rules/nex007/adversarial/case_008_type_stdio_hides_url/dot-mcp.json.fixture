@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "x": { "url": "http://mcp.example.com/mcp", "type": "stdio", "command": "./server" }
+  }
+}

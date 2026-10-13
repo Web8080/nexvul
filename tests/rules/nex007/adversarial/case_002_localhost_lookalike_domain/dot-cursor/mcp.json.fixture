@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "a": { "url": "http://localhost.evil-example.com/mcp" },
+    "b": { "url": "http://127.0.0.1.evil-example.com/mcp" }
+  }
+}

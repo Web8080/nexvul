@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.mcp.json reason="syntax error: the file is not analysed (parse_error, scan partial), no finding"

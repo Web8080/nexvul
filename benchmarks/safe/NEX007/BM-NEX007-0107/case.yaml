@@ -1,0 +1,50 @@
+# JSON is a subset of YAML 1.2: this file is valid case.yaml and readable with the stdlib.
+{
+  "schema_version": 1,
+  "id": "BM-NEX007-0107",
+  "name": "Python mcp SDK client over https with an Authorization header",
+  "category": "safe",
+  "language": "python",
+  "split": "dev",
+  "source": {
+    "kind": "synthetic"
+  },
+  "framework": {
+    "name": "mcp",
+    "version": "unverified"
+  },
+  "owasp": [
+    "ASI07",
+    "ASI04"
+  ],
+  "cwe": [
+    "CWE-319",
+    "CWE-306"
+  ],
+  "expected_findings": [],
+  "expected_non_findings": [
+    {
+      "rule": "NEX007",
+      "file": "agent/client.py",
+      "line": 8,
+      "reason": "headers argument passed"
+    }
+  ],
+  "license": {
+    "spdx": "Apache-2.0",
+    "attribution": null
+  },
+  "labels": {
+    "author": "implementation-engineer (step 4)",
+    "labelled_by": [
+      "pending: 17-false-positive-hunter",
+      "pending: 02-security-research"
+    ],
+    "adjudicated_by": null
+  },
+  "tags": [
+    "python",
+    "auth"
+  ],
+  "notes": "Author-proposed labels; independent double labelling pending."
+}

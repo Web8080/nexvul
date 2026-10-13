@@ -1,0 +1,18 @@
+import os
+
+from mcp.client.streamable_http import streamablehttp_client
+
+
+def streamable(url: str) -> str:
+    return url
+
+
+async def main() -> None:
+    token = os.environ["MCP_TOKEN"]
+    async with streamablehttp_client(
+        "https://mcp.example.com/mcp", headers={"Authorization": f"Bearer {token}"}
+    ) as streams:
+        print(streams)
+    async with streamablehttp_client(os.environ["MCP_URL"]) as streams:
+        print(streams)
+    streamable("http://not-mcp.example.com/")

@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.cursor/mcp.json reason="WHATWG spellings of 127.0.0.1 / localhost are loopback"

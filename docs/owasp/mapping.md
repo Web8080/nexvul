@@ -1,6 +1,8 @@
 # Rule -> OWASP ASI Mapping
 
-> Phase 0. Owner: OWASP Mapping agent. Date: 2026-10-08. Status of every row: **design only**.
+> Phase 0. Owner: OWASP Mapping agent. Date: 2026-10-08. Status of every row: **design only**, except
+> NEX007: **implemented, experimental** (Phase 2 step 4, 2026-10-13; off by default per DEC-0002; see
+> `docs/rules/NEX007.md`). Its labels, severity and CWE below are what the rule ships with.
 > Read `README.md` first. "PDF p. N" = OWASP Top 10 for Agentic Applications 2026 official PDF
 > (https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/).
 > ⚠ = ASI label pending human decision (`docs/research/open-questions-security.md` Q1/Q2/Q3). The ⚠ value shown is
@@ -18,7 +20,7 @@
 | NEX004 | User-controlled content persisted into shared agent state | ASI06; ASI03 | ASI06 cross-session persistence; ASI03 example 2 "Memory-Based Privilege Retention & Data Leakage" across users (pp. 15-16) | medium | medium | CWE-501, CWE-668 | Requires shared-vs-per-user key model (not yet designed); DB-level tenant isolation invisible |
 | NEX005 | Retrieved content promoted to trusted instructions | ASI06; ASI01 | Corrupted context alters goal interpretation (ASI06 description, p. 24, cross-ref ASI01) | high | medium | CWE-1427, CWE-501 | Delimited RAG in user/tool role is not this sink; injection effectiveness unknowable |
 | NEX006 | A2A / agent HTTP endpoint without authentication | ASI07 | ASI07: exchanges lacking authentication allow spoofing (p. 27); mitigation 1 mutual authentication (p. 28) | high | medium | CWE-306 | Gateway/mesh auth invisible -> FP; broken auth not detected; replay/integrity not detected |
-| NEX007 | MCP connection without auth or over cleartext | ASI07; ASI04 | ASI07 scenario 1 "Semantic injection via unencrypted communications" and scenario 5 MCP descriptor poisoning (p. 28); mitigation 6 names MCP protocol pinning (p. 29); MCP spec security best practices | high | high (literal config) | CWE-306, CWE-319 | Configs outside repo (user home/IDE) not scanned; env-driven URLs are FNs; tool content not inspected |
+| NEX007 | MCP connection without auth or over cleartext | ASI07; ASI04 | ASI07 scenario 1 "Semantic injection via unencrypted communications" and scenario 5 MCP descriptor poisoning (p. 28); mitigation 6 names MCP protocol pinning (p. 29); MCP spec security best practices | high (cleartext); medium (https, no auth in config) | high (literal cleartext) / medium (no auth in config: OAuth may be negotiated at connect time) | CWE-306, CWE-319 | Configs outside repo (user home/IDE) not scanned; env-driven URLs are FNs; tool content not inspected |
 | NEX008 | Remote agent identity not verified | ASI07; ASI03 | ASI07 scenario 6 "A2A registration spoofing" and mitigation 8 "signed agent cards" (pp. 28-29); ASI03 scenario 6 "Forged Agent Persona" (p. 16) | medium | medium | CWE-345, CWE-346 | Validly signed malicious agents and compromised legitimate peers not detected |
 | NEX009 | Sensitive context sent to untrusted agent | ASI07; ASI03; LLM02 | ASI07 example 2 "cross-context contamination ... data leakage" (p. 27) | high | medium | CWE-201, CWE-200 | PII/secret labelling is heuristic; remote handling of data invisible |
 | NEX010 | Inter-agent request executed without authorisation | ASI07; ASI03 | ASI03 example 3 "Cross-Agent Trust Exploitation (Confused Deputy)" (p. 16); ASI07 description "authorization" (p. 27) | high | medium | CWE-862, CWE-441 | Policy correctness and downstream authz invisible |

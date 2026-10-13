@@ -62,6 +62,7 @@ from nexvul.findings.result import (
     ScanStatus,
     ToolInfo,
 )
+from nexvul.frameworks.mcp.config import recognise_config
 from nexvul.ir.model import ModuleIR
 from nexvul.rules.engine import run_rules
 from nexvul.rules.registry import Registry, builtin_registry
@@ -129,6 +130,14 @@ def _limited_notes(modules: tuple[ModuleIR, ...]) -> tuple[int, tuple[LimitedNot
     return total, tuple(notes)
 
 
+def recognised_frameworks(modules: tuple[ModuleIR, ...]) -> tuple[str, ...]:
+    """Framework labels for the header (trusted wording; counts only, no repo text)."""
+    mcp_configs = sum(1 for m in modules if m.config is not None and recognise_config(m))
+    if mcp_configs:
+        return (f"MCP client config ({mcp_configs} file{'s' if mcp_configs != 1 else ''})",)
+    return ()
+
+
 def tool_info(registry: Registry) -> ToolInfo:
     return ToolInfo(
         name="nexvul",
@@ -137,7 +146,10 @@ def tool_info(registry: Registry) -> ToolInfo:
         rule_pack_sha256=registry.sha256,
         python=platform.python_version(),
         platform=f"{platform.system()}-{platform.machine()}",
-        parsers=(f"python: stdlib ast (CPython {sys.version_info[0]}.{sys.version_info[1]})",),
+        parsers=(
+            f"python: stdlib ast (CPython {sys.version_info[0]}.{sys.version_info[1]})",
+            "json: stdlib json + bounded tokenizer (JSON/JSONC)",
+        ),
     )
 
 
@@ -214,6 +226,12 @@ def run_scan(
     modules = analysis.modules
 
     selection = registry.select(eff.rules_enabled, eff.rules_disabled)
+    frameworks = recognised_frameworks(modules)
+    if frameworks and "NEX007" in selection.not_enabled:
+        ledger.add_note(
+            "MCP client config recognised but NEX007 is experimental and not enabled "
+            "(rules.enabled: [NEX007] in .nexvul.yml)"
+        )
     run = run_rules(selection.enabled, modules, ledger, ci=opts.ci)
     outcome = apply_suppressions(run.findings, modules, registry.ids(), ci=opts.ci)
     t3 = clock()
@@ -276,6 +294,7 @@ def run_scan(
         suppressed=tuple(f for f in outcome.findings if f.suppressed),
         suppression_issues=outcome.issues,
         languages_analysed=tuple(sorted(languages.items())),
+        frameworks=frameworks,
         limited=limited,
         exit_code=int(code),
         timings=(("discover", t1 - t0), ("parse", t2 - t1), ("analyse", t3 - t2)),

@@ -117,6 +117,15 @@ MAX_AST_NODES: Final = 500_000
 #: Truncation does not make the scan partial (architecture §5.3 ``literal_truncated``).
 MAX_LITERAL_CHARS: Final = 10_000
 
+#: JSON/JSONC data files (step 4). Values beyond these caps: keys are truncated and flagged;
+#: a document with more values than ``MAX_CONFIG_ENTRIES`` is not analysed (``max_ast_nodes``),
+#: and a number literal longer than ``MAX_JSON_NUMBER_CHARS`` is rejected (``parse_error``).
+MAX_CONFIG_KEY_CHARS: Final = 1_000
+MAX_CONFIG_ENTRIES: Final = 100_000
+MAX_JSON_NUMBER_CHARS: Final = 100
+MAX_CONFIG_POINTER_CHARS: Final = 512
+MAX_DUPLICATE_KEYS_LISTED: Final = 100
+
 #: Maximum characters of a rendered expression summary or dotted name kept in the IR.
 MAX_EXPR_TEXT_CHARS: Final = 200
 

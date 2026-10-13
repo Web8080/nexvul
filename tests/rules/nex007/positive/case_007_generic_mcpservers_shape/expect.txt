@@ -1,0 +1,2 @@
+# Unknown client file with the mcpServers shape: recognised by structure, medium
+nexvul-expect: NEX007 file=config/agents.json line=3 severity=high confidence=medium

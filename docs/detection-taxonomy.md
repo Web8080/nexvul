@@ -1,7 +1,8 @@
 # nexvul Detection Taxonomy
 
 > Phase 0 deliverable (brief §35 item 4). Owner: Security Research + OWASP Mapping agent. Date: 2026-10-08.
-> Status: **design only**. No rule in this document is implemented, tested, benchmarked or approved.
+> Status: **design only**, except NEX007, which is implemented as an experimental thin slice (2026-10-13; see its
+> entry). No other rule in this document is implemented, tested, benchmarked or approved.
 > Inputs: `docs/brief/master-brief.md` §§5, 10, 16, 17; `docs/research/attack-techniques/`; `docs/architecture.md`
 > §2 (intermediate-model facts); `docs/benchmark-strategy.md` §8.3 (FP budget, pending human approval).
 > OWASP labels follow `docs/owasp/mapping.md`; several are **pending a human decision** (see
@@ -168,7 +169,12 @@ indistinguishable from attacker content statically; rules must target *external 
 - Sinks: MCP client configs (`mcpServers` entries, SDK client constructors) with non-loopback `http://` URL, or remote server with no auth/headers/OAuth configuration; MCP HTTP servers bound to `0.0.0.0` with no auth.
 - FP risks: loopback dev servers; env-driven URLs (treated as FN, not FP); auth supplied by a wrapper.
 - Does NOT detect: client configs outside the repo (user home, IDE); malicious tool content (see tool-poisoning); token passthrough (separate future rule).
-- Readiness: design only. (Roadmap thin-slice S3.)
+- Readiness: **implemented, experimental** (Phase 2 step 4, 2026-10-13): off by default because fewer than 20
+  labelled benchmark cases exist (DEC-0002). Shipped severity/confidence: cleartext `http://` to a non-loopback
+  host = high/high (medium severity for private-network hosts); `https://` with no auth setting in the entry =
+  medium/medium (low severity for private-network hosts), because OAuth may be negotiated at connect time.
+  The MCP *server* bound to `0.0.0.0` sink is **not** implemented in this slice. Details, FPs and FNs:
+  `docs/rules/NEX007.md`. (Roadmap thin-slice S3.)
 
 **NEX008 -- Remote agent identity not verified**
 - ASI: ASI07 (secondary ASI03) · Class: control-absence · medium / medium

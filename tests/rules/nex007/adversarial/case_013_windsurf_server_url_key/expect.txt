@@ -1,0 +1,1 @@
+nexvul-known-miss: NEX007 file=.codeium/windsurf/mcp_config.json line=3 ref=FND-NEX007-03 # FND-NEX007-03 Windsurf shape UNVERIFIED, not recognised

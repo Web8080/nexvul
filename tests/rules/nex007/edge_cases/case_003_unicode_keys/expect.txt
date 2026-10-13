@@ -1,0 +1,2 @@
+# Non-ASCII server name; column is a UTF-8 byte offset
+nexvul-expect: NEX007 file=.mcp.json line=3 severity=high confidence=high

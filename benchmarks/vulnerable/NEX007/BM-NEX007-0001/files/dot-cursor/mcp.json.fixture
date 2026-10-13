@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "tickets": {
+      "url": "http://tickets.example.com/mcp"
+    }
+  }
+}

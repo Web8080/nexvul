@@ -1,0 +1,2 @@
+# Claude Desktop: url entries not verified for this client, confidence capped at medium
+nexvul-expect: NEX007 file=claude_desktop_config.json line=7 severity=high confidence=medium

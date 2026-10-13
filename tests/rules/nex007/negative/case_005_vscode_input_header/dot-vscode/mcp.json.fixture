@@ -1,0 +1,6 @@
+{
+  "inputs": [ { "type": "promptString", "id": "api-key", "description": "API key", "password": true } ],
+  "servers": {
+    "remote": { "type": "http", "url": "https://mcp.example.com/mcp", "headers": { "X-Key": "${input:api-key}" } }
+  }
+}

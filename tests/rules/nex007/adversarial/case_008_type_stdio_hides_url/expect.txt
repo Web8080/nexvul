@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.mcp.json reason="declared stdio: the client launches the command and ignores url"

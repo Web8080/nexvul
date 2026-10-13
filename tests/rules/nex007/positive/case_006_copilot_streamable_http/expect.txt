@@ -1,0 +1,2 @@
+# Copilot mcp-config.json, streamable-http alias
+nexvul-expect: NEX007 file=.copilot/mcp-config.json line=3 severity=high confidence=high

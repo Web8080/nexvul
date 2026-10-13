@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "basic": { "url": "https://svc:hunter2pass@mcp.example.com/mcp" },
+    "basic-clear": { "url": "http://svc:hunter2pass@mcp.example.com/mcp" }
+  }
+}

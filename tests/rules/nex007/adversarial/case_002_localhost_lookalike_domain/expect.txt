@@ -1,0 +1,2 @@
+nexvul-expect: NEX007 file=.cursor/mcp.json line=3 severity=high confidence=high
+nexvul-expect: NEX007 file=.cursor/mcp.json line=4 severity=high confidence=high

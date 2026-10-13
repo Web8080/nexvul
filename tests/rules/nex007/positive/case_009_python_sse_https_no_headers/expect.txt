@@ -1,0 +1,2 @@
+# Python SDK sse_client, https, no headers/auth argument
+nexvul-expect: NEX007 file=app/sse_client.py line=5 severity=medium confidence=medium

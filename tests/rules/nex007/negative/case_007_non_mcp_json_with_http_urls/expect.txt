@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=package.json reason="ordinary JSON with http URLs is not an MCP config"

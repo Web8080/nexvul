@@ -29,7 +29,7 @@ from typing import Final
 
 #: Semantic version of the IR JSON shape. Bump the minor version for additive changes and the
 #: major version for anything a consumer of an older version would misread.
-IR_SCHEMA_VERSION: Final = "0.2.0"
+IR_SCHEMA_VERSION: Final = "0.3.0"
 
 #: Column unit used by every :class:`Location` produced by the Python front end. CPython's
 #: ``col_offset`` counts UTF-8 bytes of the decoded line (SR-29: reporters declare columnKind).
@@ -320,6 +320,66 @@ class SuppressionComment:
     target_line: int
 
 
+class ConfigValueKind(StrEnum):
+    """JSON value kind of one :class:`ConfigEntry`."""
+
+    OBJECT = "object"
+    ARRAY = "array"
+    STRING = "string"
+    NUMBER = "number"
+    BOOL = "bool"
+    NULL = "null"
+
+
+@dataclass(frozen=True)
+class ConfigEntry:
+    """One JSON value of a configuration document, flattened (the schema stays non-recursive).
+
+    * ``parent`` is the index of the containing object/array entry in
+      :attr:`ConfigDocument.entries` (``-1`` for the root value). Parents always precede their
+      children, so the tree can be rebuilt exactly - including duplicate keys, which appear as
+      two sibling entries with the same ``key``.
+    * ``key`` is the member name for a value inside an object (capped at
+      ``MAX_CONFIG_KEY_CHARS``), ``None`` otherwise; ``item`` is the position inside an array,
+      ``-1`` otherwise.
+    * ``value`` is the decoded string (capped at the literal cap), the number exactly as written,
+      ``"true"``/``"false"`` for booleans, and ``None`` for objects, arrays and ``null``.
+      ``size`` is the original string length in characters, or the member/item count of an
+      object/array.
+    * ``truncated`` is true when ``key`` or ``value`` was capped.
+    * ``location`` points at the member name for object members, else at the value. Lines are
+      1-based; columns are 0-based UTF-8 byte offsets (``COLUMN_UNIT_UTF8_BYTES``).
+
+    Every ``key``/``value`` is untrusted text from the scanned repository.
+    """
+
+    parent: int
+    key: str | None
+    item: int
+    kind: ConfigValueKind
+    value: str | None
+    size: int
+    truncated: bool
+    location: Location
+
+
+@dataclass(frozen=True)
+class ConfigDocument:
+    """Facts extracted from a JSON/JSONC data file (architecture §6, §7.3).
+
+    ``syntax`` is ``"json"`` or ``"jsonc"`` (comments or trailing commas were present: VS Code
+    and Cursor accept them, strict JSON clients do not). ``duplicate_keys`` lists, once each, the
+    JSON Pointers (RFC 6901, capped) of object members that occur more than once in the same
+    object; duplicates are recorded, never silently resolved (consumers decide; MCP clients
+    built on ``JSON.parse`` use the last occurrence).
+    """
+
+    syntax: str
+    entries: tuple[ConfigEntry, ...]
+    duplicate_keys: tuple[str, ...] = ()
+    duplicate_keys_truncated: bool = False
+
+
 @dataclass(frozen=True)
 class ParseFailure:
     """Why no IR was produced. ``detail`` is composed by nexvul only (line numbers, limit
@@ -363,6 +423,8 @@ class ModuleIR:
     limited: tuple[AnalysisLimited, ...] = ()
     suppressions: tuple[SuppressionComment, ...] = ()
     notes: tuple[str, ...] = ()
+    #: Set for configuration/data files (``language == "json"``); ``None`` for source code.
+    config: ConfigDocument | None = None
 
     @property
     def ok(self) -> bool:

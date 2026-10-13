@@ -11,8 +11,8 @@ dynamic = ["version"]
 description = "Local-first static security scanner for AI-agent applications (OWASP Agentic Top 10)."
 readme = "README.md"
 requires-python = ">=3.12"
-# TODO(licence): the product owner has not chosen a licence yet. Do not set `license` or add a
-# licence classifier until a decision record exists in .nexvul/decisions/.
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [{ name = "Victor Ibhafidon" }]
 classifiers = [
     "Programming Language :: Python :: 3",

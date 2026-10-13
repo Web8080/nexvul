@@ -1,0 +1,5 @@
+{
+  "servers": {
+    "a": { "url": "http://mcp.example.com/mcp" }
+  }
+}

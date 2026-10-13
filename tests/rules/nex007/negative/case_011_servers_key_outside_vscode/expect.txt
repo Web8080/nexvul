@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=config/servers.json reason="the generic servers key is only an MCP shape in .vscode/mcp.json"

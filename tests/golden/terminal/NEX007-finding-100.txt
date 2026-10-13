@@ -1,0 +1,25 @@
+nexvul 0.0.0-test  scan of ./mcp-demo
+  Files       1 of 1 analysed (JSON 1)
+  Frameworks  MCP client config (1 file)
+  Rules       1 of 1 enabled - fail-on high - config .nexvul.yml (local)
+----------------------------------------------------------------------------------------------------
+
+ HIGH     [###.]  NEX007  MCP connection without authentication or over cleartext
+                  ASI07, ASI04 - confidence high
+                  .cursor/mcp.json:5:7
+    The MCP server entry 'search' in .cursor/mcp.json uses an HTTP transport at
+    http://mcp.example.com/mcp, over cleartext http:// to a non-loopback host. No authentication
+    setting (headers, auth block, bearer/OAuth) was found in this config entry.
+    Fix  Use https:// for remote MCP servers and configure authentication (an Authorization header
+         from an environment variable or input, or the client's OAuth support).
+
+ Learn a rule: nexvul explain NEX007
+----------------------------------------------------------------------------------------------------
+
+ Scan completeness
+   Status        COMPLETE
+   Analysed      1 of 1 files - 0 skipped - 0 parse errors - 0 timeouts
+   Not in scope  nexvul config file: 1
+   Rules run     1 of 1 enabled rules finished
+
+ Result  1 finding: 1 high - 1 at or above fail-on (high). Exit code 1.

@@ -1,0 +1,2 @@
+# Duplicate url key: the last occurrence (JSON.parse) is evaluated; confidence medium
+nexvul-expect: NEX007 file=.mcp.json line=6 severity=high confidence=medium

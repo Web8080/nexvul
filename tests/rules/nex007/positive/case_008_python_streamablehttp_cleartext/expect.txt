@@ -1,0 +1,2 @@
+# Python SDK streamable HTTP client with a constant cleartext URL
+nexvul-expect: NEX007 file=app/client.py line=6 severity=high confidence=high

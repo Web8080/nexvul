@@ -1,0 +1,2 @@
+# Duplicate server name: the overridden first entry is still reported, confidence medium
+nexvul-expect: NEX007 file=.cursor/mcp.json line=3 severity=high confidence=medium

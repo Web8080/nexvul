@@ -1,0 +1,2 @@
+# Private-network host: cleartext still reported, severity lowered one step
+nexvul-expect: NEX007 file=.mcp.json line=3 severity=medium confidence=high

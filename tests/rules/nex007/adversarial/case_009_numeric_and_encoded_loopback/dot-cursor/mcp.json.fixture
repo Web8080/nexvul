@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "dec": { "url": "http://2130706433:8000/mcp" },
+    "hex": { "url": "http://0x7f.1:8000/mcp" },
+    "pct": { "url": "http://local%68ost:8000/mcp" }
+  }
+}

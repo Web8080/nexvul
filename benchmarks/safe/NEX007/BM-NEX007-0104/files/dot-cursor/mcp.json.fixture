@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "docs": {
+      "url": "https://docs.example.com/mcp",
+      "auth": { "CLIENT_ID": "${env:DOCS_CLIENT_ID}", "scopes": ["read"] }
+    }
+  }
+}

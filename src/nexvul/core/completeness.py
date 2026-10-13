@@ -73,8 +73,10 @@ class SkipReason(StrEnum):
     NON_UTF8_UNDECODABLE = "non_utf8_undecodable"
     SYNTAX_UNSUPPORTED_BY_RUNTIME = "syntax_unsupported_by_runtime"
     SUBMODULE_NOT_SCANNED = "submodule_not_scanned"
-    # In-scope language (selected by discovery) for which this build has no parser yet, e.g.
-    # JS/TS before Phase 5. The content was not analysed, so the scan is partial.
+    # In-scope language (selected by discovery) for which this build has no parser yet: JS/TS
+    # before Phase 5, YAML and TOML. The content was not analysed, so the scan is partial.
+    # (.json files are parsed as configuration data since step 4: a JSON file in which no
+    # recogniser finds anything is *analysed*, not partial.)
     PARSER_UNAVAILABLE = "parser_unavailable"
     # --- policy (counted, not partial) ---
     SYMLINK_NOT_FOLLOWED = "symlink_not_followed"

@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "検索": { "type": "http", "url": "http://mcp.example.jp/mcp" }
+  }
+}

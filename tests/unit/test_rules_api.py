@@ -49,12 +49,27 @@ def test_meta_to_dict_is_canonical() -> None:
     assert d["severity"] == "high" and d["readiness"] == "default"
 
 
-def test_builtin_registry_is_empty_and_frozen() -> None:
-    assert BUILTIN_RULES == ()
-    reg = builtin_registry()
+def test_empty_registry_is_supported() -> None:
+    reg = Registry(())
     assert len(reg) == 0 and list(reg) == [] and reg.ids() == frozenset()
     assert reg.sha256.startswith("sha256:")
-    assert builtin_registry().sha256 == reg.sha256
+
+
+def test_builtin_registry_is_frozen_and_ships_only_nex007_experimental() -> None:
+    # Step 4: the first real rule. It ships experimental (off by default) because fewer than
+    # 20 labelled benchmark cases exist for it (DEC-0002 amendment 1).
+    assert isinstance(BUILTIN_RULES, tuple)
+    reg = builtin_registry()
+    assert reg.ids() == frozenset({"NEX007"})
+    nex007 = reg.get("NEX007")
+    assert nex007 is not None
+    assert nex007.meta.readiness is Readiness.EXPERIMENTAL
+    assert nex007.meta.asi == ("ASI07", "ASI04")
+    assert reg.sha256.startswith("sha256:") and builtin_registry().sha256 == reg.sha256
+    assert reg.pack_version == "0.1.0"
+    selection = reg.select(frozenset(), frozenset())
+    assert selection.enabled == () and selection.not_enabled == ("NEX007",)
+    assert [r.meta.id for r in reg.select(frozenset({"ASI07"}), frozenset()).enabled] == ["NEX007"]
 
 
 def test_registry_rejects_duplicates_and_non_rules() -> None:

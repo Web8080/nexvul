@@ -81,4 +81,4 @@ nexvul explain NEX001
 
 ## License
 
-Not yet chosen. Until a license file is added, no rights are granted to use, copy or modify this code.
+Apache License 2.0. See [LICENSE](LICENSE). The benchmark cases in `benchmarks/` are original synthetic examples under the same licence.

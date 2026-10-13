@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "api": { "type": "http", "url": "${API_BASE_URL:-http://api.example.com}/mcp" }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "a": { "type": "HTTP", "url": "HTTP://MCP.EXAMPLE.COM/mcp" }
+  }
+}

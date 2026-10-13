@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.cursor/mcp.json reason="0.0.0.0 as a client destination reaches the local machine"

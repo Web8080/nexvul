@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=app/client.py reason="headers passed; URL from the environment; a local function that only looks similar"

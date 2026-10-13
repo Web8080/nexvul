@@ -1,0 +1,8 @@
+from mcp.client.streamable_http import streamablehttp_client
+
+MCP_URL = "http://mcp.example.com/mcp"
+
+
+async def main() -> None:
+    async with streamablehttp_client(MCP_URL) as streams:
+        print(streams)

@@ -1,0 +1,5 @@
+{
+  "name": "web",
+  "homepage": "http://example.com",
+  "repository": { "type": "git", "url": "http://git.example.com/web.git" }
+}

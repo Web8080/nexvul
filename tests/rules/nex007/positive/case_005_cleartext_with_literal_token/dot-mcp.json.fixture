@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "billing": {
+      "type": "http",
+      "url": "http://billing.example.com/mcp",
+      "headers": { "Authorization": "Bearer sk-live-0000000000000000000000000000" }
+    }
+  }
+}

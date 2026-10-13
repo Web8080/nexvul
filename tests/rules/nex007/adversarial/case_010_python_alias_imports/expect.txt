@@ -1,0 +1,2 @@
+nexvul-expect: NEX007 file=agent/connect.py line=6 severity=high confidence=high
+nexvul-expect: NEX007 file=agent/connect.py line=8 severity=high confidence=high

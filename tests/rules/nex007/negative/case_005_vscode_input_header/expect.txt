@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.vscode/mcp.json reason="VS Code input variable supplies a credential header"

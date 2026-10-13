@@ -1,0 +1,2 @@
+# Credentials configured but sent over cleartext http
+nexvul-expect: NEX007 file=.mcp.json line=5 severity=high confidence=high

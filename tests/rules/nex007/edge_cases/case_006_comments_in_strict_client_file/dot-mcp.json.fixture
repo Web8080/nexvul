@@ -1,0 +1,4 @@
+{
+  // a strict JSON client would reject this file; nexvul still reads it as JSONC
+  "mcpServers": { "remote": { "type": "http", "url": "http://mcp.example.com/mcp" } }
+}

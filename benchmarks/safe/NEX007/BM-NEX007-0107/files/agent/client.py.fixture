@@ -1,0 +1,9 @@
+import os
+
+from mcp.client.streamable_http import streamablehttp_client
+
+
+async def connect() -> None:
+    headers = {"Authorization": f"Bearer {os.environ['MCP_TOKEN']}"}
+    async with streamablehttp_client("https://mcp.example.com/mcp", headers=headers) as s:
+        print(s)

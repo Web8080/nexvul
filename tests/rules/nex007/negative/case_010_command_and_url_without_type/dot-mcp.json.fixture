@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "local": { "command": "./bin/server", "url": "http://mcp.example.com/mcp" }
+  }
+}

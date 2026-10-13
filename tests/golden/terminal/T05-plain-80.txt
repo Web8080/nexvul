@@ -1,6 +1,6 @@
 nexvul 0.1.0  scan of ./my-agent-project
   Files       308 of 312 analysed (Python 241)
-  Frameworks  none recognised (no framework recognisers in this version)
+  Frameworks  none recognised (MCP client configs only in this version)
   Rules       3 of 3 enabled - fail-on high - config .nexvul.yml (local)
 --------------------------------------------------------------------------------
 

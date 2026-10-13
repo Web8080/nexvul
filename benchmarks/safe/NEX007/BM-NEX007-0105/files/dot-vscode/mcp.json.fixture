@@ -1,0 +1,6 @@
+{
+  "inputs": [ { "type": "promptString", "id": "kb-key", "description": "KB key", "password": true } ],
+  "servers": {
+    "kb": { "type": "http", "url": "https://kb.example.com/mcp", "headers": { "X-KB-Key": "${input:kb-key}" } }
+  }
+}

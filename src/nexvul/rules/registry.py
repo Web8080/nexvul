@@ -5,8 +5,8 @@ installed-package entry points, never imports code from other installed distribu
 loads rules from repository or user config. A co-installed package therefore gets no hook
 into nexvul.
 
-Phase 1 ships **no** detection rules: the table is empty, and ``nexvul rules`` / ``explain`` /
-``scan`` say so. Tests build their own :class:`Registry` with test-only rules that live under
+Step 4 ships one rule, NEX007, marked experimental (off unless enabled, DEC-0002). Tests build
+their own :class:`Registry` with test-only rules that live under
 ``tests/`` and are passed in explicitly; they are never added to this table.
 
 The rule-pack hash (SR-27) is the SHA-256 of the canonical JSON of every rule's metadata, in ID
@@ -23,13 +23,15 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Final
 
+from nexvul.rules.asi07.nex007 import McpConnectionWithoutAuth
 from nexvul.rules.base import Readiness, Rule
 
 #: Version of the built-in rule pack (U07). Bumped whenever the table changes.
-RULE_PACK_VERSION: Final = "0.0.0"
+#: 0.1.0 (step 4): first rule, NEX007 (experimental, off by default per DEC-0002).
+RULE_PACK_VERSION: Final = "0.1.0"
 
-#: The frozen table of built-in rule classes. Empty in Phase 1 (no rule ships yet).
-BUILTIN_RULES: Final[tuple[type[Rule], ...]] = ()
+#: The frozen table of built-in rule classes. Adding a rule here is the only way to ship one.
+BUILTIN_RULES: Final[tuple[type[Rule], ...]] = (McpConnectionWithoutAuth,)
 
 
 @dataclass(frozen=True)

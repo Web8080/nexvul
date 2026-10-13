@@ -1,0 +1,8 @@
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client
+
+
+async def main() -> None:
+    async with streamablehttp_client("http://mcp.example.com/mcp") as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()

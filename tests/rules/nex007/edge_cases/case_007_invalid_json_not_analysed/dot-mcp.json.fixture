@@ -1,0 +1,4 @@
+{
+  "mcpServers": { "remote": { "url": "http://mcp.example.com/mcp" } }
+  "extra": NaN
+}

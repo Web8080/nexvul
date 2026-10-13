@@ -72,7 +72,12 @@ REASON_LABELS: dict[SkipReason, str] = {
     SkipReason.NEXVUL_CONFIG: "nexvul config file",
 }
 
-LANGUAGE_NAMES = {"python": "Python", "typescript": "TypeScript", "javascript": "JavaScript"}
+LANGUAGE_NAMES = {
+    "python": "Python",
+    "typescript": "TypeScript",
+    "javascript": "JavaScript",
+    "json": "JSON",
+}
 
 
 @dataclass(frozen=True)
@@ -199,7 +204,7 @@ def _config_text(result: ScanResult, *, with_hash: bool, ell: str) -> str:
 def _frameworks_text(result: ScanResult) -> str:
     if result.frameworks:
         return ", ".join(_safe(f) for f in result.frameworks)
-    return "none recognised (no framework recognisers in this version)"
+    return "none recognised (MCP client configs only in this version)"
 
 
 def _header(w: _Writer, result: ScanResult) -> None:

@@ -1,0 +1,2 @@
+# VS Code servers key, remote https with no auth: medium/medium (OAuth may be negotiated)
+nexvul-expect: NEX007 file=.vscode/mcp.json line=5 severity=medium confidence=medium

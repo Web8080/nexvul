@@ -1,0 +1,6 @@
+{
+  "name": "mcp-dashboard",
+  "version": "2.1.0",
+  "mirrors": ["http://mirror.example.com/"],
+  "servers": ["http://a.example.com", "http://b.example.com"]
+}

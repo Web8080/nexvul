@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "remote": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": { "Content-Type": "application/json", "X-Trace-Id": "abc" }
+    }
+  }
+}

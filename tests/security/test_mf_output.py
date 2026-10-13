@@ -54,8 +54,9 @@ def hostile_tree(tmp_path: Path) -> Path:
     root.mkdir()
     (root / "ok.py").write_text("import os\nos.system('ls')\n")
     for i, name in enumerate(HOSTILE_NAMES):
-        # .json: in scope, no parser -> listed by path in the partial block
-        (root / f"{name}{i}.json").write_text("{}")
+        # .ts: in scope, no parser -> listed by path in the partial block. (Was .json until
+        # step 4; JSON files are parsed as configuration data now.)
+        (root / f"{name}{i}.ts").write_text("export {}\n")
         # .py with a finding -> path appears in findings and flow
         (root / f"{name}{i}.py").write_text("import os\nos.system('x')\n")
     return root
@@ -79,7 +80,7 @@ def test_mf61_75_hostile_filenames_never_reach_output_raw(
     root = hostile_tree(tmp_path)
     code = run(["scan", str(root), "--format", fmt, "--verbose"])
     captured = capsys.readouterr()
-    assert code == 3  # .json files have no parser: partial
+    assert code == 3  # .ts files have no parser: partial
     assert_clean_output(captured.out)
     assert_clean_output(captured.err)
     captured.out.encode("utf-8")  # valid UTF-8, no lone surrogates

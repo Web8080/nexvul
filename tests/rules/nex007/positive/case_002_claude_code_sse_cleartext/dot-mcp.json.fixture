@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tools": {
+      "type": "sse",
+      "url": "http://tools.example.org/sse"
+    }
+  }
+}

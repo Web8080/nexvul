@@ -1,0 +1,9 @@
+import mcp.client.sse as transport
+from mcp.client.streamable_http import streamablehttp_client as open_mcp
+
+
+async def main() -> None:
+    async with open_mcp("http://mcp.example.com/mcp") as streams:
+        print(streams)
+    async with transport.sse_client("http://mcp.example.com/sse", None) as streams:
+        print(streams)

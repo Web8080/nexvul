@@ -1,0 +1,6 @@
+{
+  "mcpServers": {
+    "remote": { "url": "http://mcp.example.com/mcp" },
+    "remote": { "url": "https://mcp.example.com/mcp", "headers": { "Authorization": "Bearer ${env:T}" } }
+  }
+}

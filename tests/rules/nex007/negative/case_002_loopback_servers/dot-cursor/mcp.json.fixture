@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "a": { "url": "http://localhost:8000/mcp" },
+    "b": { "url": "http://127.0.0.1:3000/mcp" },
+    "c": { "url": "http://[::1]:3001/mcp" },
+    "d": { "url": "http://dev.localhost:9000/mcp" }
+  }
+}

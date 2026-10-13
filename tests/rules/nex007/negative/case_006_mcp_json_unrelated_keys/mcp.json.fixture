@@ -1,0 +1,6 @@
+{
+  "name": "mcp",
+  "version": "1.2.0",
+  "servers": ["http://mirror.example.com/"],
+  "mcp": { "url": "http://mcp.example.com/" }
+}

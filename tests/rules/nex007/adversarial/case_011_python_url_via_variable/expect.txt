@@ -1,0 +1,1 @@
+nexvul-known-miss: NEX007 file=agent/indirect.py line=7 ref=FND-NEX007-01 # FND-NEX007-01 constant propagation not implemented

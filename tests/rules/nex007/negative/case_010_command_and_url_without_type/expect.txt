@@ -1,0 +1,1 @@
+nexvul-expect-not: NEX007 file=.mcp.json reason="command present and no type: Claude Code runs it as stdio"

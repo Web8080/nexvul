@@ -1,0 +1,2 @@
+nexvul-expect-not: NEX007 file=mcp.json reason="named mcp.json but no mcpServers object of server entries"
+nexvul-expect-not: NEX007 file=tools/mcpServers.json reason="mcpServers is a list, not an object of server entries"

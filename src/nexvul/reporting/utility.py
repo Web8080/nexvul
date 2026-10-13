@@ -108,6 +108,10 @@ def render_explain(rule: Rule, *, width: int) -> str:
         f"        {' '.join(asi_names)} · default severity {m.severity.value}",
         f"        confidence up to {m.confidence.value} · {m.readiness.value}",
     ]
+    if doc is not None and doc.status_note:
+        lines.extend(
+            textwrap.wrap(doc.status_note, width=wrap, initial_indent="  ", subsequent_indent="  ")
+        )
     if doc is not None:
         _section(lines, "WHAT IT LOOKS FOR", doc.looks_for, wrap)
         _section(lines, "WHY IT MATTERS", doc.why_it_matters, wrap)
@@ -121,6 +125,11 @@ def render_explain(rule: Rule, *, width: int) -> str:
     lines.append("SUPPRESSING THIS FINDING")
     lines.append(f"  # nexvul: ignore[{m.id}] -- <why this is acceptable>")
     lines.append("  In CI the justification after -- is required.")
+    if doc is not None and doc.suppression_note:
+        for para in doc.suppression_note.split("\n"):
+            lines.extend(
+                textwrap.wrap(para, width=wrap, initial_indent="  ", subsequent_indent="  ")
+            )
     if m.references:
         lines.append("")
         lines.append("REFERENCES")
@@ -217,8 +226,15 @@ def doctor_checks(
     )
     checks.append(
         Check(
+            "ok",
+            "JSON parser: stdlib json + bounded tokenizer (JSON and JSONC; data only, never "
+            "executed)",
+        )
+    )
+    checks.append(
+        Check(
             "info",
-            "JavaScript/TypeScript, JSON, YAML and TOML parsers are not in this version.",
+            "JavaScript/TypeScript, YAML and TOML parsers are not in this version.",
             "Such files are recorded as not analysed and make scans PARTIAL.",
         )
     )

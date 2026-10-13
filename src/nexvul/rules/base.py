@@ -43,6 +43,10 @@ class RuleDoc:
     example_flagged: str = ""
     example_not_flagged: str = ""
     asi_names: tuple[str, ...] = ()
+    #: One line shown under the header of ``explain`` (e.g. "experimental thin slice ...").
+    status_note: str = ""
+    #: Replaces the generic inline-suppression hint when it cannot apply (e.g. JSON configs).
+    suppression_note: str = ""
 
 
 @dataclass(frozen=True)

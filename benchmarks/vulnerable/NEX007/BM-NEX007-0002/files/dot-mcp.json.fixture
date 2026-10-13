@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "events": {
+      "type": "sse",
+      "url": "http://events.example.org/sse",
+      "headers": { "Authorization": "Bearer ${EVENTS_TOKEN}" }
+    }
+  }
+}

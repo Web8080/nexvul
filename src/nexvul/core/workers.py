@@ -59,8 +59,14 @@ from nexvul.core.sanitize import display_path
 from nexvul.core.startup import ModuleShadowingError, assert_no_module_from_roots
 from nexvul.ir.codec import IRDecodeError, loads_strict, module_from_dict, module_to_json
 from nexvul.ir.model import FailureReason, ModuleIR, failed_module
+from nexvul.parser.json_config import LANGUAGE as JSON_LANGUAGE
+from nexvul.parser.json_config import JsonLimits, parse_json_config
 from nexvul.parser.python import LANGUAGE as PYTHON
 from nexvul.parser.python import ParseLimits, module_name_for, parse_python
+
+#: Languages parsed in workers, by discovery language. YAML and TOML stay ``parser_unavailable``
+#: (no parser yet); JSON files are read as configuration data (step 4).
+_PARSED_LANGUAGES: Final = {Language.PYTHON: PYTHON, Language.JSON: JSON_LANGUAGE}
 
 _CLOEXEC: Final = getattr(os, "O_CLOEXEC", 0)
 _FILE_FLAGS: Final = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_NOCTTY | _CLOEXEC
@@ -248,7 +254,7 @@ def handle_task(task: dict[str, Any]) -> bytes:
         payload = module_to_json(module)
         if len(payload) > int(task["max_result_bytes"]) - 256:
             module = failed_module(
-                language=PYTHON,
+                language=module.language,
                 path=task["path"],
                 module_name=module.module_name,
                 is_package=module.is_package,
@@ -269,7 +275,11 @@ def _reply(obj: dict[str, Any]) -> bytes:
 
 def _read_and_parse(task: dict[str, Any]) -> ModuleIR:
     path: str = task["path"]
-    module_name, is_package = module_name_for(path)
+    language = str(task.get("language", PYTHON))
+    if language == JSON_LANGUAGE:
+        module_name, is_package = "", False
+    else:
+        module_name, is_package = module_name_for(path)
     expect = task.get("expect")
     data = read_file(
         task["root"],
@@ -280,12 +290,21 @@ def _read_and_parse(task: dict[str, Any]) -> ModuleIR:
     if isinstance(data, tuple):
         reason, detail = data
         return failed_module(
-            language=PYTHON,
+            language=language,
             path=path,
             module_name=module_name,
             is_package=is_package,
             reason=reason,
             detail=detail,
+        )
+    if language == JSON_LANGUAGE:
+        return parse_json_config(
+            data,
+            path,
+            json_limits=JsonLimits(
+                max_nesting=int(task["max_nesting"]),
+                max_literal_chars=int(task["max_literal_chars"]),
+            ),
         )
     lim = ParseLimits(
         max_nesting=int(task["max_nesting"]),
@@ -358,6 +377,7 @@ class _Task:
     path: str
     expect: tuple[int, int] | None
     attempts: int = 0
+    language: str = PYTHON
 
 
 @dataclass
@@ -455,6 +475,7 @@ class _Pool:
             "id": task.index,
             "root": self.root,
             "path": task.path,
+            "language": task.language,
             "expect": list(task.expect) if task.expect else None,
             "timeout": self.opt.timeout_seconds,
             "max_file_size": self.opt.max_file_size,
@@ -584,7 +605,7 @@ class _Pool:
             module = module_from_dict(reply["module"])
         except IRDecodeError:
             return None
-        if module.path != task.path or module.language != PYTHON:
+        if module.path != task.path or module.language != task.language:
             return None
         if module.ok:
             return FileOutcome(task.path, OutcomeStatus.SCANNED, module=module)
@@ -616,6 +637,8 @@ def _fold(ledger: Completeness, outcomes: Sequence[FileOutcome], memory_enforced
     truncated_files = 0
     cookie_files = 0
     bidi_files = 0
+    duplicate_key_files = 0
+    jsonc_files = 0
     for outcome in outcomes:
         if outcome.status is OutcomeStatus.SCANNED:
             ledger.record_scanned()
@@ -627,6 +650,8 @@ def _fold(ledger: Completeness, outcomes: Sequence[FileOutcome], memory_enforced
             truncated_files += module.literals_truncated > 0
             cookie_files += "non_utf8_coding_cookie" in module.notes
             bidi_files += "bidi_control" in module.notes
+            duplicate_key_files += "duplicate_keys" in module.notes
+            jsonc_files += "jsonc" in module.notes
     if truncated_files:
         ledger.add_note(
             f"string literals longer than {limits.MAX_LITERAL_CHARS} characters were truncated "
@@ -636,6 +661,15 @@ def _fold(ledger: Completeness, outcomes: Sequence[FileOutcome], memory_enforced
         ledger.add_note(f"{cookie_files} file(s) declare a non-UTF-8 source encoding")
     if bidi_files:
         ledger.add_note(f"{bidi_files} file(s) contain bidirectional control characters")
+    if duplicate_key_files:
+        ledger.add_note(
+            f"{duplicate_key_files} JSON file(s) repeat a key inside one object; rules read the "
+            "last occurrence, as JSON.parse does"
+        )
+    if jsonc_files:
+        ledger.add_note(
+            f"{jsonc_files} JSON file(s) contain comments or trailing commas (read as JSONC)"
+        )
     if outcomes and not memory_enforced:
         # DEC-0013 §2: shown on every scan, does not by itself make the scan partial.
         ledger.add_note(
@@ -658,7 +692,8 @@ def analyse_files(
     re-checked at open) or repo-relative ``/``-separated paths. Every input file ends up in
     exactly one :class:`FileOutcome` and in the completeness ledger (``completeness`` is updated
     in place when given): scanned, failed (typed reason), timed out, crashed, or unsupported
-    (``parser_unavailable`` for in-scope languages without a parser, ``unsupported_file_type``
+    (``parser_unavailable`` for in-scope languages without a parser - YAML, TOML, JS/TS in this
+    version; ``.json`` files are parsed as configuration data - ``unsupported_file_type``
     for unknown extensions). Target code is never imported or executed (SR-01).
 
     ``worker_entry`` replaces the worker's entry point; it exists for fault-injection tests and
@@ -683,7 +718,7 @@ def analyse_files(
             outcomes[index] = FileOutcome(
                 path, OutcomeStatus.UNSUPPORTED, SkipReason.UNSUPPORTED_FILE_TYPE
             )
-        elif language is not Language.PYTHON:
+        elif language not in _PARSED_LANGUAGES:
             outcomes[index] = FileOutcome(
                 path,
                 OutcomeStatus.UNSUPPORTED,
@@ -691,7 +726,9 @@ def analyse_files(
                 f"no {language.value} parser in this version",
             )
         else:
-            tasks.append(_Task(index=index, path=path, expect=expect))
+            tasks.append(
+                _Task(index=index, path=path, expect=expect, language=_PARSED_LANGUAGES[language])
+            )
     pool = _Pool(real_root, opt, worker_entry or worker_main, clock)
     try:
         if tasks:

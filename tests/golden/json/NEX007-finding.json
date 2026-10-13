@@ -1,0 +1,66 @@
+{
+  "rule_id": "NEX007",
+  "title": "MCP connection without authentication or over cleartext",
+  "severity": "high",
+  "confidence": "high",
+  "owasp": [
+    "ASI07",
+    "ASI04"
+  ],
+  "cwe": [
+    "CWE-319",
+    "CWE-306"
+  ],
+  "file": ".cursor/mcp.json",
+  "line": 5,
+  "column": 7,
+  "end_line": 5,
+  "end_column": 7,
+  "raw_path_b64": null,
+  "message": "The MCP server entry 'search' in .cursor/mcp.json uses an HTTP transport at http://mcp.example.com/mcp, over cleartext http:// to a non-loopback host. No authentication setting (headers, auth block, bearer/OAuth) was found in this config entry.",
+  "fingerprint": "sha256:a78581a30e47bd7d356adc724489315d8883db9d6a7fd3c03747f736a1c857b5",
+  "dataflow": [],
+  "evidence": [
+    {
+      "type": "recognised_as",
+      "description": "MCP client config: Cursor project config (.cursor/mcp.json); top-level 'mcpServers' object with server entries",
+      "snippet": null
+    },
+    {
+      "type": "config_value",
+      "description": "/mcpServers/search/url = http://mcp.example.com/mcp (transport http, declared type http)",
+      "snippet": null
+    },
+    {
+      "type": "auth_search",
+      "description": "Looked for: headers carrying credentials (Authorization, *token*, *key*, cookies) or a variable reference, an auth/oauth block, bearer/token/apiKey keys, a headersHelper, user-info in the URL, a credential query parameter. Found: none",
+      "snippet": null
+    }
+  ],
+  "limitations": [],
+  "remediation": "Use https:// for remote MCP servers and configure authentication (an Authorization header from an environment variable or input, or the client's OAuth support).",
+  "references": [
+    "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
+    "https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices",
+    "https://modelcontextprotocol.io/specification/2025-11-25/basic/transports",
+    "docs/rules/NEX007.md"
+  ],
+  "suppressed": false,
+  "suppression": {
+    "status": "none",
+    "kind": "inline",
+    "line": 0,
+    "justification": null,
+    "reason": ""
+  },
+  "untrusted_fields": [
+    "file",
+    "message",
+    "dataflow[].file",
+    "dataflow[].code",
+    "evidence[].description",
+    "evidence[].snippet",
+    "limitations[]",
+    "suppression.justification"
+  ]
+}

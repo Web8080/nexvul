@@ -1,0 +1,2 @@
+# Claude Code project .mcp.json, deprecated SSE over cleartext
+nexvul-expect: NEX007 file=.mcp.json line=5 severity=high confidence=high

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "search": {
+      "type": "http",
+      "url": "https://search.example.com/mcp",
+      "headers": { "User-Agent": "acme-agent/1.0" }
+    }
+  }
+}

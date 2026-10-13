@@ -1,0 +1,10 @@
+{
+  // VS Code accepts comments and trailing commas in mcp.json
+  "servers": {
+    /* remote server */
+    "remote": {
+      "type": "http",
+      "url": "http://mcp.example.com/mcp",
+    },
+  },
+}

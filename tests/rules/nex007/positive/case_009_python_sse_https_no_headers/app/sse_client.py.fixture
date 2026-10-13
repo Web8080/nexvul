@@ -1,0 +1,6 @@
+from mcp.client.sse import sse_client
+
+
+async def main() -> None:
+    async with sse_client(url="https://mcp.example.com/sse") as streams:
+        print(streams)

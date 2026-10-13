@@ -11,7 +11,7 @@ from nexvul_test_rules import ShellCallRule, default_test_registry, registry_wit
 import nexvul.cli.main as cli_main
 from nexvul.cli.main import main, terminal_style
 from nexvul.reporting.utility import Check, doctor_checks, normalise_rule_id, render_doctor
-from nexvul.rules.registry import builtin_registry
+from nexvul.rules.registry import Registry, builtin_registry
 
 SHELL = "import os\nos.system('ls')\n"
 
@@ -219,12 +219,32 @@ def test_force_color_emits_sgr_only_on_request(
 def test_rules_empty_registry_says_so(
     capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr(cli_main, "registry_factory", builtin_registry)
+    monkeypatch.setattr(cli_main, "registry_factory", lambda: Registry(()))
     assert run(["rules"]) == 0
     assert "No detection rules ship in this version" in capsys.readouterr().out
     assert run(["explain", "NEX007"]) == 2
     err = capsys.readouterr().err
     assert "NEX007 is not a nexvul rule" in err and "No detection rules ship" in err
+
+
+@pytest.mark.parametrize("cols", ["80", "120"])
+def test_builtin_rules_and_explain_show_nex007_as_experimental(
+    cols: str, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("COLUMNS", cols)
+    monkeypatch.setattr(cli_main, "registry_factory", builtin_registry)
+    assert run(["rules"]) == 0
+    out = capsys.readouterr().out
+    assert "NEX007" in out and "experimental" in out
+    assert "0 on by default" in out and "1 experimental (off)" in out
+    assert all(len(line) <= int(cols) for line in out.splitlines())
+    assert run(["explain", "nex7"]) == 0
+    text = capsys.readouterr().out
+    assert "confidence up to high · experimental" in text
+    assert "Experimental thin slice: off by default" in text
+    assert "WHAT THIS RULE DOES NOT DETECT" in text and "'claude mcp add'" in text
+    assert "JSON has no comments" in text and "rules.disabled" in text
+    assert all(len(line) <= 80 for line in text.splitlines() if not line.startswith("  https"))
 
 
 @pytest.mark.parametrize("cols", ["80", "120"])

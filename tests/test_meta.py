@@ -23,6 +23,11 @@ EXECUTABLE_SUFFIXES = frozenset(
 )
 
 
+#: nexvul's own harness code that lives next to the corpus (benchmark-strategy §2 also plans
+#: benchmarks/perf/generator.py). Exact paths only; corpus case files stay ``.fixture``.
+HARNESS_FILES = frozenset({"benchmarks/run.py"})
+
+
 def fixture_violations(base: Path, trees: tuple[str, ...] = FIXTURE_TREES) -> list[str]:
     bad: list[str] = []
     for tree in trees:
@@ -33,6 +38,8 @@ def fixture_violations(base: Path, trees: tuple[str, ...] = FIXTURE_TREES) -> li
             if path.is_dir():
                 continue
             name = path.name
+            if path.relative_to(base).as_posix() in HARNESS_FILES:
+                continue
             if (
                 path.suffix.lower() in EXECUTABLE_SUFFIXES
                 or (name.startswith("test_") and name.endswith(".py"))
@@ -142,3 +149,58 @@ def test_banned_api_checker_catches(tmp_path: Path, snippet: str) -> None:
     p = tmp_path / "mod.py"
     p.write_text(snippet)
     assert _violations(p)
+
+
+# 3. Real agent/IDE config filenames (step 4). A committed `.mcp.json`, `.cursor/mcp.json`,
+# `.vscode/mcp.json` or `claude_desktop_config.json` under the fixture or benchmark trees could be
+# loaded by an editor or coding agent opened on this repository, starting hostile MCP servers.
+# Fixtures spell them `dot-cursor/mcp.json.fixture` and similar instead.
+CONFIG_TREES = ("tests", "benchmarks")
+REAL_CONFIG_NAMES = frozenset(
+    {
+        ".mcp.json",
+        "mcp.json",
+        "claude_desktop_config.json",
+        "mcp-config.json",
+        "mcp_config.json",
+        ".claude.json",
+        "settings.json",
+        "settings.local.json",
+    }
+)
+TOOL_DIRS = frozenset({".cursor", ".vscode", ".claude", ".copilot", ".codeium", ".windsurf"})
+
+
+def config_name_violations(base: Path, trees: tuple[str, ...] = CONFIG_TREES) -> list[str]:
+    bad: list[str] = []
+    for tree in trees:
+        top = base / tree
+        if not top.is_dir():
+            continue
+        for path in sorted(top.rglob("*")):
+            rel = path.relative_to(base)
+            if path.is_dir():
+                if path.name.lower() in TOOL_DIRS:
+                    bad.append(str(rel) + "/")
+            elif path.name.lower() in REAL_CONFIG_NAMES:
+                bad.append(str(rel))
+    return bad
+
+
+def test_no_real_agent_config_filenames_committed() -> None:
+    assert config_name_violations(REPO) == []
+
+
+def test_config_name_checker_catches_violations(tmp_path: Path) -> None:
+    for rel in (
+        "tests/rules/NEX007/positive/case_1/.mcp.json",
+        "benchmarks/vulnerable/NEX007/x/.cursor/mcp.json",
+        "benchmarks/safe/NEX007/y/claude_desktop_config.json",
+    ):
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("{}")
+    ok = tmp_path / "tests/rules/NEX007/positive/case_2/dot-cursor/mcp.json.fixture"
+    ok.parent.mkdir(parents=True, exist_ok=True)
+    ok.write_text("{}")
+    assert len(config_name_violations(tmp_path)) == 4  # 3 files + the .cursor directory

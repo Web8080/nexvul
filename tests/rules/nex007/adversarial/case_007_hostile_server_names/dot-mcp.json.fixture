@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "\u001b[2J\u001b[31mok\u001b[0m": { "type": "http", "url": "http://a.example.com/mcp" },
+    "line1\nResult  0 findings": { "type": "http", "url": "http://b.example.com/mcp" },
+    "\u202eevil": { "type": "http", "url": "http://c.example.com/mcp" }
+  }
+}

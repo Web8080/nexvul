@@ -1,6 +1,6 @@
 nexvul 0.1.0  ./docs
   0 of 0 files · rules: 3 of 3 enabled · fail-on high
-  none recognised (no framework recognisers in this
+  none recognised (MCP client configs only in this
   version)
 ────────────────────────────────────────────────────────────
 

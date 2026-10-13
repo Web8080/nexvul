@@ -1,0 +1,2 @@
+# Headers present but none carries credentials
+nexvul-expect: NEX007 file=.cursor/mcp.json line=4 severity=medium confidence=medium

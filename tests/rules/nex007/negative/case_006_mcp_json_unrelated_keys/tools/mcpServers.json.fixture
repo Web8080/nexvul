@@ -1,0 +1,3 @@
+{
+  "mcpServers": ["http://a.example.com/mcp", "http://b.example.com/mcp"]
+}

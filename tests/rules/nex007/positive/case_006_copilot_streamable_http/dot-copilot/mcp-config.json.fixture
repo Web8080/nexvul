@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "docs": { "type": "streamable-http", "url": "http://docs.example.com/mcp" }
+  }
+}

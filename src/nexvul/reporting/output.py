@@ -23,6 +23,7 @@ from dataclasses import dataclass
 
 from nexvul.core.sanitize import display_path
 from nexvul.reporting.json_report import is_nexvul_report
+from nexvul.reporting.sarif import is_nexvul_sarif
 
 _CLOEXEC = getattr(os, "O_CLOEXEC", 0)
 _READ_FLAGS = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | _CLOEXEC
@@ -57,6 +58,8 @@ def _inside(root: str, path: str) -> bool:
 def _is_nexvul_file(head: bytes, fmt: str) -> bool:
     if fmt == "json":
         return is_nexvul_report(head)
+    if fmt == "sarif":
+        return is_nexvul_sarif(head)
     return head.startswith(b"nexvul ")
 
 

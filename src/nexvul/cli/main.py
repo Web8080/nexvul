@@ -30,6 +30,7 @@ from nexvul.core.workers import WorkerStartupError
 from nexvul.reporting import tokens as tk
 from nexvul.reporting.json_report import render_json
 from nexvul.reporting.output import OutputRefusedError, prepare_output, write_output
+from nexvul.reporting.sarif import render_sarif
 from nexvul.reporting.terminal import (
     TerminalStyle,
     render_scan,
@@ -63,7 +64,7 @@ Exit codes
 A clean nexvul result does not prove that an application is secure.
 """
 
-_BUG_URL = "https://github.com/<owner>/nexvul/issues/new?template=bug.yml"
+_BUG_URL = "https://github.com/Web8080/nexvul/issues/new?template=bug.yml"
 
 #: Registry used by every command. Tests replace it; nothing else may (DEC-0004 §4).
 registry_factory: Callable[[], Registry] = builtin_registry
@@ -134,7 +135,7 @@ def version() -> None:
 @click.option(
     "--format",
     "fmt",
-    type=click.Choice(["terminal", "json"]),
+    type=click.Choice(["terminal", "json", "sarif"]),
     default="terminal",
     show_default=True,
     help="Report format.",
@@ -184,6 +185,7 @@ def scan(  # noqa: PLR0917 - click passes every option as a parameter
             hint = f"\n  {exc.hint}" if exc.hint else ""
             _err(f"nexvul: {exc.message}{hint}\n\nNothing was scanned. Exit code 2.")
             return ExitCode.USAGE_ERROR
+    registry = registry_factory()
     try:
         result = run_scan(
             ScanOptions(
@@ -192,7 +194,7 @@ def scan(  # noqa: PLR0917 - click passes every option as a parameter
                 ci_reason=ci_reason,
                 fail_on=fail_on,
                 allow_partial=allow_partial,
-                registry=registry_factory(),
+                registry=registry,
             )
         )
     except ScanUsageError as exc:
@@ -223,6 +225,8 @@ def scan(  # noqa: PLR0917 - click passes every option as a parameter
     if fmt == "json":
         pretty = not to_file and bool(getattr(sys.stdout, "isatty", lambda: False)())
         text = render_json(result, pretty=pretty)
+    elif fmt == "sarif":
+        text = render_sarif(result, registry, pretty=True)
     else:
         style = terminal_style(
             env, sys.stdout, no_color=no_color or to_file, verbose=verbose, width=_width()
@@ -230,7 +234,7 @@ def scan(  # noqa: PLR0917 - click passes every option as a parameter
         text = render_scan(result, style)
     if target is not None:
         write_output(target, text.encode("utf-8"))
-        kind = "JSON" if fmt == "json" else "text"
+        kind = {"json": "JSON", "sarif": "SARIF"}.get(fmt, "text")
         _err(f"nexvul: wrote {target.shown} ({kind}, {len(result.findings)} findings)")
         _err(status_line(result))
     else:

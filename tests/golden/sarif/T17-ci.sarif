@@ -1,0 +1,647 @@
+{
+  "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "nexvul",
+          "version": "0.1.0",
+          "semanticVersion": "0.1.0",
+          "informationUri": "https://github.com/Web8080/nexvul",
+          "rules": [
+            {
+              "id": "NEX007",
+              "name": "McpConnectionWithoutAuth",
+              "shortDescription": {
+                "text": "MCP connection without authentication or over cleartext"
+              },
+              "fullDescription": {
+                "text": "MCP client configurations that connect to a remote MCP server over cleartext http://, or over https:// with no authentication configured in the same server entry."
+              },
+              "help": {
+                "text": "MCP connection without authentication or over cleartext - ASI07, ASI04\n\nA finding means nexvul identified a risky pattern. It does not prove the code is exploitable.\n\nExperimental thin slice: off by default (fewer than 20 labelled benchmark cases, DEC-0002). Enable with rules.enabled: [NEX007] in .nexvul.yml.\n\nWHAT NEXVUL LOOKED FOR\nMCP client configurations that connect to a remote MCP server over cleartext http://, or over https:// with no authentication configured in the same server entry.\nFiles read: claude_desktop_config.json, .mcp.json, .cursor/mcp.json, .vscode/mcp.json (servers), .copilot/mcp-config.json, and any other .json file whose top level has an mcpServers object of server entries (recognised by structure; confidence capped at medium). Python: streamablehttp_client(), streamable_http_client() and sse_client() from the mcp SDK called with a constant URL.\nAn entry counts as authenticated when it has a credential-bearing header (or a header whose value is a ${VAR}/${env:X}/${input:id} reference), an auth/oauth block, a bearer/token/apiKey key, a headersHelper, user-info in the URL or a credential query parameter.\n\nWHY IT MATTERS\nA remote MCP server's tools run with whatever authority the client gives them, and tool results flow straight into the model's context. Over cleartext http:// anyone on the network path can read or rewrite tool descriptions, tool calls and results, and capture any token sent. Without authentication, anyone who can reach the server can call its tools, and the client cannot tell a spoofed server from the real one. OWASP ASI07 scenario 1 (semantic injection via unencrypted communications) and the MCP security best practices describe both.\n\nHOW TO FIX\nUse https:// for every non-loopback MCP server. Configure authentication for remote servers: an Authorization header taken from an environment variable or a VS Code input (never a literal token in a committed file), or the client's OAuth support. For local development servers, connect to localhost or 127.0.0.1, or use the stdio transport.\n\nFlagged:\n    { \"mcpServers\": {\n        \"search\": { \"type\": \"http\", \"url\": \"http://mcp.example.com/mcp\" } } }\n\nNot flagged:\n    { \"mcpServers\": {\n        \"search\": { \"type\": \"http\", \"url\": \"https://mcp.example.com/mcp\",\n                    \"headers\": { \"Authorization\": \"Bearer ${MCP_TOKEN}\" } },\n        \"files\": { \"command\": \"npx\",\n                   \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\"] },\n        \"dev\": { \"type\": \"http\", \"url\": \"http://localhost:8000/mcp\" } } }\n\nWHAT THIS RULE DOES NOT DETECT\n- Authentication configured outside this file: on the server, in a gateway or reverse proxy, or negotiated by the client through OAuth discovery at connect time (an https:// finding without auth is therefore medium confidence).\n- Configs generated at runtime, servers added through a client CLI or UI (for example 'claude mcp add'), and client configs outside the repository (user home, IDE settings).\n- URLs built from variables (${VAR}, f-strings, environment lookups): reported as nothing.\n- Windsurf, Zed, Continue, Cline, Gemini CLI and Codex config shapes (not verified yet); YAML/TOML configs; TypeScript MCP clients; langchain-mcp-adapters MultiServerMCPClient.\n- Malicious tool descriptions, token passthrough, weak or leaked credentials, unpinned 'npx -y' stdio servers (a separate supply-chain concern, not this rule).\n\nSEVERITY AND CONFIDENCE\nDefault severity high. Highest confidence high. The alert message states this result's own severity and confidence.\n\nTRIAGE\n- Snippets and identifiers in this alert come from the scanned repository. Treat them as untrusted text.\n- Reproduce locally: nexvul explain NEX007 and nexvul scan --verbose <path>\n- False positive? Report it: https://github.com/Web8080/nexvul/issues/new?template=false-positive.yml\n\nSUPPRESSING THIS FINDING\nJSON has no comments, so findings in .json configs cannot be suppressed inline. Use .nexvul.yml: add the file to exclude, or list NEX007 under rules.disabled. Inline suppression works for Python findings.\n\nREFERENCES\n- https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization\n- https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices\n- https://modelcontextprotocol.io/specification/2025-11-25/basic/transports\n- nexvul rule NEX007: https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX007.md",
+                "markdown": "**MCP connection without authentication or over cleartext** · ASI07, ASI04\n\nA finding means nexvul identified a risky pattern\\. It does not prove the code is exploitable\\.\n\n*Experimental thin slice: off by default \\(fewer than 20 labelled benchmark cases, DEC\\-0002\\)\\. Enable with rules\\.enabled: \\[NEX007\\] in \\.nexvul\\.yml\\.*\n\n#### What nexvul looked for\nMCP client configurations that connect to a remote MCP server over cleartext http://, or over https:// with no authentication configured in the same server entry\\.\n\nFiles read: claude\\_desktop\\_config\\.json, \\.mcp\\.json, \\.cursor/mcp\\.json, \\.vscode/mcp\\.json \\(servers\\), \\.copilot/mcp\\-config\\.json, and any other \\.json file whose top level has an mcpServers object of server entries \\(recognised by structure; confidence capped at medium\\)\\. Python: streamablehttp\\_client\\(\\), streamable\\_http\\_client\\(\\) and sse\\_client\\(\\) from the mcp SDK called with a constant URL\\.\n\nAn entry counts as authenticated when it has a credential\\-bearing header \\(or a header whose value is a $\\{VAR\\}/$\\{env:X\\}/$\\{input:id\\} reference\\), an auth/oauth block, a bearer/token/apiKey key, a headersHelper, user\\-info in the URL or a credential query parameter\\.\n\n\n#### Why it matters\nA remote MCP server's tools run with whatever authority the client gives them, and tool results flow straight into the model's context\\. Over cleartext http:// anyone on the network path can read or rewrite tool descriptions, tool calls and results, and capture any token sent\\. Without authentication, anyone who can reach the server can call its tools, and the client cannot tell a spoofed server from the real one\\. OWASP ASI07 scenario 1 \\(semantic injection via unencrypted communications\\) and the MCP security best practices describe both\\.\n\n#### How to fix\nUse https:// for every non\\-loopback MCP server\\. Configure authentication for remote servers: an Authorization header taken from an environment variable or a VS Code input \\(never a literal token in a committed file\\), or the client's OAuth support\\. For local development servers, connect to localhost or 127\\.0\\.0\\.1, or use the stdio transport\\.\n\nFlagged:\n\n```text\n    { \"mcpServers\": {\n        \"search\": { \"type\": \"http\", \"url\": \"http://mcp.example.com/mcp\" } } }\n```\n\nNot flagged:\n\n```text\n    { \"mcpServers\": {\n        \"search\": { \"type\": \"http\", \"url\": \"https://mcp.example.com/mcp\",\n                    \"headers\": { \"Authorization\": \"Bearer ${MCP_TOKEN}\" } },\n        \"files\": { \"command\": \"npx\",\n                   \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\"] },\n        \"dev\": { \"type\": \"http\", \"url\": \"http://localhost:8000/mcp\" } } }\n```\n\n#### What this rule does not detect\n- Authentication configured outside this file: on the server, in a gateway or reverse proxy, or negotiated by the client through OAuth discovery at connect time \\(an https:// finding without auth is therefore medium confidence\\)\\.\n- Configs generated at runtime, servers added through a client CLI or UI \\(for example 'claude mcp add'\\), and client configs outside the repository \\(user home, IDE settings\\)\\.\n- URLs built from variables \\($\\{VAR\\}, f\\-strings, environment lookups\\): reported as nothing\\.\n- Windsurf, Zed, Continue, Cline, Gemini CLI and Codex config shapes \\(not verified yet\\); YAML/TOML configs; TypeScript MCP clients; langchain\\-mcp\\-adapters MultiServerMCPClient\\.\n- Malicious tool descriptions, token passthrough, weak or leaked credentials, unpinned 'npx \\-y' stdio servers \\(a separate supply\\-chain concern, not this rule\\)\\.\n\n#### Severity and confidence\nDefault severity high\\. Highest confidence high\\. The alert message states this result's own severity and confidence\\.\n\n#### Triage\n- Snippets and identifiers in this alert come from the scanned repository\\. Treat them as untrusted text\\.\n- Reproduce locally: `nexvul explain NEX007` and `nexvul scan --verbose <path>`\n- False positive? Report it: https://github.com/Web8080/nexvul/issues/new?template=false-positive.yml\n\n#### Suppressing this finding\nJSON has no comments, so findings in \\.json configs cannot be suppressed inline\\. Use \\.nexvul\\.yml: add the file to exclude, or list NEX007 under rules\\.disabled\\. Inline suppression works for Python findings\\.\n\n#### References\n- [https://modelcontextprotocol\\.io/specification/2025\\-11\\-25/basic/authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)\n- [https://modelcontextprotocol\\.io/specification/2026\\-07\\-28/basic/security\\_best\\_practices](https://modelcontextprotocol.io/specification/2026-07-28/basic/security_best_practices)\n- [https://modelcontextprotocol\\.io/specification/2025\\-11\\-25/basic/transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)\n- [nexvul rule NEX007](https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX007.md)"
+              },
+              "helpUri": "https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX007.md",
+              "defaultConfiguration": {
+                "enabled": false,
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "security",
+                  "external/owasp/asi07",
+                  "external/owasp/asi04",
+                  "external/cwe/cwe-319",
+                  "external/cwe/cwe-306",
+                  "experimental"
+                ],
+                "precision": "high",
+                "security-severity": "8.0",
+                "nexvul": {
+                  "readiness": "experimental",
+                  "asi": [
+                    "ASI07",
+                    "ASI04"
+                  ],
+                  "cwe": [
+                    "CWE-319",
+                    "CWE-306"
+                  ],
+                  "default_severity": "high",
+                  "confidence_ceiling": "high",
+                  "languages": [
+                    "json",
+                    "python"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "NEX018",
+              "shortDescription": {
+                "text": "Financial action without human oversight"
+              },
+              "fullDescription": {
+                "text": "Financial action without human oversight"
+              },
+              "help": {
+                "text": "Require human approval before the call (needs_approval=True on the tool), or cap the amount in code.",
+                "markdown": "Require human approval before the call \\(needs\\_approval\\=True on the tool\\), or cap the amount in code\\."
+              },
+              "helpUri": "https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX018.md",
+              "properties": {
+                "tags": [
+                  "security",
+                  "external/owasp/asi02",
+                  "external/owasp/asi09"
+                ]
+              }
+            },
+            {
+              "id": "NEX006",
+              "shortDescription": {
+                "text": "A2A / agent HTTP endpoint without authentication"
+              },
+              "fullDescription": {
+                "text": "A2A / agent HTTP endpoint without authentication"
+              },
+              "help": {
+                "text": "Add an authentication dependency.",
+                "markdown": "Add an authentication dependency\\."
+              },
+              "helpUri": "https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX006.md",
+              "properties": {
+                "tags": [
+                  "security",
+                  "external/owasp/asi07"
+                ]
+              }
+            },
+            {
+              "id": "NEX015",
+              "shortDescription": {
+                "text": "Missing timeout around agent or tool execution"
+              },
+              "fullDescription": {
+                "text": "Missing timeout around agent or tool execution"
+              },
+              "help": {
+                "text": "Pass timeout= to the client or wrap the tool in asyncio.wait_for().",
+                "markdown": "Pass timeout\\= to the client or wrap the tool in asyncio\\.wait\\_for\\(\\)\\."
+              },
+              "helpUri": "https://github.com/Web8080/nexvul/blob/main/docs/rules/NEX015.md",
+              "properties": {
+                "tags": [
+                  "security",
+                  "external/owasp/asi08"
+                ]
+              }
+            }
+          ],
+          "properties": {
+            "nexvul": {
+              "rule_pack_version": "0.0.0",
+              "rule_pack_sha256": "sha256:9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e"
+            }
+          }
+        }
+      },
+      "automationDetails": {
+        "id": "nexvul/"
+      },
+      "originalUriBaseIds": {
+        "%SRCROOT%": {
+          "description": {
+            "text": "The scan root. Every artifact URI is relative to it."
+          }
+        }
+      },
+      "columnKind": "utf16CodeUnits",
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "exitCode": 1,
+          "startTimeUtc": "2026-10-13T00:00:00Z",
+          "endTimeUtc": "2026-10-13T00:00:05Z",
+          "toolExecutionNotifications": [],
+          "toolConfigurationNotifications": [
+            {
+              "descriptor": {
+                "id": "nexvul.config.not_applied"
+              },
+              "level": "note",
+              "message": {
+                "text": "severity.fail_on: high -> critical [NOT APPLIED] (repo: loosening from untrusted repository config in CI mode)"
+              }
+            }
+          ],
+          "ruleConfigurationOverrides": [
+            {
+              "descriptor": {
+                "id": "NEX007",
+                "index": 0
+              },
+              "configuration": {
+                "enabled": true
+              }
+            }
+          ]
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "NEX018",
+          "ruleIndex": 1,
+          "level": "error",
+          "message": {
+            "text": "CRITICAL · Tool refund_order calls stripe.Refund.create() with an amount chosen by the model. No approval step was found on the path to the call in the scanned code. Confidence: medium. Steps: 3 (Show paths)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "agent/billing.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 58,
+                  "startColumn": 9,
+                  "endLine": 58,
+                  "endColumn": 19,
+                  "snippet": {
+                    "text": "stripe.Refund.create(amount=amt, currency=order.currency)"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "abababababababab:1",
+            "nexvulFingerprint/v1": "sha256:abababababababababababababababababababababababababababababababab"
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "agent/billing.py",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 31,
+                            "startColumn": 1,
+                            "endLine": 31,
+                            "endColumn": 11,
+                            "snippet": {
+                              "text": "@function_tool def refund_order(amount)"
+                            }
+                          }
+                        },
+                        "message": {
+                          "text": "source"
+                        }
+                      },
+                      "executionOrder": 1,
+                      "properties": {
+                        "nexvul": {
+                          "role": "source"
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "agent/billing.py",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 44,
+                            "startColumn": 1,
+                            "endLine": 44,
+                            "endColumn": 11,
+                            "snippet": {
+                              "text": "amt = int(amount * 100)"
+                            }
+                          }
+                        },
+                        "message": {
+                          "text": "step"
+                        }
+                      },
+                      "executionOrder": 2,
+                      "properties": {
+                        "nexvul": {
+                          "role": "step"
+                        }
+                      }
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "agent/billing.py",
+                            "uriBaseId": "%SRCROOT%"
+                          },
+                          "region": {
+                            "startLine": 58,
+                            "startColumn": 1,
+                            "endLine": 58,
+                            "endColumn": 11,
+                            "snippet": {
+                              "text": "stripe.Refund.create(amount=amt, currency=order.currency)"
+                            }
+                          }
+                        },
+                        "message": {
+                          "text": "sink"
+                        }
+                      },
+                      "executionOrder": 3,
+                      "properties": {
+                        "nexvul": {
+                          "role": "sink"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "nexvul": {
+              "severity": "critical",
+              "confidence": "medium",
+              "rule_default_severity": null,
+              "title": "Financial action without human oversight",
+              "asi": [
+                "ASI02",
+                "ASI09"
+              ],
+              "cwe": [],
+              "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+              "message": "Tool refund_order calls stripe.Refund.create() with an amount chosen by the model. No approval step was found on the path to the call in the scanned code.",
+              "evidence": [],
+              "limitations": [],
+              "suppression": {
+                "status": "none",
+                "reason": ""
+              },
+              "column_unit": "utf8_bytes"
+            }
+          }
+        },
+        {
+          "ruleId": "NEX006",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "HIGH · POST /agents/run has no authentication dependency. Confidence: high."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "agent/server.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 41,
+                  "startColumn": 1,
+                  "endLine": 41,
+                  "endColumn": 11
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "abababababababab:1",
+            "nexvulFingerprint/v1": "sha256:abababababababababababababababababababababababababababababababab"
+          },
+          "suppressions": [
+            {
+              "kind": "inSource",
+              "status": "accepted",
+              "justification": "auth enforced by the API gateway (infra/gateway.tf, route /agents/*)",
+              "location": {
+                "physicalLocation": {
+                  "artifactLocation": {
+                    "uri": "agent/server.py",
+                    "uriBaseId": "%SRCROOT%"
+                  },
+                  "region": {
+                    "startLine": 40,
+                    "endLine": 40
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "nexvul": {
+              "severity": "high",
+              "confidence": "high",
+              "rule_default_severity": null,
+              "title": "A2A / agent HTTP endpoint without authentication",
+              "asi": [
+                "ASI07"
+              ],
+              "cwe": [],
+              "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+              "message": "POST /agents/run has no authentication dependency.",
+              "evidence": [],
+              "limitations": [],
+              "suppression": {
+                "status": "suppressed",
+                "reason": ""
+              },
+              "column_unit": "utf8_bytes"
+            }
+          }
+        },
+        {
+          "ruleId": "NEX015",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "LOW · httpx.get() inside tool search_web has no timeout argument. Confidence: medium. Suppression NOT APPLIED."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "agent/tools.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 16,
+                  "endLine": 45,
+                  "endColumn": 26
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "abababababababab:1",
+            "nexvulFingerprint/v1": "sha256:abababababababababababababababababababababababababababababababab"
+          },
+          "properties": {
+            "nexvul": {
+              "severity": "low",
+              "confidence": "medium",
+              "rule_default_severity": null,
+              "title": "Missing timeout around agent or tool execution",
+              "asi": [
+                "ASI08"
+              ],
+              "cwe": [],
+              "fingerprint": "sha256:abababababababababababababababababababababababababababababababab",
+              "message": "httpx.get() inside tool search_web has no timeout argument.",
+              "evidence": [],
+              "limitations": [],
+              "suppression": {
+                "status": "not_applied",
+                "reason": "CI requires a justification of at least 10 characters after ' -- '"
+              },
+              "column_unit": "utf8_bytes"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "nexvul": {
+          "status": "complete",
+          "exit_code": 1,
+          "fail_on": "high",
+          "completeness": {
+            "status": "complete",
+            "failed_cause": null,
+            "files_discovered": 312,
+            "files_analysed": 312,
+            "files_not_analysed": 0,
+            "files_failed": 0,
+            "files_timed_out": 0,
+            "files_skipped": [],
+            "files_skipped_truncated": 0,
+            "skipped_by_reason": {},
+            "limits_hit": [],
+            "analysis_budgets_exhausted": [],
+            "rule_failures": [],
+            "findings_truncated": 0,
+            "suppressed": {
+              "inline": 1,
+              "baseline": 0
+            },
+            "protections_weakened_by_repo_config": [
+              "severity.fail_on: high -> critical [NOT APPLIED] (repo: loosening from untrusted repository config in CI mode)"
+            ],
+            "config_sources": [
+              {
+                "source": "repo",
+                "path": ".nexvul.yml",
+                "sha256": "4be1000000000000000000000000000000000000000000000000000000000000",
+                "ref": null
+              }
+            ],
+            "plugins_loaded": [],
+            "dynamic_constructs_not_analysed": 3,
+            "allow_partial": false,
+            "notes": []
+          },
+          "scan": {
+            "target": "my-agent-project",
+            "mode": "git",
+            "commit": "9e41d0c",
+            "started_at": "2026-10-13T00:00:00+00:00",
+            "ended_at": "2026-10-13T00:00:05+00:00",
+            "ci": true,
+            "ci_reason": "--ci",
+            "scope": "repository",
+            "position_encoding": {
+              "line_base": 1,
+              "column_base": 1,
+              "column_unit": "utf8_bytes"
+            }
+          },
+          "tool": {
+            "report_format": "nexvul-json",
+            "schema_version": "1.0.0",
+            "version": "0.1.0",
+            "rule_pack": {
+              "version": "0.0.0",
+              "sha256": "sha256:9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e9c1e",
+              "rules": 3
+            },
+            "python": "3.13.0",
+            "platform": "Test-arch",
+            "parsers": [
+              "python: stdlib ast (CPython 3.13)"
+            ],
+            "plugins_loaded": []
+          },
+          "config": {
+            "effective": [
+              {
+                "key": "severity.fail_on",
+                "value": "high",
+                "sources": [
+                  "default"
+                ]
+              },
+              {
+                "key": "rules.disabled",
+                "value": "[NEX004]",
+                "sources": [
+                  "default",
+                  "repo"
+                ]
+              }
+            ],
+            "sources": [
+              {
+                "source": "repo",
+                "path": ".nexvul.yml",
+                "sha256": "4be1000000000000000000000000000000000000000000000000000000000000",
+                "ref": null
+              }
+            ],
+            "changes": [
+              {
+                "key": "severity.fail_on",
+                "detail": "high -> critical",
+                "source": "repo",
+                "status": "not_applied",
+                "reason": "loosening from untrusted repository config in CI mode"
+              }
+            ]
+          },
+          "summary": {
+            "status": "complete",
+            "exit_code": 1,
+            "fail_on": "high",
+            "findings": 2,
+            "by_severity": {
+              "critical": 1,
+              "high": 0,
+              "medium": 0,
+              "low": 1,
+              "info": 0
+            },
+            "at_or_above_fail_on": 1,
+            "suppressed": 1,
+            "rules": {
+              "available": 3,
+              "enabled": [
+                "NEX002",
+                "NEX007",
+                "NEX014"
+              ],
+              "failed": []
+            },
+            "disclaimer": "A clean nexvul result does not prove that an application is secure."
+          },
+          "frameworks": [],
+          "rules_enabled": [
+            "NEX002",
+            "NEX007",
+            "NEX014"
+          ],
+          "suppression_issues": [
+            {
+              "kind": "rejected",
+              "path": "agent/admin.py",
+              "line": 30,
+              "problem": "no_rule_id",
+              "rule_ids": [],
+              "message": "suppression ignored: no rule ID. Write ignore[NEX0nn] -- <reason>."
+            },
+            {
+              "kind": "unmatched",
+              "path": "agent/old.py",
+              "line": 12,
+              "problem": null,
+              "rule_ids": [
+                "NEX014"
+              ],
+              "message": "ignore[NEX014] matched no finding."
+            }
+          ],
+          "position_encoding": {
+            "line_base": 1,
+            "column_base": 1,
+            "column_unit": "utf8_bytes",
+            "sarif_column_kind": "utf16CodeUnits",
+            "note": "Columns are 1-based UTF-8 byte offsets. They equal UTF-16 code units when the text before the column on that line is ASCII; otherwise they can be larger."
+          },
+          "sarif": {
+            "results_total": 3,
+            "results_emitted": 3,
+            "results_dropped": 0,
+            "info_findings_not_uploaded": 0,
+            "limits": {
+              "max_results": 25000,
+              "max_gzip_bytes": 10485760
+            }
+          },
+          "disclaimer": "A clean nexvul result does not prove that an application is secure.",
+          "untrusted_fields": [
+            "scan.target",
+            "scan.commit",
+            "config.effective[].value",
+            "config.sources[].path",
+            "config.changes[].detail",
+            "completeness.files_skipped[].path",
+            "completeness.protections_weakened_by_repo_config[]",
+            "findings[].file",
+            "findings[].message",
+            "findings[].dataflow[].file",
+            "findings[].dataflow[].code",
+            "findings[].evidence[].description",
+            "findings[].evidence[].snippet",
+            "findings[].limitations[]",
+            "findings[].suppression.justification",
+            "suppressed[].file",
+            "suppressed[].message",
+            "suppressed[].dataflow[].file",
+            "suppressed[].dataflow[].code",
+            "suppressed[].evidence[].description",
+            "suppressed[].evidence[].snippet",
+            "suppressed[].limitations[]",
+            "suppressed[].suppression.justification",
+            "suppressions[].path",
+            "suppressions[].message",
+            "analysis_limited[].path"
+          ]
+        }
+      }
+    }
+  ]
+}
